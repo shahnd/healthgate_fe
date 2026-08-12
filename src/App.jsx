@@ -9,7 +9,6 @@ function App() {
     <div className='flex'>
       <Sidebar/>
 
-
       <div>
         <Routes>
           <Route path="/employee/list" element={<EmployeeListComponent/>}/>
