@@ -6,6 +6,9 @@ import HospitalListComponent from './hospital/components/HospitalListComponent'
 import NoticeListComponent from './notice/components/NoticeListComponent'
 import LoginComponent from './login/components/LoginComponent'
 import DashboardComponent from './dashboard/DashboardComponent'
+import ReservationListComponent from './consultation/reservations/components/ReservationListComponent'
+import ReservationComponent from './consultation/reservations/components/ReservationComponent'
+import ConsultationListComponent from './consultation/consultations/components/ConsultationListComponent';
 
 function App() {
 
@@ -20,9 +23,13 @@ function App() {
           <Route path="/hospital/list" element={<HospitalListComponent/>}/>
           <Route path="/notice/list" element={<NoticeListComponent/>}/>
           <Route path="/employee/list" element={<EmployeeListComponent/>}/>
+
+          <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
+          <Route path="/consultation/reservation" element={<ReservationComponent />} />
+          <Route path="/consultation/list" element={<ConsultationListComponent />} />
+          
         </Routes>
       </div>
-
     </div>
   
   )
