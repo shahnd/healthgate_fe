@@ -6,6 +6,7 @@ import HospitalListComponent from './hospital/components/HospitalListComponent'
 import NoticeListComponent from './notice/components/NoticeListComponent'
 import LoginComponent from './login/components/LoginComponent'
 import DashboardComponent from './dashboard/DashboardComponent'
+import EmployeeCreateComponent from './employee/components/EmployeeCreateComponent'
 
 function App() {
 
@@ -19,7 +20,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardComponent/>}/>
           <Route path="/hospital/list" element={<HospitalListComponent/>}/>
           <Route path="/notice/list" element={<NoticeListComponent/>}/>
-          <Route path="/employee/list" element={<EmployeeListComponent/>}/>
+          <Route path="/employees" element={<EmployeeListComponent/>}/>
+          <Route path="/employees/new" element={<EmployeeCreateComponent/>}/>
         </Routes>
       </div>
 
