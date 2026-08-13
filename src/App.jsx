@@ -1,6 +1,8 @@
 import './App.css'
-import Sidebar from './common/components/Sidebar'
+
 import { Route, Routes } from 'react-router-dom'
+
+import Sidebar from './common/components/Sidebar'
 
 import EmployeeListComponent
   from './employee/components/EmployeeListComponent'
@@ -10,6 +12,12 @@ import HospitalListComponent
 
 import NoticeListComponent
   from './notice/components/NoticeListComponent'
+
+import LoginComponent
+  from './login/components/LoginComponent'
+
+import DashboardComponent
+  from './dashboard/DashboardComponent'
 
 import CheckupManagementComponent
   from './checkup/components/CheckupManagementComponent'
@@ -21,8 +29,20 @@ function App() {
       <Sidebar />
 
       {/* 페이지 콘텐츠 영역 */}
-      <main className="flex-1 min-w-0 bg-slate-50">
+      <main className="min-w-0 flex-1 bg-slate-50">
         <Routes>
+          {/* 로그인 */}
+          <Route
+            path="/login"
+            element={<LoginComponent />}
+          />
+
+          {/* 대시보드 */}
+          <Route
+            path="/dashboard"
+            element={<DashboardComponent />}
+          />
+
           {/* 병원 관리 */}
           <Route
             path="/hospital/list"
