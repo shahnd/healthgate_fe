@@ -1,6 +1,15 @@
 import axios from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
+const INITIAL_SETTING_FORM = {
+  settingType: 'INCOMPLETE',
+  messageTemplate: '건강검진을 완료해 주세요.',
+  scheduleType: 'DAILY',
+  scheduleDay: 'MON',
+  scheduleTime: '09:00',
+  active: true,
+}
+
 export default function CheckupReminderManagementComponent() {
   // 자동 알림 설정 목록
   const [settingList, setSettingList] = useState([])
@@ -13,12 +22,9 @@ export default function CheckupReminderManagementComponent() {
     useState(null)
 
   // 자동 알림 설정 입력값
-  const [settingForm, setSettingForm] = useState({
-    settingType: 'INCOMPLETE',
-    messageTemplate: '건강검진을 완료해 주세요.',
-    cronSchedule: '0 0 9 * * *',
-    active: true,
-  })
+  const [settingForm, setSettingForm] = useState(
+    INITIAL_SETTING_FORM
+  )
 
   // 처리 상태
   const [loading, setLoading] = useState(false)
@@ -86,9 +92,21 @@ export default function CheckupReminderManagementComponent() {
       return
     }
 
-    if (!settingForm.cronSchedule.trim()) {
-      alert('Cron 표현식을 입력해 주세요.')
+    if (!settingForm.scheduleTime) {
+      alert('실행 시간을 선택해 주세요.')
       return
+    }
+
+    const requestData = {
+      settingType: settingForm.settingType,
+      messageTemplate:
+        settingForm.messageTemplate.trim(),
+      cronSchedule: createCronSchedule(
+        settingForm.scheduleType,
+        settingForm.scheduleDay,
+        settingForm.scheduleTime
+      ),
+      active: settingForm.active,
     }
 
     setSaving(true)
@@ -97,14 +115,14 @@ export default function CheckupReminderManagementComponent() {
       if (editingSettingId) {
         await axios.put(
           `/healthgate/checkups/reminder-settings/${editingSettingId}`,
-          settingForm
+          requestData
         )
 
         alert('자동 알림 설정이 수정되었습니다.')
       } else {
         await axios.post(
           '/healthgate/checkups/reminder-settings',
-          settingForm
+          requestData
         )
 
         alert('자동 알림 설정이 등록되었습니다.')
@@ -124,12 +142,17 @@ export default function CheckupReminderManagementComponent() {
    * 선택한 자동 알림 설정을 수정 상태로 변경한다.
    */
   const startEditingSetting = (setting) => {
+    const schedule =
+      parseCronSchedule(setting.cronSchedule)
+
     setEditingSettingId(setting.settingId)
 
     setSettingForm({
       settingType: setting.settingType,
       messageTemplate: setting.messageTemplate,
-      cronSchedule: setting.cronSchedule,
+      scheduleType: schedule.scheduleType,
+      scheduleDay: schedule.scheduleDay,
+      scheduleTime: schedule.scheduleTime,
       active: setting.active,
     })
   }
@@ -141,10 +164,7 @@ export default function CheckupReminderManagementComponent() {
     setEditingSettingId(null)
 
     setSettingForm({
-      settingType: 'INCOMPLETE',
-      messageTemplate: '건강검진을 완료해 주세요.',
-      cronSchedule: '0 0 9 * * *',
-      active: true,
+      ...INITIAL_SETTING_FORM,
     })
   }
 
@@ -170,21 +190,25 @@ export default function CheckupReminderManagementComponent() {
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            건강검진 자동 알림의 메시지와 실행 주기를
+            건강검진 자동 알림의 메시지와 실행 일정을
             관리합니다.
           </p>
         </div>
 
         <form
           onSubmit={saveReminderSetting}
-          className="grid grid-cols-1 gap-5 lg:grid-cols-2"
+          className="
+            grid grid-cols-1 gap-5
+            lg:grid-cols-2
+          "
         >
           {/* 설정 종류 */}
           <div>
             <label
               htmlFor="settingType"
               className="
-                mb-2 block text-sm font-semibold text-slate-700
+                mb-2 block text-sm
+                font-semibold text-slate-700
               "
             >
               알림 설정 종류
@@ -196,9 +220,10 @@ export default function CheckupReminderManagementComponent() {
               value={settingForm.settingType}
               onChange={changeSettingForm}
               className="
-                w-full rounded-lg border border-slate-300
-                bg-white px-4 py-2 outline-none
-                focus:border-blue-500
+                w-full rounded-lg
+                border border-slate-300
+                bg-white px-4 py-2
+                outline-none focus:border-blue-500
               "
             >
               <option value="INCOMPLETE">
@@ -211,33 +236,100 @@ export default function CheckupReminderManagementComponent() {
             </select>
           </div>
 
-          {/* Cron 표현식 */}
+          {/* 실행 주기 */}
           <div>
             <label
-              htmlFor="cronSchedule"
+              htmlFor="scheduleType"
               className="
-                mb-2 block text-sm font-semibold text-slate-700
+                mb-2 block text-sm
+                font-semibold text-slate-700
               "
             >
-              Cron 실행 주기
+              실행 주기
+            </label>
+
+            <select
+              id="scheduleType"
+              name="scheduleType"
+              value={settingForm.scheduleType}
+              onChange={changeSettingForm}
+              className="
+                w-full rounded-lg
+                border border-slate-300
+                bg-white px-4 py-2
+                outline-none focus:border-blue-500
+              "
+            >
+              <option value="DAILY">매일</option>
+              <option value="WEEKDAY">평일</option>
+              <option value="WEEKLY">매주</option>
+            </select>
+          </div>
+
+          {/* 매주 선택 시 실행 요일 */}
+          {settingForm.scheduleType === 'WEEKLY' && (
+            <div>
+              <label
+                htmlFor="scheduleDay"
+                className="
+                  mb-2 block text-sm
+                  font-semibold text-slate-700
+                "
+              >
+                실행 요일
+              </label>
+
+              <select
+                id="scheduleDay"
+                name="scheduleDay"
+                value={settingForm.scheduleDay}
+                onChange={changeSettingForm}
+                className="
+                  w-full rounded-lg
+                  border border-slate-300
+                  bg-white px-4 py-2
+                  outline-none focus:border-blue-500
+                "
+              >
+                <option value="MON">월요일</option>
+                <option value="TUE">화요일</option>
+                <option value="WED">수요일</option>
+                <option value="THU">목요일</option>
+                <option value="FRI">금요일</option>
+                <option value="SAT">토요일</option>
+                <option value="SUN">일요일</option>
+              </select>
+            </div>
+          )}
+
+          {/* 실행 시간 */}
+          <div>
+            <label
+              htmlFor="scheduleTime"
+              className="
+                mb-2 block text-sm
+                font-semibold text-slate-700
+              "
+            >
+              실행 시간
             </label>
 
             <input
-              id="cronSchedule"
-              name="cronSchedule"
-              type="text"
-              value={settingForm.cronSchedule}
+              id="scheduleTime"
+              name="scheduleTime"
+              type="time"
+              value={settingForm.scheduleTime}
               onChange={changeSettingForm}
-              placeholder="예: 0 0 9 * * *"
               className="
-                w-full rounded-lg border border-slate-300
-                px-4 py-2 outline-none
-                focus:border-blue-500
+                w-full rounded-lg
+                border border-slate-300
+                bg-white px-4 py-2
+                outline-none focus:border-blue-500
               "
             />
 
             <p className="mt-1 text-xs text-slate-400">
-              예: 매일 오전 9시 = 0 0 9 * * *
+              자동 알림을 실행할 시간을 선택해 주세요.
             </p>
           </div>
 
@@ -246,7 +338,8 @@ export default function CheckupReminderManagementComponent() {
             <label
               htmlFor="messageTemplate"
               className="
-                mb-2 block text-sm font-semibold text-slate-700
+                mb-2 block text-sm
+                font-semibold text-slate-700
               "
             >
               메시지 템플릿
@@ -260,8 +353,9 @@ export default function CheckupReminderManagementComponent() {
               rows="4"
               className="
                 w-full resize-none rounded-lg
-                border border-slate-300 px-4 py-3
-                outline-none focus:border-blue-500
+                border border-slate-300
+                px-4 py-3 outline-none
+                focus:border-blue-500
               "
             />
           </div>
@@ -270,7 +364,7 @@ export default function CheckupReminderManagementComponent() {
           <div
             className="
               flex items-center justify-between
-              lg:col-span-2
+              gap-4 lg:col-span-2
             "
           >
             <label className="flex items-center gap-2">
@@ -282,7 +376,11 @@ export default function CheckupReminderManagementComponent() {
                 className="h-4 w-4"
               />
 
-              <span className="text-sm font-semibold text-slate-700">
+              <span
+                className="
+                  text-sm font-semibold text-slate-700
+                "
+              >
                 자동 알림 활성화
               </span>
             </label>
@@ -293,8 +391,10 @@ export default function CheckupReminderManagementComponent() {
                   type="button"
                   onClick={resetSettingForm}
                   className="
-                    rounded-lg border border-slate-300
-                    px-4 py-2 font-semibold text-slate-600
+                    rounded-lg
+                    border border-slate-300
+                    px-4 py-2 font-semibold
+                    text-slate-600
                     hover:bg-slate-50
                   "
                 >
@@ -306,8 +406,8 @@ export default function CheckupReminderManagementComponent() {
                 type="submit"
                 disabled={saving}
                 className="
-                  rounded-lg bg-blue-600 px-5 py-2
-                  font-semibold text-white
+                  rounded-lg bg-blue-600
+                  px-5 py-2 font-semibold text-white
                   transition hover:bg-blue-700
                   disabled:cursor-not-allowed
                   disabled:bg-blue-300
@@ -327,12 +427,30 @@ export default function CheckupReminderManagementComponent() {
         <div className="mt-8 overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-slate-100">
-              <tr className="text-left text-sm text-slate-600">
-                <th className="px-4 py-3">설정 종류</th>
-                <th className="px-4 py-3">메시지</th>
-                <th className="px-4 py-3">Cron 주기</th>
-                <th className="px-4 py-3">상태</th>
-                <th className="px-4 py-3">관리</th>
+              <tr
+                className="
+                  text-left text-sm text-slate-600
+                "
+              >
+                <th className="px-4 py-3">
+                  설정 종류
+                </th>
+
+                <th className="px-4 py-3">
+                  메시지
+                </th>
+
+                <th className="px-4 py-3">
+                  실행 일정
+                </th>
+
+                <th className="px-4 py-3">
+                  상태
+                </th>
+
+                <th className="px-4 py-3">
+                  관리
+                </th>
               </tr>
             </thead>
 
@@ -342,7 +460,8 @@ export default function CheckupReminderManagementComponent() {
                   <td
                     colSpan="5"
                     className="
-                      px-4 py-10 text-center text-slate-500
+                      px-4 py-10 text-center
+                      text-slate-500
                     "
                   >
                     자동 알림 설정을 불러오는 중입니다.
@@ -353,7 +472,8 @@ export default function CheckupReminderManagementComponent() {
                   <td
                     colSpan="5"
                     className="
-                      px-4 py-10 text-center text-slate-500
+                      px-4 py-10 text-center
+                      text-slate-500
                     "
                   >
                     등록된 자동 알림 설정이 없습니다.
@@ -378,8 +498,25 @@ export default function CheckupReminderManagementComponent() {
                       {setting.messageTemplate}
                     </td>
 
-                    <td className="px-4 py-4 font-mono">
-                      {setting.cronSchedule}
+                    <td className="px-4 py-4">
+                      <p
+                        className="
+                          font-semibold text-slate-700
+                        "
+                      >
+                        {getScheduleDescription(
+                          setting.cronSchedule
+                        )}
+                      </p>
+
+                      <p
+                        className="
+                          mt-1 font-mono
+                          text-xs text-slate-400
+                        "
+                      >
+                        {setting.cronSchedule}
+                      </p>
                     </td>
 
                     <td className="px-4 py-4">
@@ -395,9 +532,11 @@ export default function CheckupReminderManagementComponent() {
                           startEditingSetting(setting)
                         }
                         className="
-                          rounded-lg border border-blue-300
-                          px-3 py-2 font-semibold text-blue-600
-                          transition hover:bg-blue-50
+                          rounded-lg
+                          border border-blue-300
+                          px-3 py-2 font-semibold
+                          text-blue-600 transition
+                          hover:bg-blue-50
                         "
                       >
                         수정
@@ -412,11 +551,17 @@ export default function CheckupReminderManagementComponent() {
       </section>
 
       {/* 알림 발송 이력 */}
-      <section className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <section
+        className="
+          overflow-hidden rounded-xl
+          bg-white shadow-sm
+        "
+      >
         <div
           className="
             flex items-center justify-between
-            border-b border-slate-200 px-6 py-5
+            border-b border-slate-200
+            px-6 py-5
           "
         >
           <div>
@@ -434,9 +579,9 @@ export default function CheckupReminderManagementComponent() {
             onClick={loadReminderData}
             disabled={loading}
             className="
-              rounded-lg bg-slate-800 px-4 py-2
-              text-sm font-semibold text-white
-              hover:bg-slate-700
+              rounded-lg bg-slate-800
+              px-4 py-2 text-sm font-semibold
+              text-white hover:bg-slate-700
               disabled:cursor-not-allowed
               disabled:bg-slate-400
             "
@@ -448,11 +593,17 @@ export default function CheckupReminderManagementComponent() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-slate-100">
-              <tr className="text-left text-sm text-slate-600">
+              <tr
+                className="
+                  text-left text-sm text-slate-600
+                "
+              >
                 <th className="px-5 py-3">번호</th>
                 <th className="px-5 py-3">검진 ID</th>
                 <th className="px-5 py-3">채널</th>
-                <th className="px-5 py-3">메시지 내용</th>
+                <th className="px-5 py-3">
+                  메시지 내용
+                </th>
                 <th className="px-5 py-3">발송 일시</th>
                 <th className="px-5 py-3">상태</th>
                 <th className="px-5 py-3">구분</th>
@@ -465,7 +616,8 @@ export default function CheckupReminderManagementComponent() {
                   <td
                     colSpan="7"
                     className="
-                      px-5 py-10 text-center text-slate-500
+                      px-5 py-10 text-center
+                      text-slate-500
                     "
                   >
                     알림 발송 이력을 불러오는 중입니다.
@@ -476,7 +628,8 @@ export default function CheckupReminderManagementComponent() {
                   <td
                     colSpan="7"
                     className="
-                      px-5 py-10 text-center text-slate-500
+                      px-5 py-10 text-center
+                      text-slate-500
                     "
                   >
                     저장된 알림 발송 이력이 없습니다.
@@ -532,6 +685,129 @@ export default function CheckupReminderManagementComponent() {
 }
 
 /**
+ * 화면의 일정 선택값을 Spring Cron 표현식으로 변환한다.
+ */
+function createCronSchedule(
+  scheduleType,
+  scheduleDay,
+  scheduleTime
+) {
+  const [hour, minute] = scheduleTime.split(':')
+
+  if (scheduleType === 'WEEKDAY') {
+    return `0 ${Number(minute)} ${Number(hour)} * * MON-FRI`
+  }
+
+  if (scheduleType === 'WEEKLY') {
+    return `0 ${Number(minute)} ${Number(hour)} * * ${scheduleDay}`
+  }
+
+  return `0 ${Number(minute)} ${Number(hour)} * * *`
+}
+
+/**
+ * DB의 Spring Cron 표현식을 화면 입력값으로 변환한다.
+ */
+function parseCronSchedule(cronSchedule) {
+  const defaultSchedule = {
+    scheduleType: 'DAILY',
+    scheduleDay: 'MON',
+    scheduleTime: '09:00',
+  }
+
+  if (!cronSchedule) {
+    return defaultSchedule
+  }
+
+  const cronParts = cronSchedule.trim().split(/\s+/)
+
+  if (cronParts.length !== 6) {
+    return defaultSchedule
+  }
+
+  const minute = String(Number(cronParts[1]))
+    .padStart(2, '0')
+
+  const hour = String(Number(cronParts[2]))
+    .padStart(2, '0')
+
+  const dayOfWeek = cronParts[5]
+
+  if (dayOfWeek === 'MON-FRI') {
+    return {
+      scheduleType: 'WEEKDAY',
+      scheduleDay: 'MON',
+      scheduleTime: `${hour}:${minute}`,
+    }
+  }
+
+  if (dayOfWeek !== '*') {
+    return {
+      scheduleType: 'WEEKLY',
+      scheduleDay: dayOfWeek,
+      scheduleTime: `${hour}:${minute}`,
+    }
+  }
+
+  return {
+    scheduleType: 'DAILY',
+    scheduleDay: 'MON',
+    scheduleTime: `${hour}:${minute}`,
+  }
+}
+
+/**
+ * Cron 표현식을 사용자가 이해하기 쉬운 문구로 변환한다.
+ */
+function getScheduleDescription(cronSchedule) {
+  const schedule = parseCronSchedule(cronSchedule)
+  const timeText =
+    formatScheduleTime(schedule.scheduleTime)
+
+  if (schedule.scheduleType === 'WEEKDAY') {
+    return `평일 ${timeText}`
+  }
+
+  if (schedule.scheduleType === 'WEEKLY') {
+    return `매주 ${getDayName(
+      schedule.scheduleDay
+    )} ${timeText}`
+  }
+
+  return `매일 ${timeText}`
+}
+
+/**
+ * 24시간 형식의 시간을 오전·오후 형식으로 변환한다.
+ */
+function formatScheduleTime(scheduleTime) {
+  const [hourText, minute] = scheduleTime.split(':')
+  const hour = Number(hourText)
+
+  const period = hour < 12 ? '오전' : '오후'
+  const displayHour = hour % 12 || 12
+
+  return `${period} ${displayHour}:${minute}`
+}
+
+/**
+ * 영문 요일을 한글로 변환한다.
+ */
+function getDayName(day) {
+  const dayNames = {
+    MON: '월요일',
+    TUE: '화요일',
+    WED: '수요일',
+    THU: '목요일',
+    FRI: '금요일',
+    SAT: '토요일',
+    SUN: '일요일',
+  }
+
+  return dayNames[day] ?? day
+}
+
+/**
  * 자동 알림 설정 종류를 한글로 변환한다.
  */
 function getSettingTypeName(settingType) {
@@ -573,7 +849,7 @@ function formatDateTime(dateTime) {
 }
 
 /**
- * 자동 알림 활성화 상태
+ * 자동 알림 활성화 상태 표시
  */
 function ActiveStatusBadge({ active }) {
   return (
@@ -594,7 +870,7 @@ function ActiveStatusBadge({ active }) {
 }
 
 /**
- * 알림 발송 결과 상태
+ * 알림 발송 결과 상태 표시
  */
 function ReminderStatusBadge({ status }) {
   const successful = status === 'SUCCESS'
