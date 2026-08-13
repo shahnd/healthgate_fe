@@ -19,7 +19,12 @@ export default function Sidebar() {
       <nav className="flex flex-col gap-2">
         <a href="/dashboard" className="block py-2 px-3 hover:bg-slate-700 rounded transition">대시보드</a>
         <a href="#profile" className="block py-2 px-3 hover:bg-slate-700 rounded transition">출근자 건강 정보조회</a>
-        <a href="#settings" className="block py-2 px-3 hover:bg-slate-700 rounded transition">보건 상담</a>
+        <a className="block py-2 px-3 hover:bg-slate-700 rounded transition">보건 상담</a>
+        <ul>
+          <li><a href="/consultation/reservation/list">상담 예약 조회</a></li>
+          <li><a href="/consultation/reservation">상담 예약 신청</a></li>
+          <li><a href="/consultation/list">상담 내역 조회</a></li>
+        </ul>
         <a href="#settings" className="block py-2 px-3 hover:bg-slate-700 rounded transition">건강검진</a>
         <a href="/hospital/list" className="block py-2 px-3 hover:bg-slate-700 rounded transition">병원 관리</a>
         <a href="/notice/list" className="block py-2 px-3 hover:bg-slate-700 rounded transition">공지사항</a>
