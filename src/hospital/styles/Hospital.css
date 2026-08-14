@@ -1,0 +1,40 @@
+.content {
+    width : 1000px;
+    margin : auto;
+    margin-top : 50px;
+    margin-bottom : 50px;
+}
+
+/* table 태그에 대한 공통스타일 */
+table {
+    margin : auto;
+}
+
+/* 목록 조회용 테이블 스타일 */
+.list-area {
+    width : 90%;
+}
+.list-area>tbody>tr:hover {
+    cursor : pointer;
+}
+
+/* 작성 폼용 테이블 스타일 */
+.form {
+    width : 60%;
+}
+
+.form input, .form textarea {
+    width : 100%;
+    box-sizing : border-box;
+    padding : 10px;
+}
+
+.form textarea {
+    resize : none;
+    height : 300px;
+}
+
+.form input[type=checkbox], .form input[type=radio] {
+    width : 15px;
+    margin : 5px;
+}
