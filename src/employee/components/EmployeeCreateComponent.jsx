@@ -1,8 +1,14 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import "../styles/employee.css"
+import { useNavigate } from "react-router-dom";
+
 
 export default function EmployeeCreateComponent() {
 
-    const [employee, setEmployees] = useState({
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
         employeeNumber: "",
         password: "",
         name: "",
@@ -15,31 +21,108 @@ export default function EmployeeCreateComponent() {
 
     });
 
+    const [dlist, setDlist] = useState([]);
+    const [plist, setPlist] = useState([]);
+
+    useEffect(() => {
+
+        const getInitInfo = async () => {
+            try {
+                const response = await axios.get('http://localhost:8006/healthgate/employees/init')
+
+                setDlist(response.data.data.departmentList);
+                setPlist(response.data.data.positionList);
+                
+            } catch(error) {
+                console.log("초기 정보 통신 조회 실패");
+            }
+        }
+
+        getInitInfo();
+
+    }, [])
+
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({...formData, [name]: value});
+    }
+
+    const handleSubmit = async e => {
+        e.preventDefault();
+
+        if (confirmPassword !== formData.password) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        const {departmentId, positionId, ...rest} = formData;
+
+        const sendData = {
+            ...rest,
+            departments: {
+                id: Number(departmentId)
+            },
+            positions: {
+                id: Number(positionId)
+            }
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8006/healthgate/employees', sendData);
+
+            alert("직원 등록에 성공했습니다.")
+            navigate('/employees')
+
+        } catch(error) {
+            console.log("등록 통신 실패");
+        }
+    }
+
     return(
         <div>
 
 
-            <form className="flex flex-col">
+            <form className="flex flex-col" onSubmit={handleSubmit}>
                 <label>사번</label>
-                <input type="text" name="employeeNumber"/>
+                <input type="text" name="employeeNumber" value={formData.employeeNumber} onChange={handleChange} required/>
                 <label>이름</label>
-                <input type="text" name="name"/>
+                <input type="text" name="name" value={formData.name} onChange={handleChange} required/>
                 <label>비밀번호</label>
-                <input type="password" name="password"/>
+                <input type="password" name="password" value={formData.password} onChange={handleChange} required/>
                 <label>비밀번호 재확인</label>
-                <input type="password"/>
+                <input type="password" name="confirmPassword" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}/>
+                {formData.password !== "" &&
+                    ((formData.password !== confirmPassword) ? "비밀번호가 일치하지 않습니다." : "비밀번호가 일치합니다.")
+                }
                 <label>이메일</label>
-                <input type="email"/>
+                <input type="email" name="email" value={formData.email} onChange={handleChange}/>
                 <label>입사일</label>
-                <input type="hireDate"/>
+                <input type="date" name="hireDate" value={formData.hireDate} onChange={handleChange} required/>
                 <label>전화번호</label>
-                <input type="phone"/>
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange}/>
                 <label>권한</label>
-                <input type="role"/>
+                <select name="role" value={formData.role} onChange={handleChange} required>
+                    <option value="">권한을 선택하세요</option>
+                    <option value="EMPLOYEE">직원</option>
+                    <option value="HR_ADMIN">인사 관리자</option>
+                    <option value="HEALTH_ADMIN">보건 관리자</option>
+                </select>
                 <label>부서코드</label>
-                <input type="departmentId"/>
+                <select name="departmentId" value={formData.departmentId} onChange={handleChange} required>
+                    <option value="">부서를 선택하세요</option>
+                    {dlist.map(d => (
+                        <option value={d.id}>{d.name}</option>
+                    ))}
+                </select>
                 <label>직급코드</label>
-                <input type="positionId"/>
+                <select name="positionId" value={formData.positionId} onChange={handleChange} required>
+                    <option value="">직급을 선택하세요</option>
+                    {plist.map(p => (
+                        <option value={p.id}>{p.name}</option>
+                    ))}
+                </select>
 
                 <button type="submit">등록</button>
             </form>
