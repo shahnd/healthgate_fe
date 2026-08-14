@@ -9,6 +9,9 @@ import DashboardComponent from './dashboard/DashboardComponent'
 import EmployeeCreateComponent from './employee/components/EmployeeCreateComponent'
 import EmployeeDetailComponent from './employee/components/EmployeeDetailComponent'
 import EmployeeUpdateComponent from './employee/components/EmployeeUpdateComponent'
+import ReservationListComponent from './consultation/reservations/components/ReservationListComponent'
+import ReservationComponent from './consultation/reservations/components/ReservationComponent'
+import ConsultationListComponent from './consultation/consultations/components/ConsultationListComponent';
 
 function App() {
 
@@ -26,9 +29,13 @@ function App() {
           <Route path="/employees/:id" element={<EmployeeDetailComponent/>}/>
           <Route path="/employees/:id/edit" element={<EmployeeUpdateComponent/>}/>
           <Route path="/employees/new" element={<EmployeeCreateComponent/>}/>
+
+          <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
+          <Route path="/consultation/reservation" element={<ReservationComponent />} />
+          <Route path="/consultation/list" element={<ConsultationListComponent />} />
+          
         </Routes>
       </div>
-
     </div>
   
   )
