@@ -9,10 +9,8 @@ const CHECKUP_API_URL =
 export default function CheckupManagementComponent() {
   const currentYear = new Date().getFullYear()
 
-  // 조회할 검진 대상 연도
   const [year, setYear] = useState(currentYear)
 
-  // 검진 완료율 통계
   const [statistics, setStatistics] = useState({
     checkupYear: currentYear,
     totalCount: 0,
@@ -21,14 +19,10 @@ export default function CheckupManagementComponent() {
     completionRate: 0,
   })
 
-  // 건강검진 대상자 목록
   const [targetList, setTargetList] = useState([])
-
-  // 조회 상태
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  // 수동 알림 발송 모달
   const [selectedTarget, setSelectedTarget] =
     useState(null)
 
@@ -42,7 +36,7 @@ export default function CheckupManagementComponent() {
     useState(false)
 
   /**
-   * 검진 완료율 통계와 대상자 목록을 조회한다.
+   * 검진 완료율 통계와 대상자 목록 조회
    */
   const loadCheckupData = useCallback(async () => {
     setLoading(true)
@@ -89,7 +83,7 @@ export default function CheckupManagementComponent() {
   }, [loadCheckupData])
 
   /**
-   * 수동 알림 발송 창을 연다.
+   * 수동 알림 발송 창 열기
    */
   const openReminderModal = (target) => {
     const confirmed = window.confirm(
@@ -108,7 +102,7 @@ export default function CheckupManagementComponent() {
   }
 
   /**
-   * 수동 알림 발송 창을 닫는다.
+   * 수동 알림 발송 창 닫기
    */
   const closeReminderModal = () => {
     if (sendingReminder) {
@@ -121,7 +115,7 @@ export default function CheckupManagementComponent() {
   }
 
   /**
-   * 수동 알림을 발송하고 발송 이력을 저장한다.
+   * 수동 알림 발송 및 발송 이력 저장
    */
   const sendManualReminder = async () => {
     if (!selectedTarget) {
@@ -219,11 +213,11 @@ export default function CheckupManagementComponent() {
             onClick={loadCheckupData}
             disabled={loading}
             className="
-              rounded-lg bg-slate-800 px-4 py-2
-              text-sm font-semibold text-white
-              transition hover:bg-slate-700
+              rounded-lg !bg-slate-800 px-4 py-2
+              text-sm font-semibold !text-white
+              transition hover:!bg-slate-700
               disabled:cursor-not-allowed
-              disabled:bg-slate-400
+              disabled:!bg-slate-400
             "
           >
             {loading ? '조회 중...' : '새로고침'}
@@ -245,11 +239,7 @@ export default function CheckupManagementComponent() {
 
       {/* 검진 완료율 통계 */}
       <section className="mb-8">
-        <h2
-          className="
-            mb-4 text-lg font-bold text-slate-800
-          "
-        >
+        <h2 className="mb-4 text-lg font-bold text-slate-800">
           검진 완료율 통계
         </h2>
 
@@ -304,11 +294,7 @@ export default function CheckupManagementComponent() {
           "
         >
           <div>
-            <h2
-              className="
-                text-lg font-bold text-slate-800
-              "
-            >
+            <h2 className="text-lg font-bold text-slate-800">
               검진 대상자 목록
             </h2>
 
@@ -322,11 +308,7 @@ export default function CheckupManagementComponent() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-slate-100">
-              <tr
-                className="
-                  text-left text-sm text-slate-600
-                "
-              >
+              <tr className="text-left text-sm text-slate-600">
                 <th className="px-6 py-3">사번</th>
                 <th className="px-6 py-3">이름</th>
                 <th className="px-6 py-3">
@@ -380,11 +362,7 @@ export default function CheckupManagementComponent() {
                       {target.employeeNo}
                     </td>
 
-                    <td
-                      className="
-                        px-6 py-4 font-semibold
-                      "
-                    >
+                    <td className="px-6 py-4 font-semibold">
                       {target.employeeName}
                     </td>
 
@@ -420,12 +398,13 @@ export default function CheckupManagementComponent() {
                             target.completed
                               ? `
                                 cursor-not-allowed
-                                bg-slate-200
-                                text-slate-400
+                                !bg-slate-200
+                                !text-slate-400
                               `
                               : `
-                                bg-blue-600 text-white
-                                hover:bg-blue-700
+                                !bg-blue-600
+                                !text-white
+                                hover:!bg-blue-700
                               `
                           }
                         `}
@@ -459,11 +438,7 @@ export default function CheckupManagementComponent() {
               bg-white p-6 shadow-xl
             "
           >
-            <h2
-              className="
-                text-xl font-bold text-slate-800
-              "
-            >
+            <h2 className="text-xl font-bold text-slate-800">
               수동 알림 발송
             </h2>
 
@@ -490,9 +465,7 @@ export default function CheckupManagementComponent() {
                 id="reminderChannel"
                 value={reminderChannel}
                 onChange={(event) =>
-                  setReminderChannel(
-                    event.target.value
-                  )
+                  setReminderChannel(event.target.value)
                 }
                 className="
                   w-full rounded-lg
@@ -522,9 +495,7 @@ export default function CheckupManagementComponent() {
                 id="reminderContent"
                 value={reminderContent}
                 onChange={(event) =>
-                  setReminderContent(
-                    event.target.value
-                  )
+                  setReminderContent(event.target.value)
                 }
                 rows="5"
                 className="
@@ -542,11 +513,7 @@ export default function CheckupManagementComponent() {
             </p>
 
             {/* 버튼 영역 */}
-            <div
-              className="
-                mt-6 flex justify-end gap-3
-              "
-            >
+            <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={closeReminderModal}
@@ -554,9 +521,9 @@ export default function CheckupManagementComponent() {
                 className="
                   rounded-lg
                   border border-slate-300
-                  px-4 py-2 font-semibold
-                  text-slate-600 transition
-                  hover:bg-slate-50
+                  !bg-white px-4 py-2
+                  font-semibold !text-slate-600
+                  transition hover:!bg-slate-50
                   disabled:cursor-not-allowed
                 "
               >
@@ -568,12 +535,12 @@ export default function CheckupManagementComponent() {
                 onClick={sendManualReminder}
                 disabled={sendingReminder}
                 className="
-                  rounded-lg bg-blue-600
+                  rounded-lg !bg-blue-600
                   px-4 py-2 font-semibold
-                  text-white transition
-                  hover:bg-blue-700
+                  !text-white transition
+                  hover:!bg-blue-700
                   disabled:cursor-not-allowed
-                  disabled:bg-blue-300
+                  disabled:!bg-blue-300
                 "
               >
                 {sendingReminder
@@ -598,27 +565,15 @@ function StatisticsCard({
   color,
 }) {
   return (
-    <div
-      className="
-        rounded-xl bg-white p-5 shadow-sm
-      "
-    >
-      <p
-        className="
-          text-sm font-medium text-slate-500
-        "
-      >
+    <div className="rounded-xl bg-white p-5 shadow-sm">
+      <p className="text-sm font-medium text-slate-500">
         {title}
       </p>
 
       <p className={`mt-3 text-3xl font-bold ${color}`}>
         {value}
 
-        <span
-          className="
-            ml-1 text-base font-medium
-          "
-        >
+        <span className="ml-1 text-base font-medium">
           {unit}
         </span>
       </p>
