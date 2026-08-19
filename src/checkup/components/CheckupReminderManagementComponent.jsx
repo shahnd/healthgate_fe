@@ -576,14 +576,14 @@ export default function CheckupReminderManagementComponent() {
             onClick={loadReminderData}
             disabled={loading}
             className="
-              rounded-lg bg-slate-800
+              rounded-lg !bg-slate-800
               px-4 py-2 text-sm font-semibold
-              text-white hover:bg-slate-700
+              !text-white hover:!bg-slate-700
               disabled:cursor-not-allowed
-              disabled:bg-slate-400
+              disabled:!bg-slate-400
             "
           >
-            새로고침
+            {loading ? '조회 중...' : '새로고침'}
           </button>
         </div>
 
