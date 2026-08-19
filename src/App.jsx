@@ -21,7 +21,7 @@ import NoticeListComponent from "./notice/components/NoticeListComponent";
 
 import ReservationListComponent from "./consultation/reservations/components/ReservationListComponent";
 import ReservationComponent from "./consultation/reservations/components/ReservationComponent";
-import ConsultationListComponent from "./consultation/consultations/components/ConsultationListComponent";
+// import ConsultationListComponent from "./consultation/consultations/components/ConsultationListComponent";
 
 import CheckupManagementComponent from "./checkup/components/CheckupManagementComponent";
 
@@ -66,10 +66,10 @@ function App() {
             path="/consultation/reservation"
             element={<ReservationComponent />}
           />
-          <Route
+          {/* <Route
             path="/consultation/list"
             element={<ConsultationListComponent />}
-          />
+          /> */}
 
           {/* 건강검진 관리 */}
           <Route
