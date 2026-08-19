@@ -12,19 +12,33 @@ export default function EmployeeListComponent() {
     const [size, setSize] = useState(5);
     const [totalPages, setTotalPages] = useState(0);
 
+    const [searchCondition, setSearchCondition] = useState({
+        name: '',
+        employeeNumber: '',
+        departmentId: '',
+        positionId: '',
+    });
+
+    const [submittedCondition, setSubmittedCondition] = useState(searchCondition);
+
+    const [dlist, setDlist] = useState([]);
+    const [plist, setPlist] = useState([]);
 
 
     useEffect(() => {
-
         const getEmployees = async () => {
 
             try {
                 const response = await axios.get('http://localhost:8006/healthgate/employees', {
                     params: {
                         page: page,
-                        size: size
+                        size: size,
+                        ...submittedCondition
                     }
                 });
+                const response2 = await axios.get('http://localhost:8006/healthgate/employees/init')
+                setDlist(response2.data.data.departmentList);
+                setPlist(response2.data.data.positionList);
 
                 setEmployees(response.data.data.content);
                 setTotalPages(response.data.data.totalPages);
@@ -36,9 +50,24 @@ export default function EmployeeListComponent() {
 
         }
 
+
         getEmployees();
 
-    }, [page, size]);
+    }, [page, size, submittedCondition]);
+
+    const handleInputChange = e => {
+        const { name, value } = e.target;
+        setSearchCondition(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSearchSubmit = e => {
+        e.preventDefault();
+        setPage(1);
+        setSubmittedCondition(searchCondition);
+    }
 
 
     //페이지 계산
@@ -49,6 +78,35 @@ export default function EmployeeListComponent() {
     return (
         <div className="flex flex-col justify-center items-center min-h-screen gap-7">
             <h1 className="text-4xl font-bold">직원 리스트</h1>
+
+            <form onSubmit={handleSearchSubmit}>
+                <input type="text" name="name"
+                        placeholder="이름 검색"value={searchCondition.name}
+                        onChange={handleInputChange}/>
+                <input type="text" name="employeeNumber"
+                        placeholder="사번 검색"value={searchCondition.employeeNumber}
+                        onChange={handleInputChange}/>
+
+                <button type="submit">검색</button>
+
+                <label>직급코드</label>
+                <select name="positionId" value={searchCondition.positionId}
+                        onChange={handleInputChange}>
+                    <option value="">직급을 선택하세요</option>
+                    {plist.map((p) => (
+                        <option value={p.id}>{p.name}</option>
+                    ))}
+                </select>
+
+                <label>부서코드</label>
+                <select name="departmentId" value={searchCondition.depatmentId}
+                        onChange={handleInputChange}>
+                    <option value="">부서를 선택하세요</option>
+                    {dlist.map((d) => (
+                        <option value={d.id}>{d.name}</option>
+                    ))}
+                </select>
+            </form>
 
             <table>
                 <thead>
