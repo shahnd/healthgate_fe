@@ -1,64 +1,74 @@
-import './App.css'
+import "./App.css";
 
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from "react-router-dom";
 
-import Sidebar from './common/components/Sidebar'
+import Sidebar from "./common/components/Sidebar";
 
-import EmployeeListComponent
-  from './employee/components/EmployeeListComponent'
+import LoginComponent from "./login/components/LoginComponent";
+import DashboardComponent from "./dashboard/DashboardComponent";
 
-import HospitalListComponent
-  from './hospital/components/HospitalListComponent'
+import EmployeeListComponent from "./employee/components/EmployeeListComponent";
+import EmployeeCreateComponent from "./employee/components/EmployeeCreateComponent";
+import EmployeeDetailComponent from "./employee/components/EmployeeDetailComponent";
+import EmployeeUpdateComponent from "./employee/components/EmployeeUpdateComponent";
 
-import NoticeListComponent
-  from './notice/components/NoticeListComponent'
+import HospitalListComponent from "./hospital/components/HospitalListComponent";
+import HospitalEnrollFormComponent from "./hospital/components/HospitalEnrollFormComponent";
+import HospitalDetailComponent from "./hospital/components/HospitalDetailComponent";
+import HospitalUpdateFormComponent from "./hospital/components/HospitalUpdateFormComponent";
 
-import LoginComponent
-  from './login/components/LoginComponent'
+import NoticeListComponent from "./notice/components/NoticeListComponent";
 
-import DashboardComponent
-  from './dashboard/DashboardComponent'
+import ReservationListComponent from "./consultation/reservations/components/ReservationListComponent";
+import ReservationComponent from "./consultation/reservations/components/ReservationComponent";
+import ConsultationListComponent from "./consultation/consultations/components/ConsultationListComponent";
 
-import CheckupManagementComponent
-  from './checkup/components/CheckupManagementComponent'
+import CheckupManagementComponent from "./checkup/components/CheckupManagementComponent";
 
 function App() {
   return (
     <div className="flex min-h-screen">
-      {/* 공통 사이드바 */}
       <Sidebar />
 
-      {/* 페이지 콘텐츠 영역 */}
       <main className="min-w-0 flex-1 bg-slate-50">
         <Routes>
-          {/* 로그인 */}
-          <Route
-            path="/login"
-            element={<LoginComponent />}
-          />
-
-          {/* 대시보드 */}
-          <Route
-            path="/dashboard"
-            element={<DashboardComponent />}
-          />
+          {/* 로그인 및 대시보드 */}
+          <Route path="/login" element={<LoginComponent />} />
+          <Route path="/dashboard" element={<DashboardComponent />} />
 
           {/* 병원 관리 */}
+          <Route path="/hospital/list" element={<HospitalListComponent />} />
+          <Route path="/hospital/new" element={<HospitalEnrollFormComponent />} />
+          <Route path="/hospital/:id" element={<HospitalDetailComponent />} />
           <Route
-            path="/hospital/list"
-            element={<HospitalListComponent />}
+            path="/hospital/:id/edit"
+            element={<HospitalUpdateFormComponent />}
           />
 
           {/* 공지사항 */}
-          <Route
-            path="/notice/list"
-            element={<NoticeListComponent />}
-          />
+          <Route path="/notice/list" element={<NoticeListComponent />} />
 
           {/* 직원 관리 */}
+          <Route path="/employees" element={<EmployeeListComponent />} />
+          <Route path="/employees/:id" element={<EmployeeDetailComponent />} />
           <Route
-            path="/employee/list"
-            element={<EmployeeListComponent />}
+            path="/employees/:id/edit"
+            element={<EmployeeUpdateComponent />}
+          />
+          <Route path="/employees/new" element={<EmployeeCreateComponent />} />
+
+          {/* 보건 상담 */}
+          <Route
+            path="/consultation/reservation/list"
+            element={<ReservationListComponent />}
+          />
+          <Route
+            path="/consultation/reservation"
+            element={<ReservationComponent />}
+          />
+          <Route
+            path="/consultation/list"
+            element={<ConsultationListComponent />}
           />
 
           {/* 건강검진 관리 */}
@@ -69,7 +79,7 @@ function App() {
         </Routes>
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
