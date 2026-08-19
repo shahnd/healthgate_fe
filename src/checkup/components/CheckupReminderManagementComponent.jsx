@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { useCallback, useEffect, useState } from 'react'
 
+const CHECKUP_API_URL =
+  'http://localhost:8006/healthgate/checkups'
+
 const INITIAL_SETTING_FORM = {
   settingType: 'INCOMPLETE',
   messageTemplate: '건강검진을 완료해 주세요.',
@@ -11,28 +14,21 @@ const INITIAL_SETTING_FORM = {
 }
 
 export default function CheckupReminderManagementComponent() {
-  // 자동 알림 설정 목록
   const [settingList, setSettingList] = useState([])
-
-  // 알림 발송 이력
   const [historyList, setHistoryList] = useState([])
-
-  // 수정 중인 설정 ID
   const [editingSettingId, setEditingSettingId] =
     useState(null)
 
-  // 자동 알림 설정 입력값
   const [settingForm, setSettingForm] = useState(
     INITIAL_SETTING_FORM
   )
 
-  // 처리 상태
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   /**
-   * 자동 알림 설정 목록과 발송 이력을 조회한다.
+   * 자동 알림 설정과 발송 이력을 조회한다.
    */
   const loadReminderData = useCallback(async () => {
     setLoading(true)
@@ -42,10 +38,10 @@ export default function CheckupReminderManagementComponent() {
       const [settingsResponse, historyResponse] =
         await Promise.all([
           axios.get(
-            '/healthgate/checkups/reminder-settings'
+            `${CHECKUP_API_URL}/reminder-settings`
           ),
           axios.get(
-            '/healthgate/checkups/reminders/history'
+            `${CHECKUP_API_URL}/reminders/history`
           ),
         ])
 
@@ -63,7 +59,7 @@ export default function CheckupReminderManagementComponent() {
   }, [])
 
   /**
-   * 컴포넌트 최초 출력 시 조회한다.
+   * 컴포넌트 최초 출력 시 데이터를 조회한다.
    */
   useEffect(() => {
     loadReminderData()
@@ -114,14 +110,14 @@ export default function CheckupReminderManagementComponent() {
     try {
       if (editingSettingId) {
         await axios.put(
-          `/healthgate/checkups/reminder-settings/${editingSettingId}`,
+          `${CHECKUP_API_URL}/reminder-settings/${editingSettingId}`,
           requestData
         )
 
         alert('자동 알림 설정이 수정되었습니다.')
       } else {
         await axios.post(
-          '/healthgate/checkups/reminder-settings',
+          `${CHECKUP_API_URL}/reminder-settings`,
           requestData
         )
 
@@ -139,7 +135,7 @@ export default function CheckupReminderManagementComponent() {
   }
 
   /**
-   * 선택한 자동 알림 설정을 수정 상태로 변경한다.
+   * 선택한 설정을 수정 입력란에 표시한다.
    */
   const startEditingSetting = (setting) => {
     const schedule =
@@ -154,6 +150,11 @@ export default function CheckupReminderManagementComponent() {
       scheduleDay: schedule.scheduleDay,
       scheduleTime: schedule.scheduleTime,
       active: setting.active,
+    })
+
+    window.scrollTo({
+      top: document.body.scrollHeight / 2,
+      behavior: 'smooth',
     })
   }
 
@@ -202,7 +203,7 @@ export default function CheckupReminderManagementComponent() {
             lg:grid-cols-2
           "
         >
-          {/* 설정 종류 */}
+          {/* 알림 설정 종류 */}
           <div>
             <label
               htmlFor="settingType"
@@ -360,7 +361,7 @@ export default function CheckupReminderManagementComponent() {
             />
           </div>
 
-          {/* 활성화 여부 및 버튼 */}
+          {/* 활성화 여부 및 저장 버튼 */}
           <div
             className="
               flex items-center justify-between
@@ -427,11 +428,7 @@ export default function CheckupReminderManagementComponent() {
         <div className="mt-8 overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-slate-100">
-              <tr
-                className="
-                  text-left text-sm text-slate-600
-                "
-              >
+              <tr className="text-left text-sm text-slate-600">
                 <th className="px-4 py-3">
                   설정 종류
                 </th>
@@ -593,18 +590,16 @@ export default function CheckupReminderManagementComponent() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-slate-100">
-              <tr
-                className="
-                  text-left text-sm text-slate-600
-                "
-              >
+              <tr className="text-left text-sm text-slate-600">
                 <th className="px-5 py-3">번호</th>
                 <th className="px-5 py-3">검진 ID</th>
                 <th className="px-5 py-3">채널</th>
                 <th className="px-5 py-3">
                   메시지 내용
                 </th>
-                <th className="px-5 py-3">발송 일시</th>
+                <th className="px-5 py-3">
+                  발송 일시
+                </th>
                 <th className="px-5 py-3">상태</th>
                 <th className="px-5 py-3">구분</th>
               </tr>
@@ -685,7 +680,7 @@ export default function CheckupReminderManagementComponent() {
 }
 
 /**
- * 화면의 일정 선택값을 Spring Cron 표현식으로 변환한다.
+ * 화면 일정 선택값을 Spring Cron 표현식으로 변환한다.
  */
 function createCronSchedule(
   scheduleType,
@@ -706,7 +701,7 @@ function createCronSchedule(
 }
 
 /**
- * DB의 Spring Cron 표현식을 화면 입력값으로 변환한다.
+ * DB의 Cron 표현식을 화면 입력값으로 변환한다.
  */
 function parseCronSchedule(cronSchedule) {
   const defaultSchedule = {
@@ -761,6 +756,7 @@ function parseCronSchedule(cronSchedule) {
  */
 function getScheduleDescription(cronSchedule) {
   const schedule = parseCronSchedule(cronSchedule)
+
   const timeText =
     formatScheduleTime(schedule.scheduleTime)
 
@@ -778,7 +774,7 @@ function getScheduleDescription(cronSchedule) {
 }
 
 /**
- * 24시간 형식의 시간을 오전·오후 형식으로 변환한다.
+ * 24시간 형식 시간을 오전·오후 형식으로 변환한다.
  */
 function formatScheduleTime(scheduleTime) {
   const [hourText, minute] = scheduleTime.split(':')

@@ -3,6 +3,9 @@ import { useCallback, useEffect, useState } from 'react'
 import CheckupReminderManagementComponent
   from './CheckupReminderManagementComponent'
 
+const CHECKUP_API_URL =
+  'http://localhost:8006/healthgate/checkups'
+
 export default function CheckupManagementComponent() {
   const currentYear = new Date().getFullYear()
 
@@ -26,10 +29,17 @@ export default function CheckupManagementComponent() {
   const [errorMessage, setErrorMessage] = useState('')
 
   // 수동 알림 발송 모달
-  const [selectedTarget, setSelectedTarget] = useState(null)
-  const [reminderChannel, setReminderChannel] = useState('SMS')
-  const [reminderContent, setReminderContent] = useState('')
-  const [sendingReminder, setSendingReminder] = useState(false)
+  const [selectedTarget, setSelectedTarget] =
+    useState(null)
+
+  const [reminderChannel, setReminderChannel] =
+    useState('SMS')
+
+  const [reminderContent, setReminderContent] =
+    useState('')
+
+  const [sendingReminder, setSendingReminder] =
+    useState(false)
 
   /**
    * 검진 완료율 통계와 대상자 목록을 조회한다.
@@ -41,18 +51,27 @@ export default function CheckupManagementComponent() {
     try {
       const [statisticsResponse, targetsResponse] =
         await Promise.all([
-          axios.get('/healthgate/checkups/statistics', {
-            params: { year },
-          }),
-          axios.get('/healthgate/checkups/targets', {
-            params: { year },
-          }),
+          axios.get(
+            `${CHECKUP_API_URL}/statistics`,
+            {
+              params: { year },
+            }
+          ),
+          axios.get(
+            `${CHECKUP_API_URL}/targets`,
+            {
+              params: { year },
+            }
+          ),
         ])
 
       setStatistics(statisticsResponse.data)
       setTargetList(targetsResponse.data)
     } catch (error) {
-      console.error('건강검진 데이터 조회 실패:', error)
+      console.error(
+        '건강검진 데이터 조회 실패:',
+        error
+      )
 
       setErrorMessage(
         '건강검진 정보를 불러오지 못했습니다.'
@@ -73,20 +92,20 @@ export default function CheckupManagementComponent() {
    * 수동 알림 발송 창을 연다.
    */
   const openReminderModal = (target) => {
-  const confirmed = window.confirm(
-    `${target.employeeName}님에게 독려 알림을 발송하시겠습니까?`
-  )
+    const confirmed = window.confirm(
+      `${target.employeeName}님에게 독려 알림을 발송하시겠습니까?`
+    )
 
-  if (!confirmed) {
-    return
+    if (!confirmed) {
+      return
+    }
+
+    setSelectedTarget(target)
+    setReminderChannel('SMS')
+    setReminderContent(
+      `${target.employeeName}님, 건강검진을 완료해 주세요.`
+    )
   }
-
-  setSelectedTarget(target)
-  setReminderChannel('SMS')
-  setReminderContent(
-    `${target.employeeName}님, 건강검진을 완료해 주세요.`
-  )
-}
 
   /**
    * 수동 알림 발송 창을 닫는다.
@@ -118,7 +137,7 @@ export default function CheckupManagementComponent() {
 
     try {
       await axios.post(
-        '/healthgate/checkups/reminders/manual',
+        `${CHECKUP_API_URL}/reminders/manual`,
         {
           checkupId: selectedTarget.checkupId,
           channel: reminderChannel,
@@ -127,6 +146,7 @@ export default function CheckupManagementComponent() {
       )
 
       alert('알림 발송 이력이 저장되었습니다.')
+
       setSelectedTarget(null)
       setReminderContent('')
     } catch (error) {
@@ -151,7 +171,12 @@ export default function CheckupManagementComponent() {
       </div>
 
       {/* 연도 선택 */}
-      <section className="mb-6 rounded-xl bg-white p-5 shadow-sm">
+      <section
+        className="
+          mb-6 rounded-xl bg-white
+          p-5 shadow-sm
+        "
+      >
         <div className="flex items-center gap-3">
           <label
             htmlFor="checkupYear"
@@ -197,7 +222,8 @@ export default function CheckupManagementComponent() {
               rounded-lg bg-slate-800 px-4 py-2
               text-sm font-semibold text-white
               transition hover:bg-slate-700
-              disabled:cursor-not-allowed disabled:bg-slate-400
+              disabled:cursor-not-allowed
+              disabled:bg-slate-400
             "
           >
             {loading ? '조회 중...' : '새로고침'}
@@ -219,11 +245,20 @@ export default function CheckupManagementComponent() {
 
       {/* 검진 완료율 통계 */}
       <section className="mb-8">
-        <h2 className="mb-4 text-lg font-bold text-slate-800">
+        <h2
+          className="
+            mb-4 text-lg font-bold text-slate-800
+          "
+        >
           검진 완료율 통계
         </h2>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div
+          className="
+            grid grid-cols-1 gap-4
+            md:grid-cols-4
+          "
+        >
           <StatisticsCard
             title="전체 대상자"
             value={statistics.totalCount}
@@ -255,20 +290,31 @@ export default function CheckupManagementComponent() {
       </section>
 
       {/* 검진 대상자 목록 */}
-      <section className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <section
+        className="
+          overflow-hidden rounded-xl
+          bg-white shadow-sm
+        "
+      >
         <div
           className="
             flex items-center justify-between
-            border-b border-slate-200 px-6 py-5
+            border-b border-slate-200
+            px-6 py-5
           "
         >
           <div>
-            <h2 className="text-lg font-bold text-slate-800">
+            <h2
+              className="
+                text-lg font-bold text-slate-800
+              "
+            >
               검진 대상자 목록
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              총 {targetList.length}명의 대상자가 조회되었습니다.
+              총 {targetList.length}명의 대상자가
+              조회되었습니다.
             </p>
           </div>
         </div>
@@ -276,12 +322,20 @@ export default function CheckupManagementComponent() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-slate-100">
-              <tr className="text-left text-sm text-slate-600">
+              <tr
+                className="
+                  text-left text-sm text-slate-600
+                "
+              >
                 <th className="px-6 py-3">사번</th>
                 <th className="px-6 py-3">이름</th>
-                <th className="px-6 py-3">검진 연도</th>
+                <th className="px-6 py-3">
+                  검진 연도
+                </th>
                 <th className="px-6 py-3">검진일</th>
-                <th className="px-6 py-3">검진 요약</th>
+                <th className="px-6 py-3">
+                  검진 요약
+                </th>
                 <th className="px-6 py-3">상태</th>
                 <th className="px-6 py-3">알림</th>
               </tr>
@@ -293,7 +347,8 @@ export default function CheckupManagementComponent() {
                   <td
                     colSpan="7"
                     className="
-                      px-6 py-12 text-center text-slate-500
+                      px-6 py-12 text-center
+                      text-slate-500
                     "
                   >
                     건강검진 정보를 불러오는 중입니다.
@@ -304,7 +359,8 @@ export default function CheckupManagementComponent() {
                   <td
                     colSpan="7"
                     className="
-                      px-6 py-12 text-center text-slate-500
+                      px-6 py-12 text-center
+                      text-slate-500
                     "
                   >
                     해당 연도의 검진 대상자가 없습니다.
@@ -324,7 +380,11 @@ export default function CheckupManagementComponent() {
                       {target.employeeNo}
                     </td>
 
-                    <td className="px-6 py-4 font-semibold">
+                    <td
+                      className="
+                        px-6 py-4 font-semibold
+                      "
+                    >
                       {target.employeeName}
                     </td>
 
@@ -360,7 +420,8 @@ export default function CheckupManagementComponent() {
                             target.completed
                               ? `
                                 cursor-not-allowed
-                                bg-slate-200 text-slate-400
+                                bg-slate-200
+                                text-slate-400
                               `
                               : `
                                 bg-blue-600 text-white
@@ -381,7 +442,7 @@ export default function CheckupManagementComponent() {
       </section>
 
       {/* 자동 알림 설정 및 알림 발송 이력 */}
-        <CheckupReminderManagementComponent />
+      <CheckupReminderManagementComponent />
 
       {/* 수동 알림 발송 모달 */}
       {selectedTarget && (
@@ -398,7 +459,11 @@ export default function CheckupManagementComponent() {
               bg-white p-6 shadow-xl
             "
           >
-            <h2 className="text-xl font-bold text-slate-800">
+            <h2
+              className="
+                text-xl font-bold text-slate-800
+              "
+            >
               수동 알림 발송
             </h2>
 
@@ -414,7 +479,8 @@ export default function CheckupManagementComponent() {
               <label
                 htmlFor="reminderChannel"
                 className="
-                  mb-2 block font-semibold text-slate-700
+                  mb-2 block font-semibold
+                  text-slate-700
                 "
               >
                 발송 채널
@@ -424,7 +490,9 @@ export default function CheckupManagementComponent() {
                 id="reminderChannel"
                 value={reminderChannel}
                 onChange={(event) =>
-                  setReminderChannel(event.target.value)
+                  setReminderChannel(
+                    event.target.value
+                  )
                 }
                 className="
                   w-full rounded-lg
@@ -443,7 +511,8 @@ export default function CheckupManagementComponent() {
               <label
                 htmlFor="reminderContent"
                 className="
-                  mb-2 block font-semibold text-slate-700
+                  mb-2 block font-semibold
+                  text-slate-700
                 "
               >
                 알림 내용
@@ -453,7 +522,9 @@ export default function CheckupManagementComponent() {
                 id="reminderContent"
                 value={reminderContent}
                 onChange={(event) =>
-                  setReminderContent(event.target.value)
+                  setReminderContent(
+                    event.target.value
+                  )
                 }
                 rows="5"
                 className="
@@ -471,15 +542,21 @@ export default function CheckupManagementComponent() {
             </p>
 
             {/* 버튼 영역 */}
-            <div className="mt-6 flex justify-end gap-3">
+            <div
+              className="
+                mt-6 flex justify-end gap-3
+              "
+            >
               <button
                 type="button"
                 onClick={closeReminderModal}
                 disabled={sendingReminder}
                 className="
-                  rounded-lg border border-slate-300
-                  px-4 py-2 font-semibold text-slate-600
-                  transition hover:bg-slate-50
+                  rounded-lg
+                  border border-slate-300
+                  px-4 py-2 font-semibold
+                  text-slate-600 transition
+                  hover:bg-slate-50
                   disabled:cursor-not-allowed
                 "
               >
@@ -492,8 +569,9 @@ export default function CheckupManagementComponent() {
                 disabled={sendingReminder}
                 className="
                   rounded-lg bg-blue-600
-                  px-4 py-2 font-semibold text-white
-                  transition hover:bg-blue-700
+                  px-4 py-2 font-semibold
+                  text-white transition
+                  hover:bg-blue-700
                   disabled:cursor-not-allowed
                   disabled:bg-blue-300
                 "
@@ -520,15 +598,27 @@ function StatisticsCard({
   color,
 }) {
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">
+    <div
+      className="
+        rounded-xl bg-white p-5 shadow-sm
+      "
+    >
+      <p
+        className="
+          text-sm font-medium text-slate-500
+        "
+      >
         {title}
       </p>
 
       <p className={`mt-3 text-3xl font-bold ${color}`}>
         {value}
 
-        <span className="ml-1 text-base font-medium">
+        <span
+          className="
+            ml-1 text-base font-medium
+          "
+        >
           {unit}
         </span>
       </p>
