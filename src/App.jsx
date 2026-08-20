@@ -25,6 +25,7 @@ import ReservationComponent from "./consultation/reservations/components/Reserva
 
 import CheckupManagementComponent from "./checkup/components/CheckupManagementComponent";
 import MyPageComponent from "./login/components/MyPageComponent";
+import BioInputComponent from "./bioinput/components/BioInputComponent";
 
 function App() {
   return (
@@ -37,6 +38,8 @@ function App() {
           <Route path="/login" element={<LoginComponent />} />
           <Route path="/dashboard" element={<DashboardComponent />} />
           <Route path="/mypage" element={<MyPageComponent/>} />
+
+          <Route path="/bioinput" element={<BioInputComponent/>} />
 
           {/* 병원 관리 */}
           <Route path="/hospital/list" element={<HospitalListComponent />} />

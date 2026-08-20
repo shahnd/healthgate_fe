@@ -2,6 +2,7 @@ import axios from "axios";
 import { useRef } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import "../styles/login.css";
 
 export default function LoginComponent() {
     const navigate = useNavigate();
@@ -55,28 +56,45 @@ export default function LoginComponent() {
 
 
     return (
-        <div className="flex justify-center items-center min-h-screen ml-80">
+        <div className="page">
+            <div className="login-card">
 
-            <form ref={formRef} onSubmit={handleLogin}>
+                <h1 className="login-title">
+                    로그인
+                </h1>
 
-                <div className="space-y-2">
-                    <div>
-                        <label className="block font-semibold">아이디</label>
-                        <input type="text" name="employeeNumber" placeholder="아이디"
-                        className="border p-1"/>
+                <form
+                    ref={formRef}
+                    onSubmit={handleLogin}
+                    className="login-form"
+                >
+                    <div className="login-field">
+                        <label>아이디</label>
+                        <input
+                            type="text"
+                            name="employeeNumber"
+                            placeholder="아이디"
+                        />
                     </div>
 
-                    <div>
-                        <label className="block font-semibold">비밀번호</label>
-                        <input type="password" name="password" placeholder="비밀번호"
-                        className="border p-1"/>
+                    <div className="login-field">
+                        <label>비밀번호</label>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="비밀번호"
+                        />
                     </div>
 
-                </div>
+                    <button
+                        type="submit"
+                        className="login-button"
+                    >
+                        로그인
+                    </button>
+                </form>
 
-                <button type="submit" className="w-full bg-blue-50">로그인</button>
-            </form>
-
+            </div>
         </div>
     );
 }
