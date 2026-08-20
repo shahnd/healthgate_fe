@@ -9,7 +9,7 @@ import DashboardComponent from './dashboard/DashboardComponent'
 import ReservationListComponent from './consultation/reservations/components/ReservationListComponent'
 import ReservationComponent from './consultation/reservations/components/ReservationComponent'
 import ConsultationListComponent from './consultation/consultations/components/ConsultationListComponent';
-
+import ReservationDetailComponent from './consultation/reservations/components/ReservationDetailComponent'
 function App() {
 
   return (
@@ -26,6 +26,7 @@ function App() {
 
           <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
           <Route path="/consultation/reservation" element={<ReservationComponent />} />
+          <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
           <Route path="/consultation/list" element={<ConsultationListComponent />} />
           
         </Routes>
