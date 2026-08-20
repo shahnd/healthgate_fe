@@ -22,10 +22,31 @@ export default function ReservationDetailComponent() {
         status : ""
     });
 
+    // 차시 -> 시간 매핑
+    const turnTimeMap = {
+        "T1": "10:00 ~ 10:50",
+        "T2": "11:00 ~ 11:50",
+        "T3": "13:00 ~ 13:50",
+        "T4": "14:00 ~ 14:50",
+        "T5": "15:00 ~ 15:50",
+        "T6": "16:00 ~ 16:50",
+    };
+
+    // TN -> N차 + turnTimeMap
+    const formatScheduledTurn = turn => {
+        if (!turn) return "-";
+        const turnNumber = turn.replace("T", "");
+        const timeRange = turnTimeMap[turn] || "";
+
+        return timeRange ? `${turnNumber}차 ${timeRange}` : "-";
+    }
+
     useEffect(() => {
         // console.log(id);
         // 상세 정보 조회
         const selectReservation = async () => {
+
+            if(!id) return;
 
             try {
                 
@@ -47,7 +68,7 @@ export default function ReservationDetailComponent() {
         }
 
         selectReservation();
-    }, []);
+    }, [id]);
     return(
         <div>
             <h2>상담 예약 상세 조회</h2>
@@ -55,7 +76,7 @@ export default function ReservationDetailComponent() {
                 <tbody>
                     <tr>
                         <th width="130">신청자</th>
-                        <td>{ reservation.employee.name }</td>
+                        <td>{ reservation.employee?.name }</td>
                     </tr>
                     <tr>
                         <th>부서명</th>
@@ -75,7 +96,7 @@ export default function ReservationDetailComponent() {
                     </tr>
                     <tr>
                         <th>시간</th>
-                        <td>{ reservation.scheduledTurn }</td>
+                        <td>{ formatScheduledTurn(reservation.scheduledTurn) }</td>
                     </tr>
                     <tr>
                         <th>신청사유</th>

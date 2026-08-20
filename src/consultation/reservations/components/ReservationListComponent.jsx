@@ -20,14 +20,13 @@ export default function ReservationListComponent() {
         // 날짜 객체에서 연월 추출 - 'YYYY-MM-DD' 형식으로
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const day = String(currentDate.getDate()).padStart(2, '0');
 
         // 백엔드에 전달할 형식으로 가공
-        const dateStr = `${year}-${month}-${day}`;
+        const dateStr = `${year}-${month}-01`;
         
         // 전달
         const response = await selectAllReservationApi(dateStr);
-        console.log(response.data);
+        // console.log(response.data);
 
         const formattedData = response.data.map((item, index) => {
 

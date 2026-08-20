@@ -19,7 +19,6 @@ const localizer = dateFnsLocalizer({
 
 // 커스텀 툴바
 const CustomToolbar = (toolbar) => {
-  // '오늘' 버튼 클릭 핸들러
 
   // '이전' 버튼 클릭 핸들러
   const goToBack = () => {
@@ -46,7 +45,7 @@ const CustomToolbar = (toolbar) => {
         &lt;
       </button>
 
-      <span style={{ fontWeight: 'bold', fontSize: '1.1rem', minWidth: '100px', textAlign: 'center' }}>
+      <span style={{ fontWeight: 'bold', fontSize: '20px', minWidth: '100px', textAlign: 'center' }}>
         {koreanLabel}
       </span>
 
@@ -60,10 +59,10 @@ const CustomToolbar = (toolbar) => {
 };
 
 
-function ReservationCalendar() {
+function ReservationCalendar({ onSelectSlot, selectedDate }) {
 
   return (
-    <div style={{ height : 300, width : 400, padding : "10px" }}>
+    <div style={{ height : 300, width : 350, padding : "10px" }}>
       
       <Calendar
         localizer={localizer}
@@ -77,11 +76,16 @@ function ReservationCalendar() {
             return days[date.getDay()];
           }
         }}
-        components={{ toolbar: CustomToolbar, }}
+        components={{ toolbar: CustomToolbar, }} // 커스텀 툴바
         onSelectEvent={(event) => alert(event.title)}  // 이벤트 클릭
-        onSelectSlot={(slotInfo) => console.log(slotInfo)}  // 빈 슬롯 클릭(날짜 선택)
+        onSelectSlot={ onSelectSlot }  // 빈 슬롯 클릭 시 이벤트 실행
         selectable  // 슬롯 선택 가능하게
         style={{ height: '100%' }}
+        dayPropGetter={(date) => {
+          if(selectedDate && date.toDateString() === selectedDate.toDateString()) {
+            return { style : { backgroundColor : "#FFAAAA" } }
+          }
+        }}
         messages={{
             next: '다음',
             previous: '이전',
