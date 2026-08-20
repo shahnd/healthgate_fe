@@ -30,6 +30,7 @@ export default function LoginComponent() {
                 localStorage.setItem("access_token", response.data.accessToken);
 
                 const userInfo = {
+                    "id": response.data.id,
                     "number": response.data.employeeNumber,
                     "name": response.data.name,
                     "role": response.data.role

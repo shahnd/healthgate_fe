@@ -24,6 +24,7 @@ import ReservationComponent from "./consultation/reservations/components/Reserva
 // import ConsultationListComponent from "./consultation/consultations/components/ConsultationListComponent";
 
 import CheckupManagementComponent from "./checkup/components/CheckupManagementComponent";
+import MyPageComponent from "./login/components/MyPageComponent";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           {/* 로그인 및 대시보드 */}
           <Route path="/login" element={<LoginComponent />} />
           <Route path="/dashboard" element={<DashboardComponent />} />
+          <Route path="/mypage" element={<MyPageComponent/>} />
 
           {/* 병원 관리 */}
           <Route path="/hospital/list" element={<HospitalListComponent />} />

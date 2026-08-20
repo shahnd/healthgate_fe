@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import { useUserInfo, useAuthStore } from "../../store/useAuthStore";
 
 export default function Sidebar() {
   const user = useUserInfo();
   const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -112,6 +114,11 @@ export default function Sidebar() {
             >
               로그아웃
             </button>
+
+            <button
+              type="button"
+              onClick={() => {navigate('/mypage')}}
+            >마이페이지</button>
           </>
         ) : (
           <a
