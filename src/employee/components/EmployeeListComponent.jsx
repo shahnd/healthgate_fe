@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/employee.css"
 
 export default function EmployeeListComponent() {
 
@@ -76,83 +75,137 @@ export default function EmployeeListComponent() {
     const endPage = Math.min(startPage + PAGE_LIMIT - 1, totalPages);
 
     return (
-        <div className="flex flex-col justify-center items-center min-h-screen gap-7">
-            <h1 className="text-4xl font-bold">직원 리스트</h1>
+        <div className="page">
+            <h1 className="page-title">직원 리스트</h1>
 
-            <form onSubmit={handleSearchSubmit}>
-                <input type="text" name="name"
-                        placeholder="이름 검색"value={searchCondition.name}
-                        onChange={handleInputChange}/>
-                <input type="text" name="employeeNumber"
-                        placeholder="사번 검색"value={searchCondition.employeeNumber}
-                        onChange={handleInputChange}/>
+            {/* 검색 */}
+            <div className="card">
+                <form onSubmit={handleSearchSubmit} className="search-form">
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="이름 검색"
+                        value={searchCondition.name}
+                        onChange={handleInputChange}
+                    />
 
-                <button type="submit">검색</button>
+                    <input
+                        type="text"
+                        name="employeeNumber"
+                        placeholder="사번 검색"
+                        value={searchCondition.employeeNumber}
+                        onChange={handleInputChange}
+                    />
 
-                <label>직급코드</label>
-                <select name="positionId" value={searchCondition.positionId}
-                        onChange={handleInputChange}>
-                    <option value="">직급을 선택하세요</option>
-                    {plist.map((p) => (
-                        <option value={p.id}>{p.name}</option>
-                    ))}
-                </select>
+                    <select
+                        name="positionId"
+                        value={searchCondition.positionId}
+                        onChange={handleInputChange}
+                    >
+                        <option value="">직급을 선택하세요</option>
+                        {plist.map((p) => (
+                            <option key={p.id} value={p.id}>
+                                {p.name}
+                            </option>
+                        ))}
+                    </select>
 
-                <label>부서코드</label>
-                <select name="departmentId" value={searchCondition.depatmentId}
-                        onChange={handleInputChange}>
-                    <option value="">부서를 선택하세요</option>
-                    {dlist.map((d) => (
-                        <option value={d.id}>{d.name}</option>
-                    ))}
-                </select>
-            </form>
+                    <select
+                        name="departmentId"
+                        value={searchCondition.departmentId}
+                        onChange={handleInputChange}
+                    >
+                        <option value="">부서를 선택하세요</option>
+                        {dlist.map((d) => (
+                            <option key={d.id} value={d.id}>
+                                {d.name}
+                            </option>
+                        ))}
+                    </select>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>사번</th>
-                        <th>이름</th>
-                        <th>부서</th>
-                        <th>직급</th>
-                        <th>이메일</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees.map(e => (
-                        <tr key={e.id} onClick={() => {navigate(`/employees/${e.id}`)}}>
-                            <td>{e.employeeNumber}</td>
-                            <td>{e.name}</td>
-                            <td>{e.departments?.name || "부서 미지정"}</td>
-                            <td>{e.positions?.name || "직급 미지정"}</td>
-                            <td>{e.email}</td>
+                    <button className="btn-primary" type="submit">
+                        검색
+                    </button>
+                </form>
+            </div>
+
+            {/* 직원 목록 */}
+            <div className="card">
+                <table className="data-table">
+                    <thead>
+                        <tr>
+                            <th>사번</th>
+                            <th>이름</th>
+                            <th>부서</th>
+                            <th>직급</th>
+                            <th>이메일</th>
                         </tr>
+                    </thead>
+
+                    <tbody>
+                        {employees.map((e) => (
+                            <tr
+                                key={e.id}
+                                onClick={() => navigate(`/employees/${e.id}`)}
+                            >
+                                <td>{e.employeeNumber}</td>
+                                <td>{e.name}</td>
+                                <td>{e.departments?.name || "부서 미지정"}</td>
+                                <td>{e.positions?.name || "직급 미지정"}</td>
+                                <td>{e.email}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                {/* 등록 버튼 */}
+                <div className="action-area">
+                    <button
+                        className="btn-primary"
+                        type="button"
+                        onClick={() => navigate("/employees/new")}
+                    >
+                        직원 등록
+                    </button>
+                </div>
+
+                {/* 페이지네이션 */}
+                <div className="pagination">
+                    {page > PAGE_LIMIT && (
+                        <button
+                            className="btn-secondary"
+                            onClick={() => setPage(startPage - 1)}
+                        >
+                            이전
+                        </button>
+                    )}
+
+                    {Array.from(
+                        { length: endPage - startPage + 1 },
+                        (_, i) => i + startPage
+                    ).map((pageNumber) => (
+                        <button
+                            key={pageNumber}
+                            className={
+                                page === pageNumber
+                                    ? "pagination-active"
+                                    : "pagination-button"
+                            }
+                            onClick={() => setPage(pageNumber)}
+                        >
+                            {pageNumber}
+                        </button>
                     ))}
-                </tbody>
-            </table>
 
-            <button type="button" onClick={() => {navigate('/employees/new')}}>직원 등록</button>
-
-            <div>
-                {page > PAGE_LIMIT &&
-                    <button onClick={() => setPage(startPage - 1)}
-                    >이전 페이지</button>
-                }
-
-                
-                {Array.from({length: endPage - startPage + 1}, (_, i) => (i + startPage)).map(pageNumber => (
-                    (page !== pageNumber ?
-                    <button key={pageNumber}
-                            onClick={() => setPage(pageNumber)}>{pageNumber}</button> :
-                    <button key={pageNumber} className="font-bold"
-                            onClick={() => setPage(pageNumber)}>{pageNumber}</button>)
-                ))}
-
-                {page < totalPages &&
-                    <button onClick={() => setPage(endPage + 1)}>다음 페이지</button>
-                }
-
-
+                    {page < totalPages && (
+                        <button
+                            className="btn-secondary"
+                            onClick={() => setPage(endPage + 1)}
+                        >
+                            다음
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );

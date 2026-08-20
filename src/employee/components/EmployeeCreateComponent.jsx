@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "../styles/employee.css"
 import { useNavigate } from "react-router-dom";
 
 
@@ -81,51 +80,156 @@ export default function EmployeeCreateComponent() {
     }
 
     return(
-        <div>
+        <div className="page">
+            <h1 className="page-title">직원 등록</h1>
 
+            <div className="card">
+                <form onSubmit={handleSubmit}>
+                    <table className="form-table">
+                        <tbody>
+                            <tr>
+                                <th>사번</th>
+                                <td>
+                                    <input
+                                        type="text"
+                                        name="employeeNumber"
+                                        value={formData.employeeNumber}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
 
-            <form className="flex flex-col" onSubmit={handleSubmit}>
-                <label>사번</label>
-                <input type="text" name="employeeNumber" value={formData.employeeNumber} onChange={handleChange} required/>
-                <label>이름</label>
-                <input type="text" name="name" value={formData.name} onChange={handleChange} required/>
-                <label>비밀번호</label>
-                <input type="password" name="password" value={formData.password} onChange={handleChange} required/>
-                <label>비밀번호 재확인</label>
-                <input type="password" name="confirmPassword" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}/>
-                {formData.password !== "" &&
-                    ((formData.password !== confirmPassword) ? "비밀번호가 일치하지 않습니다." : "비밀번호가 일치합니다.")
-                }
-                <label>이메일</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange}/>
-                <label>입사일</label>
-                <input type="date" name="hireDate" value={formData.hireDate} onChange={handleChange} required/>
-                <label>전화번호</label>
-                <input type="tel" name="phone" value={formData.phone} onChange={handleChange}/>
-                <label>권한</label>
-                <select name="role" value={formData.role} onChange={handleChange} required>
-                    <option value="">권한을 선택하세요</option>
-                    <option value="EMPLOYEE">직원</option>
-                    <option value="HR_ADMIN">인사 관리자</option>
-                    <option value="HEALTH_ADMIN">보건 관리자</option>
-                </select>
-                <label>부서코드</label>
-                <select name="departmentId" value={formData.departmentId} onChange={handleChange} required>
-                    <option value="">부서를 선택하세요</option>
-                    {dlist.map(d => (
-                        <option value={d.id}>{d.name}</option>
-                    ))}
-                </select>
-                <label>직급코드</label>
-                <select name="positionId" value={formData.positionId} onChange={handleChange} required>
-                    <option value="">직급을 선택하세요</option>
-                    {plist.map(p => (
-                        <option value={p.id}>{p.name}</option>
-                    ))}
-                </select>
+                            <tr>
+                                <th>이름</th>
+                                <td>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
 
-                <button type="submit">등록</button>
-            </form>
+                            <tr>
+                                <th>비밀번호</th>
+                                <td>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>이메일</th>
+                                <td>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>입사일</th>
+                                <td>
+                                    <input
+                                        type="date"
+                                        name="hireDate"
+                                        value={formData.hireDate}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>전화번호</th>
+                                <td>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>권한</th>
+                                <td>
+                                    <select
+                                        name="role"
+                                        value={formData.role}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">권한을 선택하세요</option>
+                                        <option value="EMPLOYEE">직원</option>
+                                        <option value="HR_ADMIN">인사 관리자</option>
+                                        <option value="HEALTH_ADMIN">보건 관리자</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>부서</th>
+                                <td>
+                                    <select
+                                        name="departmentId"
+                                        value={formData.departmentId}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">부서를 선택하세요</option>
+
+                                        {dlist.map((d) => (
+                                            <option key={d.id} value={d.id}>
+                                                {d.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>직급</th>
+                                <td>
+                                    <select
+                                        name="positionId"
+                                        value={formData.positionId}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">직급을 선택하세요</option>
+
+                                        {plist.map((p) => (
+                                            <option key={p.id} value={p.id}>
+                                                {p.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div className="action-area">
+                        <button className="btn-secondary" type="button">
+                            취소
+                        </button>
+
+                        <button className="btn-primary" type="submit">
+                            등록
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

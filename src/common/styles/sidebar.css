@@ -1,0 +1,320 @@
+.sidebar {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 256px;
+    height: 100vh;
+    flex-shrink: 0;
+
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+/* 로고 */
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+
+    height: 64px;
+    padding: 0 24px;
+
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-logo h1 {
+    margin: 0;
+
+    color: var(--color-text-main);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.sidebar-logo h1 span {
+    color: var(--color-primary-600);
+}
+
+.sidebar-logo p {
+    margin: 2px 0 0;
+
+    color: var(--color-text-muted);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* 메뉴 영역 */
+
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+
+    padding: 20px 12px;
+}
+
+.sidebar-section-title {
+    margin: 0 0 8px;
+    padding: 0 12px;
+
+    color: var(--color-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.sidebar-section-title:not(:first-child) {
+    margin-top: 28px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 메뉴 */
+
+.sidebar-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    color: var(--color-text-sub);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.sidebar-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+
+    color: var(--color-text-muted);
+}
+
+.sidebar-menu-item:hover {
+    background: #f1f5f9;
+    color: var(--color-text-main);
+}
+
+.sidebar-menu-item:hover .sidebar-icon {
+    color: var(--color-text-sub);
+}
+
+/* 활성 메뉴 */
+
+.sidebar-menu-item.active {
+    background: var(--color-primary-50);
+    color: var(--color-primary-700);
+    font-weight: 600;
+}
+
+.sidebar-menu-item.active .sidebar-icon {
+    color: var(--color-primary-600);
+}
+
+/* 보건 상담 제목 */
+
+.sidebar-menu-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 8px 12px;
+
+    color: var(--color-text-main);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sidebar-menu-heading .sidebar-icon {
+    color: var(--color-text-muted);
+}
+
+/* 서브 메뉴 */
+
+.sidebar-submenu {
+    margin: 4px 0 0 20px;
+    padding: 0 0 0 12px;
+
+    border-left: 1px solid var(--color-border);
+
+    list-style: none;
+}
+
+.sidebar-submenu li {
+    margin: 0;
+}
+
+.sidebar-submenu a {
+    display: block;
+
+    padding: 8px 12px;
+
+    border-radius: 6px;
+
+    color: var(--color-text-sub);
+    font-size: 14px;
+    text-decoration: none;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.sidebar-submenu a:hover {
+    background: #f1f5f9;
+    color: var(--color-text-main);
+}
+
+/* 사용자 영역 */
+
+.sidebar-user {
+    padding: 16px;
+
+    border-top: 1px solid var(--color-border);
+}
+
+.sidebar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sidebar-user-text {
+    min-width: 0;
+    flex: 1;
+}
+
+.sidebar-user-text p {
+    margin: 0;
+    overflow: hidden;
+
+    color: var(--color-text-main);
+    font-size: 14px;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-user-text span {
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+/* 마이페이지 */
+
+.sidebar-mypage-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+    color: var(--color-text-muted);
+
+    cursor: pointer;
+}
+
+.sidebar-mypage-button:hover {
+    background: #f1f5f9;
+    color: var(--color-text-main);
+}
+
+/* 로그인 */
+
+.sidebar-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    padding: 10px 16px;
+
+    border-radius: 8px;
+
+    background: var(--color-text-main);
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: background-color 0.15s ease;
+}
+
+.sidebar-login:hover {
+    background: #1e293b;
+}
+
+/* 로그아웃 */
+
+.sidebar-logout {
+    width: 100%;
+    margin-top: 12px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--color-text-muted);
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.sidebar-logout:hover {
+    background: #fef2f2;
+    color: var(--color-danger);
+}
+
+/* 모바일에서는 숨김 */
+
+@media (max-width: 767px) {
+    .sidebar {
+        display: none;
+    }
+}

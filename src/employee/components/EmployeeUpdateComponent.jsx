@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "../styles/employee.css"
 
 
 export default function EmployeeUpdateComponent() {
@@ -78,42 +77,161 @@ export default function EmployeeUpdateComponent() {
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit} className="flex flex-col">
-                <label>사번</label>
-                <input type="text" name="employeeNumber" value={data.employeeNumber} onChange={handleChange} required/>
-                <label>이름</label>
-                <input type="text" name="name" value={data.name} onChange={handleChange} required/>
-                <label>이메일</label>
-                <input type="email" name="email" value={data.email} onChange={handleChange}/>
-                <label>입사일</label>
-                <input type="date" name="hireDate" value={data.hireDate} onChange={handleChange} required/>
-                <label>전화번호</label>
-                <input type="tel" name="phone" value={data.phone} onChange={handleChange}/>
-                <label>권한</label>
-                <select name="role" value={data.role} onChange={handleChange} required>
-                    <option value="">권한을 선택하세요</option>
-                    <option value="EMPLOYEE">직원</option>
-                    <option value="HR_ADMIN">인사 관리자</option>
-                    <option value="HEALTH_ADMIN">보건 관리자</option>
-                </select>
-                <label>부서코드</label>
-                <select name="departmentId" value={data.departmentId || data.departments?.id || ""} onChange={handleChange} required>
-                    <option value="">부서를 선택하세요</option>
-                    {dlist.map(d => (
-                        <option value={d.id}>{d.name}</option>
-                    ))}
-                </select>
-                <label>직급코드</label>
-                <select name="positionId" value={data.positionId || data.positions?.id || ""} onChange={handleChange} required>
-                    <option value="">직급을 선택하세요</option>
-                    {plist.map(p => (
-                        <option value={p.id}>{p.name}</option>
-                    ))}
-                </select>
+        <div className="page">
+            <h1 className="page-title">직원 정보 수정</h1>
 
-                <button type="submit">등록</button>
-            </form>
+            <div className="card">
+                <form onSubmit={handleSubmit}>
+                    <table className="form-table">
+                        <tbody>
+                            <tr>
+                                <th>사번</th>
+                                <td>
+                                    <input
+                                        type="text"
+                                        name="employeeNumber"
+                                        value={data.employeeNumber}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>이름</th>
+                                <td>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={data.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>이메일</th>
+                                <td>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={data.email}
+                                        onChange={handleChange}
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>입사일</th>
+                                <td>
+                                    <input
+                                        type="date"
+                                        name="hireDate"
+                                        value={data.hireDate}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>전화번호</th>
+                                <td>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={data.phone}
+                                        onChange={handleChange}
+                                    />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>권한</th>
+                                <td>
+                                    <select
+                                        name="role"
+                                        value={data.role}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">권한을 선택하세요</option>
+                                        <option value="EMPLOYEE">직원</option>
+                                        <option value="HR_ADMIN">인사 관리자</option>
+                                        <option value="HEALTH_ADMIN">보건 관리자</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>부서</th>
+                                <td>
+                                    <select
+                                        name="departmentId"
+                                        value={
+                                            data.departmentId ||
+                                            data.departments?.id ||
+                                            ""
+                                        }
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">부서를 선택하세요</option>
+
+                                        {dlist.map((d) => (
+                                            <option key={d.id} value={d.id}>
+                                                {d.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>직급</th>
+                                <td>
+                                    <select
+                                        name="positionId"
+                                        value={
+                                            data.positionId ||
+                                            data.positions?.id ||
+                                            ""
+                                        }
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">직급을 선택하세요</option>
+
+                                        {plist.map((p) => (
+                                            <option key={p.id} value={p.id}>
+                                                {p.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div className="action-area">
+                        <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => navigate(`/employees/${id}`)}
+                        >
+                            취소
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="btn-primary"
+                        >
+                            수정
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
