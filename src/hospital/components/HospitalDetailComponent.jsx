@@ -18,11 +18,11 @@ export default function HospitalDetailComponent() {
                                             phone : "",
                                             url : "",
                                             description : "",
-                                            isGeneralExamAvailable : "",
-                                            isStomachCancerExamAvailable : "",
-                                            isColonCancerExamAvailable : "",
-                                            isLiverCancerExamAvailable : "",
-                                            isLungCancerExamAvailable : "",
+                                            isGeneralExamAvailable : false,
+                                            isStomachCancerExamAvailable : false,
+                                            isColonCancerExamAvailable : false,
+                                            isLiverCancerExamAvailable : false,
+                                            isLungCancerExamAvailable : false,
                                             createdAt : ""});
 
     useEffect(() => {

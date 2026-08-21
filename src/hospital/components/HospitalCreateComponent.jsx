@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { insertHospitalApi } from "../api/hospitalApi";
 
-export default function HospitalEnrollFormComponent() {
+export default function HospitalCreateComponent() {
 
     // 실행할 구문
     let navigate = useNavigate();
@@ -15,11 +15,11 @@ export default function HospitalEnrollFormComponent() {
                                         phone : "",
                                         url : "",
                                         description : "",
-                                        isGeneralExamAvailable : "",
-                                        isStomachCancerExamAvailable : "",
-                                        isColonCancerExamAvailable : "",
-                                        isLiverCancerExamAvailable : "",
-                                        isLungCancerExamAvailable : ""});
+                                        isGeneralExamAvailable : false,
+                                        isStomachCancerExamAvailable : false,
+                                        isColonCancerExamAvailable : false,
+                                        isLiverCancerExamAvailable : false,
+                                        isLungCancerExamAvailable : false});
  
     // 입력값의 변화가 있을 때 마다 실행할 함수                                    
     const handleChange = e => {
@@ -129,11 +129,11 @@ export default function HospitalEnrollFormComponent() {
                                                     phone : "",
                                                     url : "",
                                                     description : "",
-                                                    isGeneralExamAvailable : "",
-                                                    isStomachCancerExamAvailable : "",
-                                                    isColonCancerExamAvailable : "",
-                                                    isLiverCancerExamAvailable : "",
-                                                    isLungCancerExamAvailable : ""});
+                                                    isGeneralExamAvailable : false,
+                                                    isStomachCancerExamAvailable : false,
+                                                    isColonCancerExamAvailable : false,
+                                                    isLiverCancerExamAvailable : false,
+                                                    isLungCancerExamAvailable : false});
                                     }}>
                         초기화           
                 </button>
