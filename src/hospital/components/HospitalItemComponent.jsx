@@ -8,12 +8,15 @@ export default function HospitalItemComponent(props) {
    const item = props.item;
 
    return (
-         <tr onClick={ () => { navigate('/hospital/${ item.id }');} }>
-            <td>{ item.id }</td>
+         <tr onClick={ () => { navigate('/hospitals/${ item.hospitalId }');} }>
+            <td>{ item.hospitalId }</td>
+            <td>{ item.name }</td>
             <td>{ item.address }</td>
-            <td>{ item.phone }</td>
-            <td>{ item.id }</td>
-            <td>{ item.id }</td>
+            <td>{ item.isGeneralExamAvailable }</td>
+            <td>{ item.isStomachCancerExamAvailable }</td>
+            <td>{ item.isColonCancerExamAvailable }</td>
+            <td>{ item.isLiverCancerExamAvailable }</td>
+            <td>{ item.isLungCancerExamAvailable}</td>
          </tr>
    );
 }

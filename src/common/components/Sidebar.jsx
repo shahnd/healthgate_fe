@@ -150,7 +150,7 @@ export default function Sidebar() {
 
           {/* 병원 관리 */}
           <a
-            href="/hospital/list"
+            href="/hospitals/list"
             className="sidebar-menu-item"
           >
             <svg

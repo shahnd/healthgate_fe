@@ -13,7 +13,7 @@ export default function HospitalListComponent() {
 
     // 검색어를 담아둘 변수셋팅
     const [name, setName] = useState("");
-
+    
     const [address, setAddress] = useState("");
 
     const [isGeneralExamAvailable, setIsGeneralExamAvailable] = useState(false);
@@ -53,8 +53,8 @@ export default function HospitalListComponent() {
     // 페이징바 배열에 담아둘 변수 셋팅
     const [pageList, setPageList] = useState([]);
 
-    // 검진가능 병원 목록 조회 함수
-    const selectHospitalList = async () => {
+    // 검진가능 병원 목록,검색 조회 함수
+    const selectSearchHospitalList = async () => {
 
         try {
 
@@ -124,28 +124,6 @@ export default function HospitalListComponent() {
                           isColonCancerExamAvailable : isColonCancerExamAvailable,
                           isLiverCancerExamAvailable : isLiverCancerExamAvailable,
                           isLungCancerExamAvailable : isLungCancerExamAvailable});
-    };
-
-    // 검색 요청 함수
-    const searchHospitalList = async () => {
-
-        try {
-
-            const response = await searchHospitalListApi(cpage, 
-                                                         searchName,
-                                                         searchAddress,
-                                                         searchIsGeneral,
-                                                         searchIsStomachCancer,
-                                                         searchIsColonCancer,
-                                                         searchIsLiverCancer,
-                                                         searchIsLungCancer );
-
-            handleResponse(response);
-
-        } catch(error) {
-
-            console.log("검진가능 병원 검색용 ajax 통신 실패!");
-        }
     };
 
     // list, pi 값을 출력해주는 후처리 함수
@@ -263,13 +241,14 @@ export default function HospitalListComponent() {
         searchIsColonCancer == false &&
         searchIsLiverCancer == false &&
         searchIsLungCancer == false ) {
-            // > 입력된 검색어가 있을 경우 - 검색 목록 조회 처리
-
-            selectHospitalList();
+            // > 입력된 검색어가 없을 경우 - 검색 목록 조회 처리
+          
+            alert("검색결과가 없습니다."); 
+            selectSearchHospitalList();
 
         } else {
             // 입력된 검색어가 있을 경우 - 검색 목록 조회 처리
-            searchHospitalList();
+            selectSearchHospitalList();
         }
 
     },[cpage, 

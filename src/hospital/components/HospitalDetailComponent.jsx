@@ -7,12 +7,12 @@ import { selectHospitalApi, deleteHospitalApi } from "../api/hospitalApi";
 export default function HospitalDetailComponent() {
 
     // 실행할 구문
-    const id = useParams().id;
+    const hospitalId = useParams().hospitalId;
 
     let navigate = useNavigate();
 
     // State 형 변수
-    const [hospital, setHospital] = useState({id : "",
+    const [hospital, setHospital] = useState({hospitalId : "",
                                             name : "",
                                             address : "",
                                             phone : "",
@@ -31,7 +31,7 @@ export default function HospitalDetailComponent() {
 
             try {
 
-                const response = await selectHospitalApi(id);
+                const response = await selectHospitalApi(hospitalId);
 
                 // console.log(response.data);
 
@@ -46,7 +46,7 @@ export default function HospitalDetailComponent() {
                     alert("이미 삭제되거나 없는 병원입니다.");
 
                     // 목록 페이지로 이동
-                    navigate("/hospital/list");
+                    navigate("/hospitals/list");
                 }
 
             } catch(error) {
@@ -64,7 +64,7 @@ export default function HospitalDetailComponent() {
 
         try {
 
-            const response = await deleteHospitalApi(id);
+            const response = await deleteHospitalApi(hospitalId);
 
             // console.log(response.data);
 
@@ -73,7 +73,7 @@ export default function HospitalDetailComponent() {
 
                 alert("검진 가능 병원 삭제에 성공했습니다.");
 
-                navigate("/hospital/list");
+                navigate("/hospitals/list");
 
             } else {
                 // > 삭제 실패일 경우
@@ -86,14 +86,13 @@ export default function HospitalDetailComponent() {
             console.log("검진가능 병원 삭제용 ajax 통신 실패!");
         }
     };
+
     // return 구문
     return (
-        <div>
-           <h1 align="left">검진가능 병원 상세조회</h1>
-           
-           <br/>
-
-           <table className="table">
+        <div className="page">
+        
+          <div className="card">
+           <table className="form-table">
                  <tbody>
                     <tr>
                         <th>병원명</th>
@@ -140,22 +139,23 @@ export default function HospitalDetailComponent() {
 
            <br/><br/>
 
-           <div align="right">
-                <button className="btn btn-outline-secondary btn-sm"
-                        onClick={ () => { navigate("/hospital/list"); } }>
+           <div className="action-area">
+                <button className="btn-primary"
+                        onClick={ () => { navigate("/hospitals/list"); } }>
                     목록으로
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn btn-outline-warning btn-sm"
-                        onClick={ () => { navigate("/hospital/${ id }/edit", {state : {id}}); } }>
+                <button className="btn-primary"
+                        onClick={ () => { navigate("/hospitals/${ hospitalId }", {state : {hospitalId}}); } }>
                     수정하기
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn btn-outline-danger btn-sm"
+                <button className="btn-secondary"
                         onClick={ deleteHospital }>
                     삭제하기
                 </button>
            </div>
+          </div>
         </div>
     )
 }

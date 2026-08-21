@@ -28,7 +28,7 @@ export default function HospitalCreateComponent() {
 
         newHospital[e.target.name] = e.target.value;
 
-        sethoapital(newHospital);
+        setHospital(newHospital);
     };
 
     const insertHospital = async e => {
@@ -47,7 +47,7 @@ export default function HospitalCreateComponent() {
 
                 alert("병원등록에 성공했습니다");
 
-                navigate("/hospital/list");
+                navigate("/hospitals/list");
             } else {
                 // > 병원 등록 실패
 
@@ -61,16 +61,15 @@ export default function HospitalCreateComponent() {
     };
 
     return(
-      <div>
-          <h1 align="right">검진 가능 병원 등록</h1>
+      <div className="page">
+          <h1 className="page-title">검진 가능 병원 등록</h1>
 
-          <br/><br/>
-          
-          <form id="enroll-form">
-             <table className="form table">
+          <div className="card">
+          <form>
+             <table className="form-table">
                 <tbody>
                     <tr>
-                        <th>제목</th>
+                        <th>병원명</th>
                         <td>
                             <input type="text" name="name" value={ hospital.name }
                                                            onChange={ handleChange } />
@@ -91,7 +90,7 @@ export default function HospitalCreateComponent() {
                         </td>
                     </tr>
                     <tr>
-                        <th>url</th>
+                        <th>병원 홈페이지 url</th>
                         <td>
                             <input type="text" name="url" value={ hospital.url }
                                                            onChange={ handleChange } />
@@ -105,24 +104,42 @@ export default function HospitalCreateComponent() {
                     </tr>
                     <tr>
                         <th>검진가능 항목</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <td></td>
+                        <td>
+                            <select>
+                                <option name="isGeneralExamAvailable" 
+                                        value={ hospital.isGeneralExamAvailable }
+                                        onChange= { handleChange }>일반검진</option>
+
+                                <option name="isStomachCancerExamAvailable" 
+                                        value={ hospital.isStomachCancerExamAvailable }
+                                        onChange= { handleChange }>위암검진</option>
+
+                                <option name="isColonCancerExamAvailable"
+                                        value={ hospital.isColonCancerExamAvailable }
+                                        onChange= { handleChange }>대장암검진</option>
+
+                                <option name="isLiverCancerExamAvailable" 
+                                        value={ hospital.isLiverCancerExamAvailable }
+                                        onChange= { handleChange }>간암검진</option>
+
+                                <option name="isLungCancerExamAvailable" 
+                                        value={ hospital.isLungCancerExamAvailable }
+                                        onChange= { handleChange }>폐암검진</option>
+                            </select>
+                        </td>
                     </tr>
                 </tbody>
              </table>
 
              <br/><br/>
 
-             <div>
-                <button type="submit" className="btn btn-outline-primary btn-sm"
-                                    onClick={ insertHospital }>
+             <div className="action-area">
+                <button type="submit" className="btn-primary"
+                        onClick={ insertHospital }>
                         등록하기
                 </button>
                 &nbsp;&nbsp;
-                <button type="reset" className="btn btn-outline-secondary btn-sm"
+                <button type="reset" className="btn-secondary"
                                     onClick={ () => {
                                         setHospital({name : "",
                                                     address : "",
@@ -138,7 +155,8 @@ export default function HospitalCreateComponent() {
                         초기화           
                 </button>
              </div>
-        </form>  
+        </form>
+        </div>  
       </div>
     );
 }

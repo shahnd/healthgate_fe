@@ -42,10 +42,10 @@ function App() {
           <Route path="/bioinput" element={<BioInputComponent/>} />
 
           {/* 병원 관리 */}
-          <Route path="/hospital/list" element={<HospitalListComponent />} />
-          <Route path="/hospital/new" element={<HospitalCreateComponent />} />
-          <Route path="/hospital/:id" element={<HospitalDetailComponent />} />
-          <Route path="/hospital/:id/edit" element={<HospitalUpdateComponent />} />
+          <Route path="/hospitals/list" element={<HospitalListComponent />} />
+          <Route path="/hospitals/new" element={<HospitalCreateComponent />} />
+          <Route path="/hospitals/:id" element={<HospitalDetailComponent />} />
+          <Route path="/hospitals/:id/edit" element={<HospitalUpdateComponent />} />
 
           {/* 공지사항 */}
           <Route path="/notice/list" element={<NoticeListComponent />} />

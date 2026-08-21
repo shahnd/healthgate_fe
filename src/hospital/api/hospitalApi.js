@@ -31,10 +31,10 @@ const searchHospitalListApi = (cpage,
 };
 
 // 검진가능 병원 상세조회용 
-const selectHospitalApi = id => {
+const selectHospitalApi = hospitalId => {
 
      const response = axios({
-        url : `${ BASE_URL }/${ id }`,
+        url : `${ BASE_URL }/${ hospitalId }`,
         method : "get"
      });
 
@@ -60,6 +60,8 @@ const insertHospitalApi = hospital => {
         method : "post",
         data : hospital
     });
+
+     return response
 };
 
 // 검진가능 병원 수정용 
@@ -67,7 +69,7 @@ const updateHospitalApi = (hospitalId, hospital) => {
 
     const response = axios({
         url : `${ BASE_URL }/${ hospitalId }`, 
-        method : "post",
+        method : "put",
         data : hospital
     });
 
