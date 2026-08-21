@@ -42,7 +42,11 @@ export default function LoginComponent() {
 
 
                 alert(`${userInfo.name}님 반갑습니다`);
-                navigate('/dashboard');
+                if (userInfo.role === "EMPLOYEE") {
+                    navigate('/bioinput');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 alert("로그인 실패");
             }

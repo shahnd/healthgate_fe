@@ -1,0 +1,220 @@
+.employee-detail {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+
+/* =========================
+   페이지 헤더
+========================= */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.page-header h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.page-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* =========================
+   버튼
+========================= */
+
+.detail-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-delete {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-delete:hover {
+    background-color: #fecaca;
+}
+
+
+/* =========================
+   탭
+========================= */
+
+.detail-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 20px;
+}
+
+.detail-tab {
+    position: relative;
+
+    padding: 12px 20px;
+
+    border: none;
+    background: transparent;
+
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+.detail-tab:hover {
+    color: #2563eb;
+}
+
+.detail-tab.active {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.detail-tab.active::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+
+    height: 2px;
+
+    background-color: #2563eb;
+}
+
+
+/* =========================
+   직원 정보
+========================= */
+
+.employee-info-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.employee-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+
+    min-height: 56px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-item:nth-child(odd) {
+    border-right: 1px solid #e5e7eb;
+}
+
+.info-item:nth-last-child(-n + 2) {
+    border-bottom: none;
+}
+
+.info-label {
+    width: 100px;
+    flex-shrink: 0;
+
+    padding-left: 20px;
+
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #1f2937;
+    font-size: 14px;
+}
+
+
+/* =========================
+   건강 데이터
+========================= */
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+
+/* =========================
+   반응형
+========================= */
+
+@media (max-width: 900px) {
+
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .detail-actions {
+        width: 100%;
+    }
+
+    .detail-actions .btn {
+        flex: 1;
+    }
+
+    .employee-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-item:nth-child(odd) {
+        border-right: none;
+    }
+
+    .info-item:nth-last-child(-n + 2) {
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+}

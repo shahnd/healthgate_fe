@@ -137,7 +137,7 @@
 
     color: var(--color-text-main);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 450;
 }
 
 .sidebar-menu-heading .sidebar-icon {
@@ -317,4 +317,31 @@
     .sidebar {
         display: none;
     }
+}
+
+/* 화살표 회전 */
+.submenu-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+    transform: rotate(-90deg); /* 닫힘 상태 기본값 → ▶ 모양 */
+}
+
+.submenu-arrow.open {
+    transform: rotate(0deg); /* 펼침 상태 → ▼ 모양 */
+}
+
+/* 서브메뉴 부드러운 펼침/접힘 */
+.sidebar-submenu-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease;
+}
+
+.sidebar-submenu-wrapper.open {
+    grid-template-rows: 1fr;
+}
+
+.sidebar-submenu {
+    overflow: hidden;
+    min-height: 0;
 }
