@@ -123,31 +123,56 @@ export default function Sidebar() {
           </div>
 
           {/* 건강검진 */}
-          <a
-            href="/checkup/list"
-            className="sidebar-menu-item"
-          >
-            <svg
-              className="sidebar-icon"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 5h6M9 3h6a1 1 0 011 1v1h2a2 2 0 012 2v13a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h2V4a1 1 0 011-1z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 13h6M9 17h4"
-              />
-            </svg>
-            건강검진
-          </a>
+          <div>
+            <div className="sidebar-menu-heading">
+              <svg
+                className="sidebar-icon"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5h6M9 3h6a1 1 0 011 1v1h2a2 2 0 012 2v13a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h2V4a1 1 0 011-1z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 13h6M9 17h4"
+                />
+              </svg>
 
+              건강검진
+                </div>
+
+                <ul className="sidebar-submenu">
+                  <li>
+                    <a href="/checkup/statistics">
+                      검진 완료율 통계
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="/checkup/targets">
+                      검진 대상자 목록
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="/checkup/reminder-settings">
+                      자동 알림 설정
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="/checkup/reminders/history">
+                      알림 발송 이력
+                    </a>
+                  </li>
+                </ul>
+              </div>
           {/* 병원 관리 */}
           <a
             href="/hospital/list"
