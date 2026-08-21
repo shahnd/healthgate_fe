@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FilesetResolver, FaceLandmarker } from "@mediapipe/tasks-vision";
+import { useUserInfo } from "../../store/useAuthStore";
+import axios from "axios";
 
 // 렌더 함수 바깥의 순수 로직 — performance.now() 등 impure 호출을 컴포넌트 스코프에서 분리
 function processFrame({
@@ -90,10 +92,14 @@ function processFrame({
 }
 
 export default function BioInputComponent() {
+  const user = useUserInfo();
+
   const [inputData, setInputData] = useState({
     systolicBp: "",
     diastolicBp: "",
     heartRate: "",
+    employeeId: "",
+    measuredAt: "",
   });
 
   const [isMeasuring, setIsMeasuring] = useState(false);
@@ -133,6 +139,7 @@ export default function BioInputComponent() {
       landmarkerRef.current = faceLandmarker;
     }
     initMediaPipe();
+
 
     return () => {
       stopCamera();
@@ -207,10 +214,25 @@ export default function BioInputComponent() {
     setInputData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("스프링 부트로 전송할 최종 생체 데이터:", inputData);
+
+    const currentTime = new Date().toISOString();
+
+    const finalData = {
+      ...inputData,
+      employeeId: user.id,
+      measuredAt: currentTime,
+    }
+
+    try {
+      await axios.post('http://localhost:8006/healthgate/biometrics', finalData);
+    } catch(error) {
+      console.log("데이터 전송 통신 실패");
+    }
     alert(`전송 데이터:\n심박수: ${inputData.heartRate}\n혈압: ${inputData.systolicBp}/${inputData.diastolicBp}`);
+
+
   };
 
   return (

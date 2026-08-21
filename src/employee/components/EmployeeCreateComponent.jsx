@@ -88,7 +88,7 @@ export default function EmployeeCreateComponent() {
                     <table className="form-table">
                         <tbody>
                             <tr>
-                                <th>사번</th>
+                                <th>*사번</th>
                                 <td>
                                     <input
                                         type="text"
@@ -101,7 +101,7 @@ export default function EmployeeCreateComponent() {
                             </tr>
 
                             <tr>
-                                <th>이름</th>
+                                <th>*이름</th>
                                 <td>
                                     <input
                                         type="text"
@@ -114,13 +114,25 @@ export default function EmployeeCreateComponent() {
                             </tr>
 
                             <tr>
-                                <th>비밀번호</th>
+                                <th>*비밀번호</th>
                                 <td>
                                     <input
                                         type="password"
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
+                                        required
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>*비밀번호 확인</th>
+                                <td>
+                                    <input
+                                        type="password"
+                                        name="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={e => setConfirmPassword(e.target.value)}
                                         required
                                     />
                                 </td>
@@ -139,7 +151,7 @@ export default function EmployeeCreateComponent() {
                             </tr>
 
                             <tr>
-                                <th>입사일</th>
+                                <th>*입사일</th>
                                 <td>
                                     <input
                                         type="date"
@@ -164,7 +176,7 @@ export default function EmployeeCreateComponent() {
                             </tr>
 
                             <tr>
-                                <th>권한</th>
+                                <th>*권한</th>
                                 <td>
                                     <select
                                         name="role"
@@ -180,7 +192,7 @@ export default function EmployeeCreateComponent() {
                             </tr>
 
                             <tr>
-                                <th>부서</th>
+                                <th>*부서</th>
                                 <td>
                                     <select
                                         name="departmentId"
@@ -199,7 +211,7 @@ export default function EmployeeCreateComponent() {
                             </tr>
 
                             <tr>
-                                <th>직급</th>
+                                <th>*직급</th>
                                 <td>
                                     <select
                                         name="positionId"
