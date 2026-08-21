@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useUserInfo, useAuthStore } from "../../store/useAuthStore";
 import "../styles/sidebar.css";
 
@@ -7,15 +8,30 @@ export default function Sidebar() {
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
+  const [openMenus, setOpenMenus] = useState({
+    consultation: true,
+    checkups: true,
+    hospitals: true,
+    notices: false,
+    employees: false,
+  });
+
+  const toggleMenu = (menu) => {
+    setOpenMenus((prev) => ({
+      ...prev,
+      [menu]: !prev[menu],
+    }));
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     logout();
     alert("로그아웃 되었습니다.");
+    navigate("/login");
   };
 
   return (
     <aside className="sidebar">
-      {/* 로고 영역 */}
       <div className="sidebar-logo">
         <div>
           <h1>
@@ -25,18 +41,15 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* 메뉴 */}
       <nav className="sidebar-nav">
-        {/* 주요 메뉴 */}
-        <p className="sidebar-section-title">
-          Main
-        </p>
+        <p className="sidebar-section-title">Main</p>
 
         <div className="sidebar-menu">
-          {/* 활성 메뉴 */}
-          <a
-            href="/dashboard"
-            className="sidebar-menu-item active"
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `sidebar-menu-item ${isActive ? "active" : ""}`
+            }
           >
             <svg
               className="sidebar-icon"
@@ -52,12 +65,13 @@ export default function Sidebar() {
               />
             </svg>
             대시보드
-          </a>
+          </NavLink>
 
-          {/* 일반 메뉴 */}
-          <a
-            href="#profile"
-            className="sidebar-menu-item"
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `sidebar-menu-item ${isActive ? "active" : ""}`
+            }
           >
             <svg
               className="sidebar-icon"
@@ -73,18 +87,19 @@ export default function Sidebar() {
               />
             </svg>
             출근자 건강 정보
-          </a>
+          </NavLink>
         </div>
 
-        {/* 보건관리 */}
-        <p className="sidebar-section-title">
-          Health Management
-        </p>
+        <p className="sidebar-section-title">Health Management</p>
 
         <div className="sidebar-menu">
           {/* 보건 상담 */}
           <div>
-            <div className="sidebar-menu-heading">
+            <button
+              type="button"
+              className="sidebar-menu-heading"
+              onClick={() => toggleMenu("consultation")}
+            >
               <svg
                 className="sidebar-icon"
                 fill="none"
@@ -98,33 +113,52 @@ export default function Sidebar() {
                   d="M8 7V3m8 4V3M5 11h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              보건 상담
+
+              <span>보건 상담</span>
+
+              <span
+                className={`submenu-arrow ${
+                  openMenus.consultation ? "open" : ""
+                }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`sidebar-submenu-wrapper ${
+                openMenus.consultation ? "open" : ""
+              }`}
+            >
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink to="/consultation/reservation/list">
+                    상담 예약 조회
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to="/consultation/reservation">
+                    상담 예약 신청
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to="/consultation/list">
+                    상담 내역 조회
+                  </NavLink>
+                </li>
+              </ul>
             </div>
-
-            <ul className="sidebar-submenu">
-              <li>
-                <a href="/consultation/reservation/list">
-                  상담 예약 조회
-                </a>
-              </li>
-
-              <li>
-                <a href="/consultation/reservation">
-                  상담 예약 신청
-                </a>
-              </li>
-
-              <li>
-                <a href="/consultation/list">
-                  상담 내역 조회
-                </a>
-              </li>
-            </ul>
           </div>
 
-          {/* 건강검진 */}
+          {/* 건강검진 관리 */}
           <div>
-            <div className="sidebar-menu-heading">
+            <button
+              type="button"
+              className="sidebar-menu-heading"
+              onClick={() => toggleMenu("checkups")}
+            >
               <svg
                 className="sidebar-icon"
                 fill="none"
@@ -137,6 +171,7 @@ export default function Sidebar() {
                   strokeLinejoin="round"
                   d="M9 5h6M9 3h6a1 1 0 011 1v1h2a2 2 0 012 2v13a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h2V4a1 1 0 011-1z"
                 />
+
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -144,92 +179,57 @@ export default function Sidebar() {
                 />
               </svg>
 
-              건강검진
-                </div>
+              <span>건강검진</span>
 
-                <ul className="sidebar-submenu">
-                  <li>
-                    <a href="/checkup/statistics">
-                      검진 완료율 통계
-                    </a>
-                  </li>
+              <span
+                className={`submenu-arrow ${
+                  openMenus.checkups ? "open" : ""
+                }`}
+              >
+                ▼
+              </span>
+            </button>
 
-                  <li>
-                    <a href="/checkup/targets">
-                      검진 대상자 목록
-                    </a>
-                  </li>
+            <div
+              className={`sidebar-submenu-wrapper ${
+                openMenus.checkups ? "open" : ""
+              }`}
+            >
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink to="/checkup/statistics">
+                    검진 완료율 통계
+                  </NavLink>
+                </li>
 
-                  <li>
-                    <a href="/checkup/reminder-settings">
-                      자동 알림 설정
-                    </a>
-                  </li>
+                <li>
+                  <NavLink to="/checkup/targets">
+                    검진 대상자 목록
+                  </NavLink>
+                </li>
 
-                  <li>
-                    <a href="/checkup/reminders/history">
-                      알림 발송 이력
-                    </a>
-                  </li>
-                </ul>
-              </div>
+                <li>
+                  <NavLink to="/checkup/reminder-settings">
+                    자동 알림 설정
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink to="/checkup/reminders/history">
+                    알림 발송 이력
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
+          </div>
+
           {/* 병원 관리 */}
-          <a
-            href="/hospital/list"
-            className="sidebar-menu-item"
-          >
-            <svg
-              className="sidebar-icon"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 21h18M5 21V6a2 2 0 012-2h10a2 2 0 012 2v15M9 8h6M9 12h6M9 16h6"
-              />
-            </svg>
-            병원 관리
-          </a>
-        </div>
-
-        {/* 운영관리 */}
-        <p className="sidebar-section-title">
-          Management
-        </p>
-
-        <div className="sidebar-menu">
-          {/* 공지사항 */}
-          <a
-            href="/notice/list"
-            className="sidebar-menu-item"
-          >
-            <svg
-              className="sidebar-icon"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h9l5 5v9a2 2 0 01-2 2z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14 4v5h5"
-              />
-            </svg>
-            공지사항
-          </a>
-
-          {/* 직원 관리 */}
           <div>
-            <div className="sidebar-menu-heading">
+            <button
+              type="button"
+              className="sidebar-menu-heading"
+              onClick={() => toggleMenu("hospitals")}
+            >
               <svg
                 className="sidebar-icon"
                 fill="none"
@@ -243,28 +243,135 @@ export default function Sidebar() {
                   d="M8 7V3m8 4V3M5 11h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              직원 관리
+
+              <span>병원 관리</span>
+
+              <span
+                className={`submenu-arrow ${
+                  openMenus.hospitals ? "open" : ""
+                }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`sidebar-submenu-wrapper ${
+                openMenus.hospitals ? "open" : ""
+              }`}
+            >
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink to="/hospital/list">병원 조회</NavLink>
+                </li>
+              </ul>
             </div>
+          </div>
+        </div>
 
-            <ul className="sidebar-submenu">
-              <li>
-                <a href="/employees">
-                  직원 조회
-                </a>
-              </li>
+        <p className="sidebar-section-title">Management</p>
 
-              <li>
-                <a href="/employees/new">
-                  직원 등록
-                </a>
-              </li>
-            </ul>
+        <div className="sidebar-menu">
+          {/* 공지사항 */}
+          <div>
+            <button
+              type="button"
+              className="sidebar-menu-heading"
+              onClick={() => toggleMenu("notices")}
+            >
+              <svg
+                className="sidebar-icon"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3M5 11h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+
+              <span>공지사항</span>
+
+              <span
+                className={`submenu-arrow ${
+                  openMenus.notices ? "open" : ""
+                }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`sidebar-submenu-wrapper ${
+                openMenus.notices ? "open" : ""
+              }`}
+            >
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink to="/notice/list">공지사항 조회</NavLink>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* 직원 관리 */}
+          <div>
+            <button
+              type="button"
+              className="sidebar-menu-heading"
+              onClick={() => toggleMenu("employees")}
+            >
+              <svg
+                className="sidebar-icon"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3M5 11h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+
+              <span>직원 관리</span>
+
+              <span
+                className={`submenu-arrow ${
+                  openMenus.employees ? "open" : ""
+                }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`sidebar-submenu-wrapper ${
+                openMenus.employees ? "open" : ""
+              }`}
+            >
+              <ul className="sidebar-submenu">
+                <li>
+                  <NavLink to="/employees">직원 조회</NavLink>
+                </li>
+
+                <li>
+                  <NavLink to="/employees/new">직원 등록</NavLink>
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* 시스템 */}
-          <a
-            href="#settings"
-            className="sidebar-menu-item"
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `sidebar-menu-item ${isActive ? "active" : ""}`
+            }
           >
             <svg
               className="sidebar-icon"
@@ -278,22 +385,18 @@ export default function Sidebar() {
                 strokeLinejoin="round"
                 d="M10.3 3.2l.7-1.2h2l.7 1.2 1.5.6 1.3-.5 1.4 1.4-.5 1.3.6 1.5 1.2.7v2l-1.2.7-.6 1.5.5 1.3-1.4 1.4-1.3-.5-1.5.6-.7 1.2h-2l-.7-1.2-1.5-.6-1.3.5-1.4-1.4.5-1.3-.6-1.5-1.2-.7v-2l1.2-.7.6-1.5-.5-1.3L6.8 3.3l1.3.5 1.5-.6z"
               />
-              <circle
-                cx="12"
-                cy="8.8"
-                r="2.5"
-              />
+
+              <circle cx="12" cy="8.8" r="2.5" />
             </svg>
+
             시스템
-          </a>
+          </NavLink>
         </div>
       </nav>
 
-      {/* 사용자 영역 */}
       <div className="sidebar-user">
         {user ? (
           <div className="sidebar-user-info">
-            {/* 프로필 아이콘 */}
             <div className="sidebar-avatar">
               {user.name?.charAt(0)}
             </div>
@@ -303,7 +406,6 @@ export default function Sidebar() {
               <span>보건관리자</span>
             </div>
 
-            {/* 마이페이지 */}
             <button
               type="button"
               onClick={() => navigate("/mypage")}
@@ -322,6 +424,7 @@ export default function Sidebar() {
                   strokeLinejoin="round"
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
+
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -331,12 +434,9 @@ export default function Sidebar() {
             </button>
           </div>
         ) : (
-          <a
-            href="/login"
-            className="sidebar-login"
-          >
+          <NavLink to="/login" className="sidebar-login">
             로그인
-          </a>
+          </NavLink>
         )}
 
         {user && (
