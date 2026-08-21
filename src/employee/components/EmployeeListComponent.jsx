@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../common/components/Pagination";
 
 export default function EmployeeListComponent() {
 
@@ -67,12 +68,6 @@ export default function EmployeeListComponent() {
         setPage(1);
         setSubmittedCondition(searchCondition);
     }
-
-
-    //페이지 계산
-    const PAGE_LIMIT = 3;
-    const startPage = Math.floor((page - 1) / PAGE_LIMIT) * PAGE_LIMIT + 1
-    const endPage = Math.min(startPage + PAGE_LIMIT - 1, totalPages);
 
     return (
         <div className="page">
@@ -168,44 +163,9 @@ export default function EmployeeListComponent() {
                         직원 등록
                     </button>
                 </div>
+                
+                <Pagination page={page} totalPages={totalPages} onPageChange={setPage}/>
 
-                {/* 페이지네이션 */}
-                <div className="pagination">
-                    {page > PAGE_LIMIT && (
-                        <button
-                            className="btn-secondary"
-                            onClick={() => setPage(startPage - 1)}
-                        >
-                            이전
-                        </button>
-                    )}
-
-                    {Array.from(
-                        { length: endPage - startPage + 1 },
-                        (_, i) => i + startPage
-                    ).map((pageNumber) => (
-                        <button
-                            key={pageNumber}
-                            className={
-                                page === pageNumber
-                                    ? "pagination-active"
-                                    : "pagination-button"
-                            }
-                            onClick={() => setPage(pageNumber)}
-                        >
-                            {pageNumber}
-                        </button>
-                    ))}
-
-                    {page < totalPages && (
-                        <button
-                            className="btn-secondary"
-                            onClick={() => setPage(endPage + 1)}
-                        >
-                            다음
-                        </button>
-                    )}
-                </div>
             </div>
         </div>
     );
