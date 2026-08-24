@@ -58,7 +58,7 @@ export default function Sidebar() {
           </NavLink>
 
           <NavLink
-            to="/profile"
+            to="/attendance"
             className={({ isActive }) =>
               `sidebar-menu-item ${isActive ? "active" : ""}`
             }

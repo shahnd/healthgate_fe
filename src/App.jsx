@@ -32,6 +32,7 @@ import CheckupStatisticsComponent from "./checkup/components/CheckupStatisticsCo
 import CheckupTargetListComponent from "./checkup/components/CheckupTargetListComponent";
 import CheckupReminderSettingComponent from "./checkup/components/CheckupReminderSettingComponent";
 import CheckupReminderHistoryComponent from "./checkup/components/CheckupReminderHistoryComponent";
+import AttendanceListComponent from "./attendance/components/AttendanceListComponent";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/login" element={<LoginComponent />} />
           <Route path="/dashboard" element={<DashboardComponent />} />
           <Route path="/mypage" element={<MyPageComponent/>} />
+          <Route path="/attendance" element={<AttendanceListComponent/>}/>
 
           <Route path="/bioinput" element={<BioInputComponent/>} />
 
