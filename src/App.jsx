@@ -20,9 +20,10 @@ import HospitalUpdateComponent from "./hospital/components/HospitalUpdateCompone
 
 import NoticeListComponent from "./notice/components/NoticeListComponent";
 
-import ReservationListComponent from "./consultation/reservations/components/ReservationListComponent";
-import ReservationComponent from "./consultation/reservations/components/ReservationComponent";
-// import ConsultationListComponent from "./consultation/consultations/components/ConsultationListComponent";
+import ReservationListComponent from './consultation/reservations/components/ReservationListComponent'
+import ReservationComponent from './consultation/reservations/components/ReservationComponent'
+import ConsultationListComponent from './consultation/consultations/components/ConsultationListComponent';
+import ReservationDetailComponent from './consultation/reservations/components/ReservationDetailComponent'
 
 import MyPageComponent from "./login/components/MyPageComponent";
 import BioInputComponent from "./bioinput/components/BioInputComponent";
@@ -65,18 +66,10 @@ function App() {
           <Route path="/employees/new" element={<EmployeeCreateComponent />} />
 
           {/* 보건 상담 */}
-          <Route
-            path="/consultation/reservation/list"
-            element={<ReservationListComponent />}
-          />
-          <Route
-            path="/consultation/reservation"
-            element={<ReservationComponent />}
-          />
-          {/* <Route
-            path="/consultation/list"
-            element={<ConsultationListComponent />}
-          /> */}
+          <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
+          <Route path="/consultation/reservation/:id?" element={<ReservationComponent />} />
+          <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
+          <Route path="/consultation/list" element={<ConsultationListComponent />} />
 
           {/* 건강검진 관리 */}
           <Route
