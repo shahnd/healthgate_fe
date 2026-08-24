@@ -243,7 +243,6 @@ export default function HospitalListComponent() {
         searchIsLungCancer == false ) {
             // > 입력된 검색어가 없을 경우 - 검색 목록 조회 처리
           
-            alert("검색결과가 없습니다."); 
             selectSearchHospitalList();
 
         } else {
