@@ -217,7 +217,7 @@ export default function NoticeListComponent() {
                
                {/* 등록 버튼 */}
                <div className="action-area">
-                   <button className="btn-primary" type="button" onClick={ () => { navigate("/notice/new"); } }>
+                   <button className="btn-primary" type="button" onClick={ () => { navigate("/notices/new"); } }>
                      공지사항 등록
                    </button>
                </div>
