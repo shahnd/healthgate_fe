@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import ReservationCalendar from "../api/ReservationCalendar";
-import { useNavigate } from "react-router-dom";
-import { insertReservationApi, selectDateApi } from "../api/consultationApi";
+import { useNavigate, useParams } from "react-router-dom";
+import { insertReservationApi, selectDateApi, selectReservationApi } from "../api/consultationApi";
 
 export default function ReservationComponent() {
 
+    // 네비게이트
     const navigate = useNavigate();
+
+    // 수정모드 판별용 변수
+    const { id } = useParams();
+    const isEditMode = Boolean(id);
+    
     // 신청자 데이터를 담을 변수 (로그인 연동)
     const [reservationData, setReservationData] = useState({
         id : "",
@@ -20,6 +26,8 @@ export default function ReservationComponent() {
         status : "RESERVED",
         createdAt : ""
     });
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
     
     // 예약된 차시 담을 배열
     const [scheduleList, setScheduleList] = useState([]);
@@ -47,7 +55,9 @@ export default function ReservationComponent() {
 
     // 날짜 선택 이벤트 핸들러
     const handleSelectDate = async slotInfo => {
+
         // 선택 날짜 반영
+        setSelectedDate(slotInfo.start);
         const formattedDate = formatDate(slotInfo.start);
 
         // 함수에도 반영
@@ -77,7 +87,7 @@ export default function ReservationComponent() {
     }
 
     // 스케줄 조회용 함수
-    const fetchSchedules = async targetDate => {
+    const fetchSchedules = async (targetDate, currentTurn = "") => {
 
         try {
             // 선택 날짜 대입
@@ -99,12 +109,16 @@ export default function ReservationComponent() {
                 // 예약 된 차시인지  확인
                 const isReserved = items.includes(item.id);
 
+                // 수정모드 - 기존 예약 불러올 때, 예약완료처리에서 예외처리
+                const isMyCurrentTurn = (item.id === currentTurn);
+
                 return(
                     <div key={index}>
                         <input type="radio"
                                name="scheduledTurn"
                                id={ item.id }
-                               disabled={ isReserved }
+                               disabled={ isReserved && !isMyCurrentTurn }
+                               checked={ isMyCurrentTurn }
                                onChange={ handleTurnChange } />
                         <label htmlFor={item.id} style={{ color: isReserved ? "#aaaaaa" : "#444444" }}>
                             {item.label} {isReserved && "(예약 완료)"}
@@ -119,17 +133,54 @@ export default function ReservationComponent() {
         }
     }
 
-    // 페이지 진입 시 실행할 구문 (오늘 날짜 기준 초기화)
+    // 페이지 진입 시 실행할 구문 (내일 날짜 기준 초기화)
     useEffect(() => {
-        const today = new Date();
-        const formattedToday = formatDate(today);
-        setReservationData(prev => ({
-            ...prev,
-            scheduledDate : formattedToday,
-        }));
 
-        fetchSchedules(today);
-    }, []);
+        const fetchDetailData = async () => {
+
+        if(isEditMode) {
+            try {
+                // 수정모드: 기존 예약 정보 조회
+                const response = await selectReservationApi(id);
+
+                if(response.data) {
+                    const data = response.data;
+                    
+                    // 1. 전체 예약 데이터 상태에 싹 집어넣기
+                    setReservationData(data);
+
+                    // 2. 날짜 객체 생성 (예: "2026-06-15")
+                    const targetDate = new Date(data.scheduledDate);
+                    
+                    // 3. 달력에 선택된 날짜와 현재 월 싱크 맞추기
+                    setSelectedDate(targetDate);
+                    setCurrentDate(targetDate);
+
+                    // 4. 해당 날짜의 스케줄을 불러오면서 기존 차시 체크하기
+                    // (약간의 텀을 주거나 state가 안정된 뒤 부르기 위해 data.scheduledDate 문자열을 직접 넘겨도 좋습니다)
+                    fetchSchedules(targetDate, data.scheduledTurn);
+                }
+            } catch (error) {
+                console.log("수정용 데이터 조회 실패" + error);
+            }
+
+            } else {
+
+                // 신청모드
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() +1);
+
+                const formattedToday = formatDate(tomorrow);
+                setReservationData(prev => ({
+                    ...prev,
+                    scheduledDate : formattedToday,
+                }));
+
+                fetchSchedules(tomorrow);
+            }
+        }
+        fetchDetailData();
+    }, [id]);
 
 
     // 상담 신청 버튼 클릭 시 실행할 이벤트
@@ -211,7 +262,10 @@ export default function ReservationComponent() {
             <form className="reservation-form">
                 <div className="reservation-date">
                     {/* 달력 - 날짜 선택 */}
-                    <ReservationCalendar onSelectSlot={handleSelectDate} />
+                    <ReservationCalendar onSelectSlot={ handleSelectDate }
+                                         selectedDate={ selectedDate }
+                                         currentDate={ currentDate }
+                                         onNavigate={ setCurrentDate } />
                 </div>
                 <div className="reservation-turn">
                     {/* 차시 선택 */}
@@ -235,7 +289,9 @@ export default function ReservationComponent() {
             <br />
             <div align="right">
                 <button type="submit"
-                        onClick={insertReservation}>상담 신청</button>
+                        onClick={insertReservation}>
+                            {isEditMode ? "수정 완료" : "상담 신청"}
+                        </button>
             </div>
         </div>
     )

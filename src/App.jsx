@@ -25,7 +25,7 @@ function App() {
           <Route path="/employee/list" element={<EmployeeListComponent/>}/>
 
           <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
-          <Route path="/consultation/reservation" element={<ReservationComponent />} />
+          <Route path="/consultation/reservation/:id?" element={<ReservationComponent />} />
           <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
           <Route path="/consultation/list" element={<ConsultationListComponent />} />
           

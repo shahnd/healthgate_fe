@@ -90,7 +90,7 @@ function ListCalendar({ dataList, onSelectEvent}) {
         }}
         components={{ toolbar: CustomToolbar, }}
         onSelectEvent={onSelectEvent}  // prop 된 이벤트 클릭 핸들러
-        onSelectSlot={(slotInfo) => console.log(slotInfo)}  // 빈 슬롯 클릭(날짜 선택)
+        // onSelectSlot={(slotInfo) => console.log(slotInfo)}  // 빈 슬롯 클릭(날짜 선택)
         selectable  // 슬롯 선택 가능하게
         style={{ height: '100%' }}
         messages={{

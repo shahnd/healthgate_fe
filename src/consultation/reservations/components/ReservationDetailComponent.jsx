@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { selectReservationApi } from "../api/consultationApi";
+import { selectReservationApi, cancelReservationApi } from "../api/consultationApi";
 
 
 export default function ReservationDetailComponent() {
@@ -69,6 +69,33 @@ export default function ReservationDetailComponent() {
 
         selectReservation();
     }, [id]);
+
+    const cancelReservation = async () => {
+
+        if(!id) return;
+
+        try {
+            
+            if(confirm("예약을 취소하시겠습니까?")) {
+
+            const response = await cancelReservationApi(id);
+
+            if(response.data == "success") {
+
+                alert("상담 예약이 취소되었습니다");
+                navigate("/consultation/reservation/list");
+
+            } else {
+
+                alert("예약 취소가 실패되었습니다. 다시 시도해주세요.");
+            }
+        }
+
+        } catch (error) {
+            console.log("예약 취소 ajax 통신 실패" + error);
+        }
+    }
+
     return(
         <div>
             <h2>상담 예약 상세 조회</h2>
@@ -105,9 +132,9 @@ export default function ReservationDetailComponent() {
                 </tbody>
             </table>
             <div align="center">
-                <button onClick={() => { navigate("/consultation/reservation"); }}>예약 수정</button>
+                <button onClick={() => { navigate(`/consultation/reservation/${id}`); }}>예약 수정</button>
                 &nbsp;&nbsp;
-                <button onClick={() => { navigate(""); }}>예약 취소</button>
+                <button onClick={ cancelReservation }>예약 취소</button>
             </div>
         </div>
     );

@@ -53,7 +53,7 @@ function updateReservationApi (id, consultation) {
 }
 
 // 예약 취소
-function cancelReservationsApi (id) {
+function cancelReservationApi (id) {
     const response = axios({
         url : `${BASE_URL}/reservations/${id}`,
         method : "delete"
@@ -62,4 +62,4 @@ function cancelReservationsApi (id) {
 }
 
 export { selectAllReservationApi, selectReservationApi, selectDateApi, insertReservationApi,
-         updateReservationApi, cancelReservationsApi };
+         updateReservationApi, cancelReservationApi };
