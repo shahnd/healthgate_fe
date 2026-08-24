@@ -12,7 +12,8 @@ export default function ReservationComponent() {
     // 수정모드 판별용 변수
     const { id } = useParams();
     const isEditMode = Boolean(id);
-    
+    const [originalDate, setOriginalDate] = useState("");
+    const [originalTurn, setOriginalTurn] = useState("");
     // 신청자 데이터를 담을 변수 (로그인 연동)
     const [reservationData, setReservationData] = useState({
         id : "",
@@ -61,18 +62,29 @@ export default function ReservationComponent() {
         setSelectedDate(slotInfo.start);
         const formattedDate = formatDate(slotInfo.start);
 
+        // 현재 클릭한날짜 와 기존 예약 날짜 비교
+        const isReturningToOriginalDate = isEditMode && (formattedDate === originalDate);
+
         // 함수에도 반영
         setReservationData(prev => ({
             ...prev,
             scheduledDate : formattedDate,
-            scheduledTurn : ""
+            scheduledTurn : isReturningToOriginalDate ? prev.scheduledTurn : ""
         }));
 
-        fetchSchedules(slotInfo.start);
+        fetchSchedules(slotInfo.start, isReturningToOriginalDate ? originalTurn : "");
     }
 
     // 차시 선택 이벤트 핸들러
     const handleTurnChange = e => {
+        // 날짜 선택 전
+        if(!selectedDate && !reservationData.scheduledDate) {
+            alert("상담 일자를 선택해주세요.");
+            e.target.checked = false;
+            return
+        }
+
+        // 날짜 선택 후
         setReservationData(prev => ({
             ...prev,
             scheduledTurn : e.target.id
@@ -88,7 +100,7 @@ export default function ReservationComponent() {
     }
 
     // 스케줄 조회용 함수
-    const fetchSchedules = async (targetDate, currentTurn = "") => {
+    const fetchSchedules = async (targetDate, targetTurn = "") => {
 
         try {
             // 선택 날짜 대입
@@ -104,25 +116,37 @@ export default function ReservationComponent() {
             const items = response.data.map((item) => {return item.scheduledTurn });
 
             // console.log(items);
+            // 선택한 날짜와 기존 예약 날짜 일치할 때
+            const isSameDate = isEditMode && (dateStr === originalDate);
 
             const divArr = turnList.map((item, index) => {
 
                 // 예약 된 차시인지  확인
                 const isReserved = items.includes(item.id);
 
-                // 수정모드 - 기존 예약 불러올 때, 예약완료처리에서 예외처리
-                const isMyCurrentTurn = (item.id === currentTurn);
+                // 기존 날짜, 예약된 차시
+                const isOriginalTurn = isSameDate && (item.id === (targetTurn || reservationData.scheduledTurn));
+
+                let statusText = "";
+                if(isReserved) {
+                    if(isOriginalTurn) {
+                        statusText = "(현재 예약 시간)";
+                    } else {
+                        statusText = "(예약 완료)";
+                    }
+                }
+                const isChecked = (item.id === reservationData.scheduledTurn);
 
                 return(
                     <div key={index}>
                         <input type="radio"
                                name="scheduledTurn"
                                id={ item.id }
-                               disabled={ isReserved && !isMyCurrentTurn }
-                               checked={ isMyCurrentTurn }
+                               disabled={ isReserved && !isOriginalTurn }
+                               checked={ isChecked }
                                onChange={ handleTurnChange } />
-                        <label htmlFor={item.id} style={{ color: isReserved ? "#aaaaaa" : "#444444" }}>
-                            {item.label} {isReserved && "(예약 완료)"}
+                        <label htmlFor={item.id} style={{ color: (isReserved && !isOriginalTurn) ? "#aaaaaa" : "#444444" }}>
+                            { item.label } { statusText }
                         </label>
                     </div>
                 );
@@ -147,18 +171,21 @@ export default function ReservationComponent() {
                 if(response.data) {
                     const data = response.data;
                     
-                    // 1. 전체 예약 데이터 상태에 싹 집어넣기
+                    // 1. 전체 예약 데이터
                     setReservationData(data);
 
-                    // 2. 날짜 객체 생성 (예: "2026-06-15")
+                    // 2. 날짜 객체 생성
                     const targetDate = new Date(data.scheduledDate);
                     
                     // 3. 달력에 선택된 날짜와 현재 월 싱크 맞추기
                     setSelectedDate(targetDate);
                     setCurrentDate(targetDate);
 
-                    // 4. 해당 날짜의 스케줄을 불러오면서 기존 차시 체크하기
-                    // (약간의 텀을 주거나 state가 안정된 뒤 부르기 위해 data.scheduledDate 문자열을 직접 넘겨도 좋습니다)
+                    // 4. 수정모드 - 기존 예약일 저장
+                    setOriginalDate(data.scheduledDate);
+                    setOriginalTurn(data.scheduledTurn);
+
+                    // 5. 해당 날짜 스케줄, 기존 예약 차시 저장
                     fetchSchedules(targetDate, data.scheduledTurn);
                 }
             } catch (error) {
@@ -182,6 +209,13 @@ export default function ReservationComponent() {
         }
         fetchDetailData();
     }, [id]);
+
+    
+    // scheduledTurn 이 바뀔 때 갱신
+    useEffect(() => {
+        const targetTurnToPass = isEditMode ? originalTurn : reservationData.scheduledTurn
+        fetchSchedules(selectedDate, targetTurnToPass);
+    }, [reservationData.scheduledTurn]);
 
 
     // 상담 신청 버튼 클릭 시 실행할 이벤트
