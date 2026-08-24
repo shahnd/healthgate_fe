@@ -2,6 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8006/healthgate/notices";
 
+// 공지사항 목록 조회
 const selectNoticeListApi = cpage => {
 
     const response = axios({
@@ -15,6 +16,7 @@ const selectNoticeListApi = cpage => {
     return response;
 };
 
+// 공지사항 목록 검색
 const searchNoticeListApi = (cpage, keyword) => {
 
     const response = axios({
@@ -29,4 +31,16 @@ const searchNoticeListApi = (cpage, keyword) => {
     return response;
 };
 
-export { selectNoticeListApi, searchNoticeListApi, BASE_URL};
+// 공지사항 등록
+const  insertNoticeApi = formData => {
+
+    const response =axios({
+        url : `${ BASE_URL }/new`,
+        method : "post",
+        data : formData
+    });
+
+    return response;
+};
+
+export { selectNoticeListApi, searchNoticeListApi, insertNoticeApi, BASE_URL};
