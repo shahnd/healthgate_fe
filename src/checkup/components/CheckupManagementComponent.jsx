@@ -1,7 +1,11 @@
 import axios from 'axios'
 import { useCallback, useEffect, useState } from 'react'
+
 import CheckupReminderManagementComponent
   from './CheckupReminderManagementComponent'
+
+import CheckupExcelStatusModal
+  from './CheckupExcelStatusModal'
 
 const CHECKUP_API_URL =
   'http://localhost:8006/healthgate/checkups'
@@ -23,6 +27,7 @@ export default function CheckupManagementComponent() {
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  // 수동 알림 관련 State
   const [selectedTarget, setSelectedTarget] =
     useState(null)
 
@@ -34,6 +39,29 @@ export default function CheckupManagementComponent() {
 
   const [sendingReminder, setSendingReminder] =
     useState(false)
+
+  // Excel 파일 업로드 모달 관련 State
+  const [excelModalOpen, setExcelModalOpen] =
+    useState(false)
+
+  const [excelFile, setExcelFile] =
+    useState(null)
+
+  const [uploadingExcel, setUploadingExcel] =
+    useState(false)
+
+  const [excelUploadResult, setExcelUploadResult] =
+    useState(null)
+
+  // Excel 업로드 후 수검 현황 모달 관련 State
+  const [excelStatusModalOpen, setExcelStatusModalOpen] =
+    useState(false)
+
+  const [uploadedTargetList, setUploadedTargetList] =
+    useState([])
+
+  const [completedUploadResult, setCompletedUploadResult] =
+    useState(null)
 
   /**
    * 검진 완료율 통계와 대상자 목록 조회
@@ -61,6 +89,8 @@ export default function CheckupManagementComponent() {
 
       setStatistics(statisticsResponse.data)
       setTargetList(targetsResponse.data)
+
+      return targetsResponse.data
     } catch (error) {
       console.error(
         '건강검진 데이터 조회 실패:',
@@ -70,6 +100,8 @@ export default function CheckupManagementComponent() {
       setErrorMessage(
         '건강검진 정보를 불러오지 못했습니다.'
       )
+
+      return []
     } finally {
       setLoading(false)
     }
@@ -81,6 +113,135 @@ export default function CheckupManagementComponent() {
   useEffect(() => {
     loadCheckupData()
   }, [loadCheckupData])
+
+  /**
+   * Excel 업로드 모달 열기
+   */
+  const openExcelModal = () => {
+    setExcelFile(null)
+    setExcelUploadResult(null)
+    setExcelModalOpen(true)
+  }
+
+  /**
+   * Excel 업로드 모달 닫기
+   */
+  const closeExcelModal = () => {
+    if (uploadingExcel) {
+      return
+    }
+
+    setExcelModalOpen(false)
+    setExcelFile(null)
+    setExcelUploadResult(null)
+  }
+
+  /**
+   * Excel 파일 선택
+   */
+  const handleExcelFileChange = (event) => {
+    const selectedFile = event.target.files?.[0]
+
+    setExcelUploadResult(null)
+
+    if (!selectedFile) {
+      setExcelFile(null)
+      return
+    }
+
+    const lowerFileName =
+      selectedFile.name.toLowerCase()
+
+    if (
+      !lowerFileName.endsWith('.xlsx')
+      && !lowerFileName.endsWith('.xls')
+    ) {
+      alert(
+        'Excel 파일(.xlsx, .xls)만 선택할 수 있습니다.'
+      )
+
+      event.target.value = ''
+      setExcelFile(null)
+      return
+    }
+
+    setExcelFile(selectedFile)
+  }
+
+  /**
+   * 건강검진 결과 Excel 업로드
+   */
+  const uploadCheckupExcel = async () => {
+    if (!excelFile) {
+      alert('업로드할 Excel 파일을 선택해 주세요.')
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('file', excelFile)
+
+    setUploadingExcel(true)
+    setExcelUploadResult(null)
+
+    try {
+      const response = await axios.post(
+        `${CHECKUP_API_URL}/excel-upload`,
+        formData
+      )
+
+      const uploadResult = response.data
+
+      setExcelUploadResult(uploadResult)
+
+      // 변경된 통계와 대상자 목록을 다시 조회한다.
+      const refreshedTargetList =
+        await loadCheckupData()
+
+      /*
+       * 업로드된 데이터 중 정상 처리된 행이 있으면
+       * 파일 업로드 모달을 닫고 수검 현황 모달을 연다.
+       */
+      if (uploadResult.successCount > 0) {
+        setUploadedTargetList(refreshedTargetList)
+        setCompletedUploadResult(uploadResult)
+
+        setExcelModalOpen(false)
+        setExcelFile(null)
+
+        setExcelStatusModalOpen(true)
+      }
+    } catch (error) {
+      console.error(
+        '건강검진 Excel 업로드 실패:',
+        error
+      )
+
+      const serverMessage =
+        error.response?.data?.message
+
+      setExcelUploadResult({
+        totalCount: 0,
+        successCount: 0,
+        failureCount: 1,
+        errors: [
+          serverMessage
+          || 'Excel 업로드 처리에 실패했습니다.',
+        ],
+        message: 'Excel 업로드에 실패했습니다.',
+      })
+    } finally {
+      setUploadingExcel(false)
+    }
+  }
+
+  /**
+   * Excel 업로드 결과 수검 현황 모달 닫기
+   */
+  const closeExcelStatusModal = () => {
+    setExcelStatusModalOpen(false)
+    setUploadedTargetList([])
+    setCompletedUploadResult(null)
+  }
 
   /**
    * 수동 알림 발송 창 열기
@@ -213,8 +374,9 @@ export default function CheckupManagementComponent() {
             onClick={loadCheckupData}
             disabled={loading}
             className="
-              rounded-lg !bg-slate-800 px-4 py-2
-              text-sm font-semibold !text-white
+              rounded-lg !bg-slate-800
+              px-4 py-2 text-sm
+              font-semibold !text-white
               transition hover:!bg-slate-700
               disabled:cursor-not-allowed
               disabled:!bg-slate-400
@@ -229,8 +391,10 @@ export default function CheckupManagementComponent() {
       {errorMessage && (
         <div
           className="
-            mb-6 rounded-lg border border-red-200
-            bg-red-50 px-4 py-3 text-red-700
+            mb-6 rounded-lg
+            border border-red-200
+            bg-red-50 px-4 py-3
+            text-red-700
           "
         >
           {errorMessage}
@@ -303,6 +467,19 @@ export default function CheckupManagementComponent() {
               조회되었습니다.
             </p>
           </div>
+
+          <button
+            type="button"
+            onClick={openExcelModal}
+            className="
+              rounded-lg !bg-blue-600
+              px-4 py-2 text-sm
+              font-semibold !text-white
+              transition hover:!bg-blue-700
+            "
+          >
+            엑셀 업로드
+          </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -423,6 +600,204 @@ export default function CheckupManagementComponent() {
       {/* 자동 알림 설정 및 알림 발송 이력 */}
       <CheckupReminderManagementComponent />
 
+      {/* Excel 파일 선택 및 업로드 모달 */}
+      {excelModalOpen && (
+        <div
+          className="
+            fixed inset-0 z-50
+            flex items-center justify-center
+            bg-slate-900/50 px-4
+          "
+        >
+          <div
+            className="
+              w-full max-w-xl rounded-xl
+              bg-white p-6 shadow-xl
+            "
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-slate-800">
+                  건강검진 결과 엑셀 업로드
+                </h2>
+
+                <p className="mt-2 text-sm text-slate-500">
+                  건강검진 결과가 입력된 Excel 파일을
+                  선택해 주세요.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeExcelModal}
+                disabled={uploadingExcel}
+                className="
+                  rounded-lg px-3 py-1
+                  text-xl !text-slate-400
+                  hover:!bg-slate-100
+                  hover:!text-slate-700
+                  disabled:cursor-not-allowed
+                "
+                aria-label="닫기"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Excel 양식 안내 */}
+            <div
+              className="
+                mt-5 rounded-lg
+                border border-blue-200
+                bg-blue-50 p-4
+              "
+            >
+              <p className="font-semibold text-blue-800">
+                Excel 열 순서
+              </p>
+
+              <p className="mt-1 text-sm text-blue-700">
+                사번 | 이름 | 검진연도 | 검진일 | 검진요약
+              </p>
+
+              <p className="mt-1 text-xs text-blue-600">
+                첫 번째 행에는 위 제목을 입력하고,
+                두 번째 행부터 대상자 정보를 입력해 주세요.
+              </p>
+            </div>
+
+            {/* 파일 선택 */}
+            <div className="mt-6">
+              <label
+                htmlFor="checkupExcelFile"
+                className="
+                  mb-2 block font-semibold
+                  text-slate-700
+                "
+              >
+                첨부파일
+              </label>
+
+              <input
+                id="checkupExcelFile"
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleExcelFileChange}
+                disabled={uploadingExcel}
+                className="
+                  block w-full rounded-lg
+                  border border-slate-300
+                  bg-white px-3 py-2
+                  text-sm text-slate-600
+                  file:mr-4 file:rounded-md
+                  file:border-0
+                  file:bg-blue-50
+                  file:px-4 file:py-2
+                  file:font-semibold
+                  file:text-blue-700
+                  hover:file:bg-blue-100
+                  disabled:cursor-not-allowed
+                "
+              />
+
+              <p className="mt-2 text-xs text-slate-400">
+                지원 형식: .xlsx, .xls
+              </p>
+            </div>
+
+            {/* 선택한 파일 */}
+            {excelFile && (
+              <div
+                className="
+                  mt-4 rounded-lg
+                  border border-slate-200
+                  bg-slate-50 px-4 py-3
+                "
+              >
+                <p className="text-sm text-slate-700">
+                  선택한 파일:
+                  <span className="ml-2 font-semibold">
+                    {excelFile.name}
+                  </span>
+                </p>
+              </div>
+            )}
+
+            {/* 업로드 실패 결과 */}
+            {excelUploadResult
+              && excelUploadResult.failureCount > 0
+              && excelUploadResult.successCount === 0
+              && (
+                <div
+                  className="
+                    mt-5 rounded-lg
+                    border border-red-200
+                    bg-red-50 p-4
+                  "
+                >
+                  <p className="font-semibold text-red-700">
+                    {excelUploadResult.message}
+                  </p>
+
+                  {excelUploadResult.errors?.length > 0 && (
+                    <ul
+                      className="
+                        mt-3 list-disc pl-5
+                        text-sm text-red-600
+                      "
+                    >
+                      {excelUploadResult.errors.map(
+                        (uploadError, index) => (
+                          <li key={index}>
+                            {uploadError}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+            {/* 버튼 영역 */}
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={closeExcelModal}
+                disabled={uploadingExcel}
+                className="
+                  rounded-lg
+                  border border-slate-300
+                  !bg-white px-4 py-2
+                  font-semibold !text-slate-600
+                  transition hover:!bg-slate-50
+                  disabled:cursor-not-allowed
+                "
+              >
+                닫기
+              </button>
+
+              <button
+                type="button"
+                onClick={uploadCheckupExcel}
+                disabled={!excelFile || uploadingExcel}
+                className="
+                  rounded-lg !bg-blue-600
+                  px-4 py-2 font-semibold
+                  !text-white transition
+                  hover:!bg-blue-700
+                  disabled:cursor-not-allowed
+                  disabled:!bg-blue-300
+                "
+              >
+                {uploadingExcel
+                  ? '업로드 중...'
+                  : '업로드'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 수동 알림 발송 모달 */}
       {selectedTarget && (
         <div
@@ -449,7 +824,6 @@ export default function CheckupManagementComponent() {
               {')'}
             </p>
 
-            {/* 발송 채널 */}
             <div className="mt-6">
               <label
                 htmlFor="reminderChannel"
@@ -479,7 +853,6 @@ export default function CheckupManagementComponent() {
               </select>
             </div>
 
-            {/* 알림 내용 */}
             <div className="mt-5">
               <label
                 htmlFor="reminderContent"
@@ -512,7 +885,6 @@ export default function CheckupManagementComponent() {
               발송 이력을 저장합니다.
             </p>
 
-            {/* 버튼 영역 */}
             <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
@@ -550,6 +922,16 @@ export default function CheckupManagementComponent() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Excel 업로드 후 수검 현황 모달 */}
+      {excelStatusModalOpen && (
+        <CheckupExcelStatusModal
+          year={year}
+          targetList={uploadedTargetList}
+          uploadResult={completedUploadResult}
+          onClose={closeExcelStatusModal}
+        />
       )}
     </div>
   )

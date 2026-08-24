@@ -1,6 +1,7 @@
 import "./App.css";
 
 import { Route, Routes } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import Sidebar from "./common/components/Sidebar";
 
@@ -23,9 +24,13 @@ import ReservationListComponent from "./consultation/reservations/components/Res
 import ReservationComponent from "./consultation/reservations/components/ReservationComponent";
 // import ConsultationListComponent from "./consultation/consultations/components/ConsultationListComponent";
 
-import CheckupManagementComponent from "./checkup/components/CheckupManagementComponent";
 import MyPageComponent from "./login/components/MyPageComponent";
 import BioInputComponent from "./bioinput/components/BioInputComponent";
+
+import CheckupStatisticsComponent from "./checkup/components/CheckupStatisticsComponent";
+import CheckupTargetListComponent from "./checkup/components/CheckupTargetListComponent";
+import CheckupReminderSettingComponent from "./checkup/components/CheckupReminderSettingComponent";
+import CheckupReminderHistoryComponent from "./checkup/components/CheckupReminderHistoryComponent";
 
 function App() {
   return (
@@ -78,8 +83,24 @@ function App() {
 
           {/* 건강검진 관리 */}
           <Route
+            path="/checkup/statistics"
+            element={<CheckupStatisticsComponent />}
+          />
+          <Route
+            path="/checkup/targets"
+            element={<CheckupTargetListComponent />}
+          />
+          <Route
+            path="/checkup/reminder-settings"
+            element={<CheckupReminderSettingComponent />}
+          />
+          <Route
+            path="/checkup/reminders/history"
+            element={<CheckupReminderHistoryComponent />}
+          />
+          <Route
             path="/checkup/list"
-            element={<CheckupManagementComponent />}
+            element={<Navigate to="/checkup/targets" replace />}
           />
         </Routes>
       </main>
