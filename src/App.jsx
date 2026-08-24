@@ -18,6 +18,9 @@ import HospitalDetailComponent from "./hospital/components/HospitalDetailCompone
 import HospitalUpdateFormComponent from "./hospital/components/HospitalUpdateFormComponent";
 
 import NoticeListComponent from "./notice/components/NoticeListComponent";
+import NoticeCreateComponent from "./notice/components/NoticeCreateComponent";
+import NoticeDetailComponent from "./notice/components/NoticeDetailComponent";
+import NoticeUpdateComponent from "./notice/components/NoticeUpdateComponent";
 
 import ReservationListComponent from "./consultation/reservations/components/ReservationListComponent";
 import ReservationComponent from "./consultation/reservations/components/ReservationComponent";
@@ -51,7 +54,10 @@ function App() {
           />
 
           {/* 공지사항 */}
-          <Route path="/notice/list" element={<NoticeListComponent />} />
+          <Route path="/notices/list" element={<NoticeListComponent />} />
+          <Route path="/notices/new" element={<NoticeCreateComponent />} />
+          <Route path="/notices/:id" element={<NoticeDetailComponent />} />
+          <Route path="/notices/:id/edit" element={<NoticeUpdateComponent />} />
 
           {/* 직원 관리 */}
           <Route path="/employees" element={<EmployeeListComponent />} />
