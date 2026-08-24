@@ -2,9 +2,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { useState,useEffect } from "react";
 
-import { selectHospitalFormApi, updateHospitalApi } from "../api/hospitalApi";
+import { updateHospitalApi } from "../api/hospitalApi";
 
-export default function HospitalUpdateFormComponent() {
+export default function HospitalUpdateComponent() {
 
     // 실행할 구문
     const id = useLocation().state.id;

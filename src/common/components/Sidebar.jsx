@@ -140,7 +140,7 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.hospitals ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/hospital/list">병원 조회</NavLink></li>
+                <li><NavLink to="/hospitals/list">병원 조회</NavLink></li>
               </ul>
             </div>
           </div>

@@ -1,31 +1,29 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5173/hospital";
+const BASE_URL = "http://localhost:8006/healthgate/hospitals";
 
-// 검진가능 병원 목록 조회용 
-const selectHospitalListApi = cpage => {
-
-    const response = axios({
-        url : `${ BASE_URL }/list`,
-        method : "get",
-        params : {
-            cpage : cpage
-        }
-
-    });
-
-    return response;
-};
-
-// 검진가능 병원 검색용
-const searchHospitalListApi = (cpage, keyword) => {
+// 검진가능 병원 검색용+ 조회용 
+const searchHospitalListApi = (cpage, 
+                               name, 
+                               address,
+                               isGeneralExamAvailable,
+                               isStomachCancerExamAvailable,
+                               isColonCancerExamAvailable,
+                               isLiverCancerExamAvailable,
+                               isLungCancerExamAvailable) => {
 
     const response = axios({
-        url : `${ BASE_URL }/search`,
+        url : `${ BASE_URL }`,
         method : "get",
         params : {
             cpage : cpage,
-            keyword : keyword
+            name : name,
+            address : address,
+            isGeneralExamAvailable : isGeneralExamAvailable,
+            isStomachCancerExamAvailable : isStomachCancerExamAvailable, 
+            isColonCancerExamAvailable : isColonCancerExamAvailable,
+            isLiverCancerExamAvailable : isLiverCancerExamAvailable,
+            isLungCancerExamAvailable : isLungCancerExamAvailable
         }
     });
 
@@ -33,10 +31,10 @@ const searchHospitalListApi = (cpage, keyword) => {
 };
 
 // 검진가능 병원 상세조회용 
-const selectHospitalApi = id => {
+const selectHospitalApi = hospitalId => {
 
      const response = axios({
-        url : `${ BASE_URL }/${ id }`,
+        url : `${ BASE_URL }/${ hospitalId }`,
         method : "get"
      });
 
@@ -62,31 +60,22 @@ const insertHospitalApi = hospital => {
         method : "post",
         data : hospital
     });
+
+     return response
 };
 
 // 검진가능 병원 수정용 
-const updateHospitalApi = (id, hospital) => {
+const updateHospitalApi = (hospitalId, hospital) => {
 
     const response = axios({
-        url : `${ BASE_URL }/${ id }`, 
-        method : "post",
+        url : `${ BASE_URL }/${ hospitalId }`, 
+        method : "put",
         data : hospital
     });
 
     return response;
 };
 
-// 검진가능 병원 상세조회용 - 수정하기 페이지에서 요청
-const selectHospitalFormApi = id => {
 
-     const response = axios({
-        url : `${ BASE_URL }/${ id }/form`,
-        method : "get"
-     });
-
-     return response;
-}; 
-
-export { selectHospitalListApi, searchHospitalListApi, selectHospitalApi, 
-         deleteHospitalApi, insertHospitalApi, updateHospitalApi,selectHospitalFormApi };
-export { BASE_URL }
+export { searchHospitalListApi, selectHospitalApi, 
+         deleteHospitalApi, insertHospitalApi, updateHospitalApi, BASE_URL };
