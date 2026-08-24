@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ReservationCalendar from "../api/ReservationCalendar";
 import { useNavigate, useParams } from "react-router-dom";
 import { insertReservationApi, selectDateApi, selectReservationApi } from "../api/consultationApi";
+import "../styles/reservationCalendar.css";
 
 export default function ReservationComponent() {
 
