@@ -1,10 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../../common/components/Pagination";
+import Pagination from '../../common/components/Pagination'
 
-export default function EmployeeListComponent() {
-
+export default function AttendanceListComponent() {
     const navigate = useNavigate();
 
     const [employees, setEmployees] = useState([]);
@@ -17,6 +16,8 @@ export default function EmployeeListComponent() {
         employeeNumber: '',
         departmentId: '',
         positionId: '',
+        searchDate: '',
+        status: ''
     });
 
     const [submittedCondition, setSubmittedCondition] = useState(searchCondition);
@@ -68,7 +69,6 @@ export default function EmployeeListComponent() {
         setPage(1);
         setSubmittedCondition(searchCondition);
     }
-
     return (
         <div className="page">
             <h1 className="page-title">직원 리스트</h1>
@@ -134,6 +134,7 @@ export default function EmployeeListComponent() {
                             <th>부서</th>
                             <th>직급</th>
                             <th>이메일</th>
+                            <th>출근상태</th>
                         </tr>
                     </thead>
 
@@ -152,21 +153,9 @@ export default function EmployeeListComponent() {
                         ))}
                     </tbody>
                 </table>
-
-                {/* 등록 버튼 */}
-                <div className="action-area">
-                    <button
-                        className="btn-primary"
-                        type="button"
-                        onClick={() => navigate("/employees/new")}
-                    >
-                        직원 등록
-                    </button>
-                </div>
-                
                 <Pagination page={page} totalPages={totalPages} onPageChange={setPage}/>
 
             </div>
         </div>
-    );
+    )
 }
