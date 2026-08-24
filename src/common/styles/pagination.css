@@ -1,0 +1,56 @@
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 24px;
+}
+
+/* 모든 페이지 버튼 */
+.pagination button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--color-text-sub);
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+/* 숫자 버튼 hover */
+.pagination button:hover {
+    background: var(--color-background);
+    color: var(--color-text-main);
+}
+
+/* 현재 페이지 */
+.pagination .pagination-active {
+    background: var(--color-primary-600);
+    border-color: var(--color-primary-600);
+    color: white;
+    font-weight: 600;
+}
+
+/* 이전 / 다음 버튼 */
+.pagination button:first-child,
+.pagination button:last-child {
+    padding: 0 12px;
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-sub);
+}
+
+/* 이전 / 다음 hover */
+.pagination button:first-child:hover,
+.pagination button:last-child:hover {
+    background: var(--color-background);
+    color: var(--color-text-main);
+}

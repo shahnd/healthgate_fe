@@ -1,0 +1,77 @@
+/* metricLineChart.css */
+
+.chart-card {
+  width: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chart-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Recharts SVG 내부 텍스트 */
+.chart-card .recharts-text {
+  fill: #6b7280;
+  font-size: 12px;
+}
+
+/* X축 / Y축 */
+.chart-card .recharts-cartesian-axis-line {
+  stroke: #d1d5db;
+}
+
+.chart-card .recharts-cartesian-axis-tick-line {
+  stroke: #d1d5db;
+}
+
+/* 격자 */
+.chart-card .recharts-cartesian-grid-horizontal line,
+.chart-card .recharts-cartesian-grid-vertical line {
+  stroke: #e5e7eb;
+}
+
+/* 범례 */
+.chart-card .recharts-legend-item-text {
+  color: #4b5563 !important;
+  font-size: 13px;
+}
+
+/* 툴팁 */
+.chart-card .recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.chart-card .recharts-default-tooltip {
+  padding: 10px 12px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card .recharts-tooltip-label {
+  margin-bottom: 6px;
+  color: #374151;
+  font-weight: 600;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .chart-card {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .chart-title {
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+}
