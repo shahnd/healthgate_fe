@@ -27,7 +27,6 @@ export default function Sidebar() {
     localStorage.removeItem("access_token");
     logout();
     alert("로그아웃 되었습니다.");
-    navigate("/login");
   };
 
   return (
@@ -115,10 +114,7 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.checkups ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/checkup/statistics">검진 완료율 통계</NavLink></li>
-                <li><NavLink to="/checkup/targets">검진 대상자 목록</NavLink></li>
-                <li><NavLink to="/checkup/reminder-settings">자동 알림 설정</NavLink></li>
-                <li><NavLink to="/checkup/reminders/history">알림 발송 이력</NavLink></li>
+                <li><NavLink to="/checkup/list">건강검진 대상자 조회</NavLink></li>
               </ul>
             </div>
           </div>
