@@ -24,11 +24,13 @@ export default function HospitalCreateComponent() {
     // 입력값의 변화가 있을 때 마다 실행할 함수                                    
     const handleChange = e => {
 
-        const newHospital = {...hospital};
+        const { name, value, type, checked } = e.target;
 
-        newHospital[e.target.name] = e.target.value;
-
-        setHospital(newHospital);
+        setHospital((prevHospital) => ({
+                           ...prevHospital,
+            // input이 checkbox면 boolean(checked) 값을, 아니면 text(value) 값을 저장
+            [name]: type === "checkbox" ? checked : value,
+        }));
     };
 
     const insertHospital = async e => {
@@ -70,62 +72,95 @@ export default function HospitalCreateComponent() {
                 <tbody>
                     <tr>
                         <th>병원명</th>
-                        <td>
+                        <td colSpan="5">
                             <input type="text" name="name" value={ hospital.name }
-                                                           onChange={ handleChange } />
+                                    onChange={ handleChange } required/>
                         </td>
                     </tr>
                     <tr>
                         <th>주소</th>
-                        <td>
+                        <td colSpan="5">
                             <input type="text" name="address" value={ hospital.address }
-                                                           onChange={ handleChange } />
+                                    onChange={ handleChange } required/>
                         </td>
                     </tr>
                     <tr>
                         <th>전화번호</th>
-                        <td>
+                        <td colSpan="5">
                             <input type="text" name="phone" value={ hospital.phone }
-                                                           onChange={ handleChange } />
+                                    onChange={ handleChange } />
                         </td>
                     </tr>
                     <tr>
                         <th>병원 홈페이지 url</th>
-                        <td>
+                        <td colSpan="5">
                             <input type="text" name="url" value={ hospital.url }
-                                                           onChange={ handleChange } />
+                                    onChange={ handleChange } />
                         </td>
                     </tr>
                     <tr>
                         <th>안내문구</th>
-                        <td><textarea name="description" value={ hospital.description }
-                                                         onChange= { handleChange } /> 
+                        <td colSpan="5">
+                            <textarea name="description" value={ hospital.description }
+                                        onChange= { handleChange } /> 
                         </td>
                     </tr>
                     <tr>
                         <th>검진가능 항목</th>
                         <td>
-                            <select>
-                                <option name="isGeneralExamAvailable" 
-                                        value={ hospital.isGeneralExamAvailable }
-                                        onChange= { handleChange }>일반검진</option>
-
-                                <option name="isStomachCancerExamAvailable" 
-                                        value={ hospital.isStomachCancerExamAvailable }
-                                        onChange= { handleChange }>위암검진</option>
-
-                                <option name="isColonCancerExamAvailable"
-                                        value={ hospital.isColonCancerExamAvailable }
-                                        onChange= { handleChange }>대장암검진</option>
-
-                                <option name="isLiverCancerExamAvailable" 
-                                        value={ hospital.isLiverCancerExamAvailable }
-                                        onChange= { handleChange }>간암검진</option>
-
-                                <option name="isLungCancerExamAvailable" 
-                                        value={ hospital.isLungCancerExamAvailable }
-                                        onChange= { handleChange }>폐암검진</option>
-                            </select>
+                            <div>
+                                <label>
+                                    일반검진
+                                    <input type="checkbox"
+                                    name="isGeneralExamAvailable"
+                                    checked={ hospital.isGeneralExamAvailable}
+                                    onChange={handleChange} />
+                                </label>
+                            </div>    
+                        </td> 
+                        <td>
+                            <div>
+                                <label>
+                                    위암검진
+                                    <input type="checkbox"
+                                    name="isStomachCancerExamAvailable"
+                                    checked={ hospital.isStomachCancerExamAvailable}
+                                    onChange={handleChange} />
+                                </label>
+                            </div> 
+                         </td>
+                         <td>
+                            <div>  
+                                <label>
+                                    대장암검진
+                                    <input type="checkbox"
+                                    name="isColonCancerExamAvailable"
+                                    checked={ hospital.isColonCancerExamAvailable}
+                                    onChange={handleChange} />
+                                </label>
+                            </div> 
+                        </td>
+                        <td> 
+                            <div>  
+                                <label>
+                                    간암검진
+                                    <input type="checkbox"
+                                    name="isLiverCancerExamAvailable"
+                                    checked={ hospital.isLiverCancerExamAvailable}
+                                    onChange={handleChange} />
+                                </label>
+                            </div> 
+                         </td> 
+                         <td>
+                            <div>
+                                <label>
+                                    폐암검진
+                                    <input type="checkbox"
+                                    name="isLungCancerExamAvailable"
+                                    checked={ hospital.isLungCancerExamAvailable}
+                                    onChange={handleChange} />
+                                </label>
+                            </div>  
                         </td>
                     </tr>
                 </tbody>

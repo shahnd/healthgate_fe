@@ -108,7 +108,7 @@ export default function HospitalDetailComponent() {
                     </tr>
                     <tr>
                         <th>검진가능 항목</th>
-                        <td>{ hospital.isGeneralExamAvailable}</td>
+                        <td>{ hospital.isGeneralExamAvailable }</td>
                         <td>{ hospital.isStomachCancerExamAvailable }</td>
                         <td>{ hospital.isColonCancerExamAvailable } </td>
                         <td>{ hospital.isLiverCancerExamAvailable }</td>

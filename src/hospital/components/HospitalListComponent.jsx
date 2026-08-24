@@ -6,6 +6,8 @@ import { searchHospitalListApi } from "../api/hospitalApi";
 
 import HospitalItemComponent from "./HospitalItemComponent";
 
+import "../styles/HospitalListComponent.css";
+
 export default function HospitalListComponent() {
  
     // 실행할 구문
@@ -276,52 +278,61 @@ export default function HospitalListComponent() {
             <br/><br/>
             {/* 검색창 */}
             <div className="card">
-                <form>
-                    <table>
-                       <tbody>
-                          <tr>
-                            <th>
-                                <input type="text" name="name" placeholder="병원이름"
-                                    value={ name } onChange={ handleChangeName } /> 
-                            </th>
-                            <th>
-                                 <input type="text" name="address" placeholder="병원주소"
-                                    value={ address } onChange={ handleChangeAddress } />   
-                            </th>
-                            <th>
-                                검진 가능 항목 : 
-                                <select className="examAvailable">
-                                    <option name="isGeneralExamAvailable" 
-                                            value={ isGeneralExamAvailable }
-                                            onChange={ handleChangeIsGeneral }>일반검진</option>
+                <form className="search2-form">
+                    <input type="text" name="name" placeholder="병원이름"
+                        value={ name } onChange={ handleChangeName } /> 
+                
+                    <input type="text" name="address" placeholder="병원주소"
+                    value={ address } onChange={ handleChangeAddress } />   
+                    <div>
+                        검진 가능 항목 : 
+                        <label>
+                            <input
+                            type="checkbox"
+                            checked={isGeneralExamAvailable}
+                            onChange={handleChangeIsGeneral}
+                            />
+                            일반검진
+                        </label>
+                        <label>
+                            <input
+                            type="checkbox"
+                            checked={isStomachCancerExamAvailable}
+                            onChange={handleChangeIsStomachCancer}
+                            />
+                            위암검진
+                        </label>
+                        <label>
+                            <input
+                            type="checkbox"
+                            checked={isColonCancerExamAvailable}
+                            onChange={handleChangeIsColonCancer}
+                            />
+                            대장암검진
+                        </label>
+                        <label>
+                            <input
+                            type="checkbox"
+                            checked={isLiverCancerExamAvailable}
+                            onChange={handleChangeIsLiverCancer}
+                            />
+                            간암검진
+                        </label>
+                        <label>
+                            <input
+                            type="checkbox"
+                            checked={isLungCancerExamAvailable}
+                            onChange={handleChangeIsLungCancer}
+                            />
+                            폐암검진
+                        </label>
+                    </div>
+                    <button type="reset" className="btn-secondary"
+                        >초기화</button>
+            
+                    <button type="submit" className="btn-primary"
+                    onClick={ handleClick }>검색</button> 
 
-                                    <option name="isStomachCancerExamAvailable" 
-                                            value={ isStomachCancerExamAvailable }
-                                            onChange={ handleChangeIsStomachCancer }>위암검진</option>
-
-                                    <option name="isColonCancerExamAvailable"
-                                            value={ isColonCancerExamAvailable }
-                                            onChange={ handleChangeIsColonCancer }>대장암검진</option>
-
-                                    <option name="isLiverCancerExamAvailable" 
-                                            value={ isLiverCancerExamAvailable }
-                                            onChange={ handleChangeIsLiverCancer }>간암검진</option>
-
-                                    <option name="isLungCancerExamAvailable" 
-                                            value={ isLungCancerExamAvailable }
-                                            onChange={ handleChangeIsLungCancer }>폐암검진</option>
-                                </select>
-                            </th>
-                            <td>
-                                 <button type="reset" className="btn-secondary">초기화</button>
-                            </td>
-                            <td>
-                                 <button type="submit" className="btn-primary"
-                                    onClick={ handleClick }>검색</button>
-                            </td>
-                          </tr> 
-                        </tbody> 
-                    </table>                       
                 </form>
             </div>
 

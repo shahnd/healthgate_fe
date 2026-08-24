@@ -42,10 +42,10 @@ const selectHospitalApi = hospitalId => {
 };
 
 // 검진가능 병원 삭제용
-const deleteHospitalApi = id => {
+const deleteHospitalApi = hospitalId => {
 
     const response = axios({
-        url : `${ BASE_URL }/${ id }`,
+        url : `${ BASE_URL }/${ hospitalId }`,
         method : "delete" 
     });
 
@@ -54,13 +54,14 @@ const deleteHospitalApi = id => {
 
 // 검진가능 병원 등록용
 const insertHospitalApi = hospital => {
-
+    
     const response = axios({
         url : `${ BASE_URL }/new`,
         method : "post",
         data : hospital
     });
-
+    
+    console.log(hospital);
      return response
 };
 
@@ -68,7 +69,7 @@ const insertHospitalApi = hospital => {
 const updateHospitalApi = (hospitalId, hospital) => {
 
     const response = axios({
-        url : `${ BASE_URL }/${ hospitalId }`, 
+        url : `${ BASE_URL }/${ hospitalId }/edit`, 
         method : "put",
         data : hospital
     });
