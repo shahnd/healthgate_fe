@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserInfo, useAuthStore } from "../../store/useAuthStore";
 import "../styles/sidebar.css";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Sidebar() {
   const user = useUserInfo();
@@ -208,6 +209,7 @@ export default function Sidebar() {
             시스템
           </NavLink>
         </div>
+        <ModeToggle /> &lt;-- 임시 다크 모드 스위치
       </nav>
 
       <div className="sidebar-user">
