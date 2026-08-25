@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import ReservationCalendar from "../api/ReservationCalendar";
+import ReservationCalendar from "./ReservationCalendar";
 import { useNavigate, useParams } from "react-router-dom";
-import { insertReservationApi, selectDateApi, selectReservationApi } from "../api/consultationApi";
+import { saveReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
 import "../styles/reservationCalendar.css";
 
 export default function ReservationComponent() {
@@ -219,7 +219,7 @@ export default function ReservationComponent() {
 
 
     // 상담 신청 버튼 클릭 시 실행할 이벤트
-    const insertReservation = async e => {
+    const saveReservation = async e => {
         e.preventDefault();
 
         // 유효성 검사
@@ -252,7 +252,7 @@ export default function ReservationComponent() {
 
         try {
    
-            const response = await insertReservationApi(reservationData);
+            const response = await saveReservationApi(reservationData);
             // console.log(response.data);
 
             if(response.data != "") {
@@ -324,7 +324,7 @@ export default function ReservationComponent() {
             <br />
             <div align="right">
                 <button type="submit"
-                        onClick={insertReservation}>
+                        onClick={saveReservation}>
                             {isEditMode ? "수정 완료" : "상담 신청"}
                         </button>
             </div>

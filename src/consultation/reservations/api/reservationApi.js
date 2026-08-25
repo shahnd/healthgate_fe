@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8006/healthgate/consultation";
+const BASE_URL = "http://localhost:8006/healthgate/consultation/reservations";
 
 
 // 예약 목록 조회
 function selectAllReservationApi(scheduledDate) {
     const response = axios({
-        url : `${BASE_URL}/reservations/list`,
+        url : `${BASE_URL}/list`,
         method : "get",
         params : { scheduledDate }
     });
@@ -17,7 +17,7 @@ function selectAllReservationApi(scheduledDate) {
 function selectReservationApi(id) {
 
     const response = axios({
-        url : `${BASE_URL}/reservations/details/${id}`,
+        url : `${BASE_URL}/details/${id}`,
         method : "get"
     });
     return response;
@@ -26,7 +26,7 @@ function selectReservationApi(id) {
 // 예약 신청 전 조회
 function selectDateApi (scheduledDate) {
     const response = axios({
-        url : `${BASE_URL}/reservations/views`,
+        url : `${BASE_URL}/views`,
         method : "get",
         params : { scheduledDate }
     });
@@ -34,9 +34,9 @@ function selectDateApi (scheduledDate) {
 }
 
 // 예약 신청
-function insertReservationApi (consultation) {
+function saveReservationApi (consultation) {
     const response = axios({
-        url : `${BASE_URL}/reservations/save`,
+        url : `${BASE_URL}/save`,
         method : "post",
         data : consultation
     });
@@ -45,7 +45,7 @@ function insertReservationApi (consultation) {
 // 예약 수정
 function updateReservationApi (id, consultation) {
     const response = axios({
-        url : `${BASE_URL}/reservations/save/${id}`,
+        url : `${BASE_URL}/save/${id}`,
         method : "put",
         data : consultation
     });
@@ -55,11 +55,11 @@ function updateReservationApi (id, consultation) {
 // 예약 취소
 function cancelReservationApi (id) {
     const response = axios({
-        url : `${BASE_URL}/reservations/${id}`,
+        url : `${BASE_URL}/${id}`,
         method : "delete"
     });
     return response;
 }
 
-export { selectAllReservationApi, selectReservationApi, selectDateApi, insertReservationApi,
+export { selectAllReservationApi, selectReservationApi, selectDateApi, saveReservationApi,
          updateReservationApi, cancelReservationApi };
