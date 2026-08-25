@@ -4,12 +4,15 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { SidebarProvider } from './components/ui/sidebar'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <ThemeProvider>
       <TooltipProvider>
-        <App />
+        <SidebarProvider>
+          <App />
+        </SidebarProvider>
       </TooltipProvider>
     </ThemeProvider>
   </BrowserRouter>
