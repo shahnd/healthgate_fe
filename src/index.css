@@ -57,11 +57,14 @@
   --color-info: #2563eb;
 }
 
-@theme inline {
+/* =========================
+   shadcn/ui
+   ========================= */
 
+@theme inline {
   --font-heading: var(--font-sans);
 
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-sans: "Geist Variable", sans-serif;
 
   --color-sidebar-ring: var(--sidebar-ring);
 
@@ -141,7 +144,6 @@
 }
 
 :root {
-
   --background: oklch(1 0 0);
 
   --foreground: oklch(0.145 0 0);
@@ -208,7 +210,6 @@
 }
 
 .dark {
-
   --background: oklch(0.145 0 0);
 
   --foreground: oklch(0.985 0 0);
