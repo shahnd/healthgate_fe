@@ -11,12 +11,20 @@ export default function AttendanceListComponent() {
     const [size, setSize] = useState(5);
     const [totalPages, setTotalPages] = useState(0);
 
+    const getToday = () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
     const [searchCondition, setSearchCondition] = useState({
         name: '',
         employeeNumber: '',
         departmentId: '',
         positionId: '',
-        searchDate: '',
+        searchDate: getToday(),
         status: ''
     });
 
@@ -53,6 +61,8 @@ export default function AttendanceListComponent() {
 
 
         getEmployees();
+        const intervalId = setInterval(getEmployees, 5000);
+        return () => clearInterval(intervalId);
 
     }, [page, size, submittedCondition]);
 
@@ -118,6 +128,17 @@ export default function AttendanceListComponent() {
                         ))}
                     </select>
 
+                    <input type="date" name="searchDate" value={searchCondition.searchDate} onChange={handleInputChange}/>
+
+                    <select
+                        name="status"
+                        value={searchCondition.status}
+                        onChange={handleInputChange}>
+                        <option value="">전체</option>
+                        <option value="ATTENDANCE">출근</option>
+                        <option value="DENY">출근거부</option>
+                    </select>
+
                     <button className="btn-primary" type="submit">
                         검색
                     </button>
@@ -134,6 +155,7 @@ export default function AttendanceListComponent() {
                             <th>부서</th>
                             <th>직급</th>
                             <th>이메일</th>
+                            <th>출근시간</th>
                             <th>출근상태</th>
                         </tr>
                     </thead>
@@ -149,6 +171,8 @@ export default function AttendanceListComponent() {
                                 <td>{e.departmentName || "부서 미지정"}</td>
                                 <td>{e.positionName || "직급 미지정"}</td>
                                 <td>{e.email}</td>
+                                <td>{e.clockInAt || "-"}</td>
+                                <td>{e.attendanceStatus}</td>
                             </tr>
                         ))}
                     </tbody>
