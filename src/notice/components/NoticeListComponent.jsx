@@ -6,6 +6,8 @@ import { selectNoticeListApi, searchNoticeListApi } from "../api/NoticeApi";
 
 import NoticeItemComponent from "./NoticeItemComponent";
 
+import '../../common/styles/pagination.css'
+
 export default function NoticeListComponent() {
 
     // 실행할 구문
@@ -223,7 +225,7 @@ export default function NoticeListComponent() {
                </div>
  
                {/* 페이징바 */}
-               <div align="center" className="paging-area">{ pageList }</div>
+               <div className="pagination">{ pageList }</div>
            </div>
         </div>
     );

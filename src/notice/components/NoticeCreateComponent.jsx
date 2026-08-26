@@ -108,7 +108,7 @@ export default function NoticeCreateComponent() {
                                          onClick={ () => {
                                             setNotice({title : "", 
                                                       content : "", 
-                                                      authorId : "admin"});
+                                                      authorId : "HEALTH_ADMIN"});
                                          } }>
                         초기화
                     </button>
