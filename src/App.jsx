@@ -3,7 +3,6 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 
-import Sidebar from "./common/components/Sidebar";
 
 import LoginComponent from "./login/components/LoginComponent";
 import DashboardComponent from "./dashboard/DashboardComponent";
@@ -35,13 +34,16 @@ import CheckupTargetListComponent from "./checkup/components/CheckupTargetListCo
 import CheckupReminderSettingComponent from "./checkup/components/CheckupReminderSettingComponent";
 import CheckupReminderHistoryComponent from "./checkup/components/CheckupReminderHistoryComponent";
 import AttendanceListComponent from "./attendance/components/AttendanceListComponent";
+import { AppSidebar } from "./components/app-sidebar";
+import { SidebarInset } from "./components/ui/sidebar";
+import { SiteHeader } from "./components/site-header";
 
 function App() {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-
-      <main className="min-w-0 flex-1 bg-slate-50">
+    <div className="flex min-h-screen w-full">
+      <AppSidebar />
+      <SidebarInset>
+        <SiteHeader/>
         <Routes>
           {/* 로그인 및 대시보드 */}
           <Route path="/login" element={<LoginComponent />} />
@@ -99,7 +101,8 @@ function App() {
             element={<Navigate to="/checkup/targets" replace />}
           />
         </Routes>
-      </main>
+      </SidebarInset>
+
     </div>
   );
 }
