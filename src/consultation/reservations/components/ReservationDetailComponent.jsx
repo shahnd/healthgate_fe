@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { selectReservationApi, cancelReservationApi } from "../api/consultationApi";
+import { selectReservationApi, cancelReservationApi } from "../api/reservationApi";
 
 
 export default function ReservationDetailComponent() {
@@ -12,10 +12,12 @@ export default function ReservationDetailComponent() {
     const [reservation, setReservation] = useState({
         employee : {
             id : "",
-            name : ""
+            name : "",
+            department : { name : "" },
+            position : { name : "" }
         },
-        id : "",
-        manager : "",
+        id : id,
+        manager : "허준", // 상담사 하드코딩
         reason : "",
         scheduledDate : "",
         scheduledTurn : "",

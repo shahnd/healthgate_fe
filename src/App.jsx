@@ -20,10 +20,12 @@ import HospitalUpdateComponent from "./hospital/components/HospitalUpdateCompone
 
 import NoticeListComponent from "./notice/components/NoticeListComponent";
 
-import ReservationListComponent from './consultation/reservations/components/ReservationListComponent'
-import ReservationComponent from './consultation/reservations/components/ReservationComponent'
+import ReservationListComponent from './consultation/reservations/components/ReservationListComponent';
+import ReservationComponent from './consultation/reservations/components/ReservationComponent';
+import ReservationDetailComponent from './consultation/reservations/components/ReservationDetailComponent';
 import ConsultationListComponent from './consultation/consultations/components/ConsultationListComponent';
-import ReservationDetailComponent from './consultation/reservations/components/ReservationDetailComponent'
+import ConsultationDetailComponent from './consultation/consultations/components/ConsultationDetailComponent';
+import ConsultationComponent from './consultation/consultations/components/ConsultationComponent';
 
 import MyPageComponent from "./login/components/MyPageComponent";
 import BioInputComponent from "./bioinput/components/BioInputComponent";
@@ -72,6 +74,8 @@ function App() {
           <Route path="/consultation/reservation/:id?" element={<ReservationComponent />} />
           <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
           <Route path="/consultation/list" element={<ConsultationListComponent />} />
+          <Route path="/consultation/detail/:id" element={<ConsultationDetailComponent />} />
+          <Route path="/consultation/:id" element={<ConsultationComponent />} />
 
           {/* 건강검진 관리 */}
           <Route

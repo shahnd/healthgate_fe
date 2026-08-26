@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import ListCalendar from "../api/ListCalendar";
+import ListCalendar from "./ListCalendar";
 import { useEffect, useState } from "react";
-import {selectAllReservationApi} from "../api/consultationApi";
+import {selectAllReservationApi} from "../api/reservationApi";
 
 export default function ReservationListComponent() {
 
