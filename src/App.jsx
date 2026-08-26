@@ -56,8 +56,8 @@ function App() {
           {/* 공지사항 */}
           <Route path="/notices/list" element={<NoticeListComponent />} />
           <Route path="/notices/new" element={<NoticeCreateComponent />} />
-          <Route path="/notices/:id" element={<NoticeDetailComponent />} />
-          <Route path="/notices/:id/edit" element={<NoticeUpdateComponent />} />
+          <Route path="/notices/:noticeId" element={<NoticeDetailComponent />} />
+          <Route path="/notices/:noticeId/edit" element={<NoticeUpdateComponent />} />
 
           {/* 직원 관리 */}
           <Route path="/employees" element={<EmployeeListComponent />} />
