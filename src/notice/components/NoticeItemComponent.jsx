@@ -10,11 +10,11 @@ export default function NoticeItemComponent(props) {
 
     // return 구문
     return (
-        <tr onClick={ () =>  { navigate(`/notice/detail/${ item.boticeId }`); } }>
+        <tr onClick={ () =>  { navigate(`/notices/${ item.noticeId }`); } }>
             <td>{ item.noticeId }</td>
             <td>{ item.title }</td>
-            <td>{ item.employee.id }</td>
-            <td>{ item.createDate.substring(0, 10) }</td>
+            <td>{ item.employee.name }</td>
+            <td>{ item.createdAt?.substring(0, 10) }</td>
             <td>{ item.count }</td>
         </tr>
     );
