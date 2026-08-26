@@ -1,43 +1,59 @@
-import '../styles/pagination.css';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 
-export default function Pagination({page, totalPages, onPageChange, pageLimit = 10}) {
+export default function CustomPagination({ page, totalPages, onPageChange, pageLimit = 3 }) {
+  const startPage = Math.floor((page - 1) / pageLimit) * pageLimit + 1;
+  const endPage = Math.min(startPage + pageLimit - 1, totalPages);
 
-    const startPage = Math.floor((page - 1) / pageLimit) * pageLimit + 1
-    const endPage = Math.min(startPage + pageLimit - 1, totalPages);
+  const pageNumbers = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => i + startPage
+  );
 
-    return (
-        <div className="pagination">
-            {page > pageLimit && (
-                <button
-                    onClick={() => onPageChange(startPage - 1)}
-                >
-                    이전
-                </button>
-            )}
+  const handleClick = (e, targetPage) => {
+    e.preventDefault();
+    onPageChange(targetPage);
+  };
 
-            {Array.from(
-                { length: endPage - startPage + 1 },
-                (_, i) => i + startPage
-            ).map((pageNumber) => (
-                <button
-                    key={pageNumber}
-                    className={
-                        page === pageNumber
-                            ? "pagination-active" : ""
-                    }
-                    onClick={() => onPageChange(pageNumber)}
-                >
-                    {pageNumber}
-                </button>
-            ))}
+  return (
+    <Pagination>
+      <PaginationContent>
+        {startPage > 1 && (
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => handleClick(e, endPage - 1)}
+            />
+          </PaginationItem>
+        )}
 
-            {endPage < totalPages && (
-                <button
-                    onClick={() => onPageChange(endPage + 1)}
-                >
-                    다음
-                </button>
-            )}
-        </div>
-    )
+        {pageNumbers.map((pageNumber) => (
+          <PaginationItem key={pageNumber}>
+            <PaginationLink
+              href="#"
+              isActive={page === pageNumber}
+              onClick={(e) => handleClick(e, pageNumber)}
+            >
+              {pageNumber}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+
+        {endPage < totalPages && (
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => handleClick(e, endPage + 1)}
+            />
+          </PaginationItem>
+        )}
+      </PaginationContent>
+    </Pagination>
+  );
 }
