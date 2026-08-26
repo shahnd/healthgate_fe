@@ -2,13 +2,22 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8006/healthgate/consultation";
 
+// 인가 체크
+const getAuthConfig = () => {
+    const token = localStorage.getItem("access_token");
+
+    return {
+        headers : { Authorization : `Bearer ${token}`}
+    };
+};
 
 // 예약 목록 조회
 function selectAllReservationApi(scheduledDate) {
     const response = axios({
         url : `${BASE_URL}/reservations/list`,
         method : "get",
-        params : { scheduledDate }
+        params : { scheduledDate },
+        ...getAuthConfig()
     });
     return response;
 }
@@ -17,8 +26,9 @@ function selectAllReservationApi(scheduledDate) {
 function selectReservationApi(id) {
 
     const response = axios({
-        url : `${BASE_URL}/reservations/details/${id}`,
-        method : "get"
+        url : `${BASE_URL}/details/${id}`,
+        method : "get",
+        ...getAuthConfig()
     });
     return response;
 }
@@ -28,7 +38,8 @@ function selectDateApi (scheduledDate) {
     const response = axios({
         url : `${BASE_URL}/reservations/views`,
         method : "get",
-        params : { scheduledDate }
+        params : { scheduledDate },
+        ...getAuthConfig()
     });
     return response;
 }
@@ -38,7 +49,8 @@ function insertReservationApi (consultation) {
     const response = axios({
         url : `${BASE_URL}/reservations/save`,
         method : "post",
-        data : consultation
+        data : consultation,
+        ...getAuthConfig()
     });
     return response;
 }
@@ -47,7 +59,8 @@ function updateReservationApi (id, consultation) {
     const response = axios({
         url : `${BASE_URL}/reservations/save/${id}`,
         method : "put",
-        data : consultation
+        data : consultation,
+        ...getAuthConfig()
     });
     return response;
 }
@@ -55,8 +68,9 @@ function updateReservationApi (id, consultation) {
 // 예약 취소
 function cancelReservationApi (id) {
     const response = axios({
-        url : `${BASE_URL}/reservations/${id}`,
-        method : "delete"
+        url : `${BASE_URL}/${id}`,
+        method : "delete",
+        ...getAuthConfig()
     });
     return response;
 }
