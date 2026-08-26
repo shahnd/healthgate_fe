@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 
 import { selectNoticeFormApi, updateNoticeApi, BASE_URL } from "../api/NoticeApi";
 
+import { useUserInfo } from "../../store/useAuthStore";
+
 export default function NoticeUpdateComponent() {
 
      // 실행할 구문
@@ -12,6 +14,8 @@ export default function NoticeUpdateComponent() {
 
     let navigate = useNavigate();
 
+    const user = useUserInfo();
+
     // useRef 훅을 통해 input type="file" 요소를 참조할 수 있는 변수 셋팅
     const reupfileRef = useRef(null);
 
@@ -19,8 +23,9 @@ export default function NoticeUpdateComponent() {
     const [notice, setNotice] = useState({noticeId : "",
                                         title : "",
                                         content : "",
-                                        employee : {name : ""}, 
+                                        authorId : user.Id, 
                                         createdAt : "",
+                                        updatedAt : "",
                                         count : "",
                                         status : ""});
     
@@ -95,7 +100,7 @@ export default function NoticeUpdateComponent() {
             formData.append("title", notice.title);
             formData.append("content", notice.content);
 
-            // 기존에 있던 첨부파일의 정보들도 같이 넘길것 (originName, savedName)
+            // 기존에 있던 첨부파일의 정보들도 같이 넘김
 
             if (noticeFile && noticeFile.noticeFileId) {
                 formData.append("nf.noticeFileId", noticeFile.noticeFileId);
@@ -106,11 +111,12 @@ export default function NoticeUpdateComponent() {
             formData.append("nf.extension", noticeFile?.extension);
             formData.append("nf.notice.noticeId", noticeFile?.notices.noticeId)
 
-            // 기존 정보들을 모두 넘길 것 DynamicUpdate..
+            // 기존 정보들을 모두 넘김
             formData.append("createdAt", notice.createdAt);
+            formData.append("updatedAt",notice.updatedAt);
             formData.append("count", notice.count);
             formData.append("status", notice.status);
-            formData.append("employee.name", notice.employee.name);
+            formData.append("authorId", user.Id);
             // > 작성자의 id 만 넘기고 싶으면 "객체명.필드명" 키값으로 넘기면 됨!!
 
             // 새로운 첨부파일 정보도 넘기기
@@ -157,7 +163,7 @@ export default function NoticeUpdateComponent() {
                             <td>
                                 <input type="text" name="title" 
                                                    value={ notice.title }
-                                                   onChange={ handleChange } />
+                                                   onChange={ handleChange } required/>
                             </td>
                         </tr>
                         <tr>
@@ -165,7 +171,7 @@ export default function NoticeUpdateComponent() {
                             <td>
                                 <textarea name="content" 
                                           value={ notice.content }
-                                          onChange={ handleChange }></textarea>
+                                          onChange={ handleChange } required></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -194,6 +200,7 @@ export default function NoticeUpdateComponent() {
                                           onClick={ updateNotice }>
                         수정하기
                     </button>
+                    <button className="btn-secondary" type="button" onClick={() => { navigate("/notices/list");}}>취소</button> 
                 </div>
 
             </form>

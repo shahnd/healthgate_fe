@@ -4,14 +4,19 @@ import { useNavigate } from "react-router-dom";
 
 import { insertNoticeApi } from "../api/NoticeApi";
 
+import { useUserInfo } from "../../store/useAuthStore";
+
 export default function NoticeCreateComponent() {
 
      // 실행할 구문
     let navigate = useNavigate();
 
+    const user = useUserInfo();
+
     // 입력값을 저장할 객체 형식의 State 형 변수 셋팅
     const [notice, setNotice] = useState({title : "", 
-                                          content : ""});
+                                          content : "",
+                                          authorId : user.id});                                  
 
     // input type="file" 의 입력값을 DOM 으로부터 참조해서 가져오기 위한 변수 셋팅
     const upfileRef = useRef(null);
@@ -42,7 +47,7 @@ export default function NoticeCreateComponent() {
 
             formData.append("title", notice.title);
             formData.append("content", notice.content);
-            formData.append("authorId", notice.authorId);
+            formData.append("authorId", user.id);
 
             if(upfile.files.length == 1) {
                 // > 입력받은 파일이 있을 경우
@@ -63,7 +68,8 @@ export default function NoticeCreateComponent() {
 
             } else {
                 // > 공지사항 작성 실패일 경우
-
+                
+                console.log(response.data);
                 alert("공지사항 작성에 실패했습니다.");
             }
 
@@ -84,14 +90,14 @@ export default function NoticeCreateComponent() {
                             <th>제목</th>
                             <td>
                                 <input type="text" name="title" 
-                                       value={ notice.title} onChange={ handleChange }/>
+                                       value={ notice.title } onChange={ handleChange } required/>
                             </td>
                         </tr>
                         <tr>
                             <th>내용</th>
                             <td>
                                  <textarea name="content" value={ notice.content }
-                                           onChange={ handleChange } ></textarea>
+                                           onChange={ handleChange } required ></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -107,12 +113,13 @@ export default function NoticeCreateComponent() {
                     <button type="reset" className="btn-secondary"
                                          onClick={ () => {
                                             setNotice({title : "", 
-                                                      content : "", 
-                                                      authorId : "HEALTH_ADMIN"});
+                                                       content : "",
+                                                       authorId : user.id});
                                          } }>
                         초기화
                     </button>
-                    <button className="btn-secondary" type="button">취소</button> 
+                    <button className="btn-secondary" type="button"
+                              onClick={() => { navigate("/notices/list");} }>취소</button> 
                     <button className="btn-primary" type="submit" 
                             onClick={ insertNotice }>등록</button>
                 </div>
