@@ -70,7 +70,7 @@ export default function EmployeeListComponent() {
 
     return (
         <div className="list-page">
-            <div>
+            <div className="list-header">
                 <h1>직원 조회</h1>
                 <p>직원 리스트 조회</p>
             </div>

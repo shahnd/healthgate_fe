@@ -71,7 +71,7 @@ export default function AttendanceListComponent() {
 
     return (
         <div className="list-page">
-            <div>
+            <div className="list-header">
                 <h1>출근 조회</h1>
                 <p>직원별 출근 현황을 조회합니다.</p>
             </div>
