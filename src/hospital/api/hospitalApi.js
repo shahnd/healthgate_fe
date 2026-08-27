@@ -3,28 +3,13 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8006/healthgate/hospitals";
 
 // 검진가능 병원 검색용+ 조회용 
-const searchHospitalListApi = (cpage, 
-                               name, 
-                               address,
-                               isGeneralExamAvailable,
-                               isStomachCancerExamAvailable,
-                               isColonCancerExamAvailable,
-                               isLiverCancerExamAvailable,
-                               isLungCancerExamAvailable) => {
+const searchHospitalListApi = params => {
 
     const response = axios({
         url : `${ BASE_URL }`,
         method : "get",
-        params : {
-            cpage : cpage,
-            name : name,
-            address : address,
-            isGeneralExamAvailable : isGeneralExamAvailable,
-            isStomachCancerExamAvailable : isStomachCancerExamAvailable, 
-            isColonCancerExamAvailable : isColonCancerExamAvailable,
-            isLiverCancerExamAvailable : isLiverCancerExamAvailable,
-            isLungCancerExamAvailable : isLungCancerExamAvailable
-        }
+        params :  params
+        
     });
 
     return response;
@@ -37,7 +22,7 @@ const selectHospitalApi = hospitalId => {
         url : `${ BASE_URL }/${ hospitalId }`,
         method : "get"
      });
-
+     
      return response;
 };
 
@@ -53,25 +38,24 @@ const deleteHospitalApi = hospitalId => {
 };
 
 // 검진가능 병원 등록용
-const insertHospitalApi = hospital => {
+const insertHospitalApi = params => {
     
     const response = axios({
         url : `${ BASE_URL }/new`,
         method : "post",
-        data : hospital
+        data : params
     });
-    
-    console.log(hospital);
+
      return response
 };
 
 // 검진가능 병원 수정용 
-const updateHospitalApi = (hospitalId, hospital) => {
+const updateHospitalApi = (hospitalId, params) => {
 
     const response = axios({
-        url : `${ BASE_URL }/${ hospitalId }/edit`, 
+        url : `${ BASE_URL }/${ hospitalId }`, 
         method : "put",
-        data : hospital
+        data : params
     });
 
     return response;
