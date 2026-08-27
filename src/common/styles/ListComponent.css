@@ -3,26 +3,7 @@
     flex-direction: column;
     gap: 1.5rem;
     width: 100%;
-    padding: 1.5rem 1rem 2rem;
-}
-
-.list-header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-}
-
-.list-header h1 {
-    margin: 0;
-    color: var(--foreground);
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.list-header p {
-    margin: 0;
-    color: var(--muted-foreground);
-    font-size: 0.875rem;
+    padding: 1.5rem 2rem 2rem;
 }
 
 .list-toolbar {
@@ -41,8 +22,8 @@
 }
 
 .list-toolbar input {
-    width: 9rem;
-    flex: 0 0 9rem;
+    width: 11rem;
+    flex: 0 0 11rem;
 }
 
 .list-table-wrapper {
@@ -54,7 +35,15 @@
 }
 
 .list-table-wrapper table {
-    min-width: 680px;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.list-table-wrapper th,
+.list-table-wrapper td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .list-table-wrapper thead {
@@ -98,23 +87,4 @@
     color: var(--muted-foreground);
     font-size: 0.8125rem;
     text-align: left;
-}
-
-@media (max-width: 768px) {
-    .list-page {
-        padding: 1rem 0.75rem 1.5rem;
-    }
-
-    .list-toolbar {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .list-toolbar > div {
-        width: 100%;
-    }
-
-    .list-table-wrapper {
-        overflow-x: auto;
-    }
 }

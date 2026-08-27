@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import MetricLineChart from "../../common/components/MetricLineChart";
 import "@/common/styles/DetailComponent.css";
 import { Button } from "@/components/ui/button";
+import "@/common/styles/Common.css"
+
 
 export default function EmployeeDetailComponent() {
 
@@ -31,16 +33,23 @@ export default function EmployeeDetailComponent() {
                     `http://localhost:8006/healthgate/biometrics/${id}`
                 );
 
-                const formatted = response2.data.data.map((d) => ({
+                const formatted = response2.data.data.map((d) => {
+                const dateObj = new Date(d.measuredAt);
+                const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+                const dd = String(dateObj.getDate()).padStart(2, "0");
+
+                return {
                     ...d,
-                    time: new Date(d.measuredAt).toLocaleTimeString(
-                        "ko-KR",
-                        {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }
-                    ),
-                }));
+                    time: `${mm}/${dd}`, // "08/27"
+                    fullTime: new Date(d.measuredAt).toLocaleString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    }),
+                };
+                });
 
                 setBioData(formatted);
 
@@ -74,21 +83,20 @@ export default function EmployeeDetailComponent() {
 
     return (
         <div className="detail-page">
-            <header>
-                <div>
-                    <h1>{data.name || "직원 상세"}</h1>
-                    <p>사번 {data.employeeNumber}</p>
-                </div>
+            <div className="page-header">
+                <h1>{data.name || "직원 상세"}</h1>
+                <p>사번 {data.employeeNumber}</p>
+            </div>
 
-                <div>
-                    <Button onClick={() => navigate(`/employees/${id}/edit`)}>
-                        편집
-                    </Button>
-                    <Button onClick={handleDelete}>
-                        삭제
-                    </Button>
-                </div>
-            </header>
+            <div className="detail-actions">
+                <Button className="primary-button" onClick={() => navigate(`/employees/${id}/edit`)}>
+                    편집
+                </Button>
+                <Button className="primary-button" onClick={handleDelete}>
+                    삭제
+                </Button>
+            </div>
+
 
             <nav aria-label="직원 상세 메뉴">
                 <button
