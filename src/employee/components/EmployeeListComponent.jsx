@@ -2,171 +2,195 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../common/components/Pagination";
+import { useServerFilter } from "@/common/hooks/useServerFilter";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FilterIcon, SearchIcon, XIcon } from "lucide-react";
+import "@/common/styles/ActionButton.css";
+import "@/common/styles/ListComponent.css";
+
+const EMPTY_CONDITION = {
+    name: "",
+    employeeNumber: "",
+    departmentId: "",
+    positionId: "",
+};
 
 export default function EmployeeListComponent() {
-
     const navigate = useNavigate();
 
     const [employees, setEmployees] = useState([]);
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(5);
+    const [size, setSize] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
-
-    const [searchCondition, setSearchCondition] = useState({
-        name: '',
-        employeeNumber: '',
-        departmentId: '',
-        positionId: '',
-    });
-
-    const [submittedCondition, setSubmittedCondition] = useState(searchCondition);
 
     const [dlist, setDlist] = useState([]);
     const [plist, setPlist] = useState([]);
 
+    const {
+        condition,
+        draftCondition,
+        filterOpen,
+        setFilterOpen,
+        handleDraftChange,
+        handleImmediateChange,
+        submitDraft,
+        reset,
+    } = useServerFilter(EMPTY_CONDITION);
+
+    // 검색 조건이 바뀌면 1페이지로 리셋
+    useEffect(() => {
+        setPage(1);
+    }, [condition]);
 
     useEffect(() => {
         const getEmployees = async () => {
-
             try {
-                const response = await axios.get('http://localhost:8006/healthgate/employees', {
-                    params: {
-                        page: page,
-                        size: size,
-                        ...submittedCondition
-                    }
-                });
-                const response2 = await axios.get('http://localhost:8006/healthgate/employees/init')
-                setDlist(response2.data.data.departmentList);
-                setPlist(response2.data.data.positionList);
+                const [listRes, initRes] = await Promise.all([
+                    axios.get("http://localhost:8006/healthgate/employees", {
+                        params: { page, size, ...condition },
+                    }),
+                    axios.get("http://localhost:8006/healthgate/employees/init"),
+                ]);
 
-                setEmployees(response.data.data.content);
-                setTotalPages(response.data.data.totalPages);
-                console.log(response.data.data);
-    
-            } catch(error) {
+                setEmployees(listRes.data.data.content);
+                setTotalPages(listRes.data.data.totalPages);
+                setDlist(initRes.data.data.departmentList);
+                setPlist(initRes.data.data.positionList);
+            } catch (error) {
                 console.log("직원 조회 통신 실패");
             }
-
-        }
-
+        };
 
         getEmployees();
-
-    }, [page, size, submittedCondition]);
-
-    const handleInputChange = e => {
-        const { name, value } = e.target;
-        setSearchCondition(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSearchSubmit = e => {
-        e.preventDefault();
-        setPage(1);
-        setSubmittedCondition(searchCondition);
-    }
+    }, [page, size, condition]);
 
     return (
-        <div className="page">
-            <h1 className="page-title">직원 리스트</h1>
-
-            {/* 검색 */}
-            <div className="card">
-                <form onSubmit={handleSearchSubmit} className="search-form">
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="이름 검색"
-                        value={searchCondition.name}
-                        onChange={handleInputChange}
-                    />
-
-                    <input
-                        type="text"
-                        name="employeeNumber"
-                        placeholder="사번 검색"
-                        value={searchCondition.employeeNumber}
-                        onChange={handleInputChange}
-                    />
-
-                    <select
-                        name="positionId"
-                        value={searchCondition.positionId}
-                        onChange={handleInputChange}
-                    >
-                        <option value="">직급을 선택하세요</option>
-                        {plist.map((p) => (
-                            <option key={p.id} value={p.id}>
-                                {p.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <select
-                        name="departmentId"
-                        value={searchCondition.departmentId}
-                        onChange={handleInputChange}
-                    >
-                        <option value="">부서를 선택하세요</option>
-                        {dlist.map((d) => (
-                            <option key={d.id} value={d.id}>
-                                {d.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <button className="btn-primary" type="submit">
-                        검색
-                    </button>
-                </form>
+        <div className="list-page">
+            <div className="list-header">
+                <h1>직원 조회</h1>
+                <p>직원 리스트 조회</p>
             </div>
 
-            {/* 직원 목록 */}
-            <div className="card">
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>사번</th>
-                            <th>이름</th>
-                            <th>부서</th>
-                            <th>직급</th>
-                            <th>이메일</th>
-                        </tr>
-                    </thead>
+            <div className="list-toolbar">
+                <div>
+                    <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+                        <PopoverTrigger
+                            render={
+                                <Button variant="outline" size="sm">
+                                    <FilterIcon />
+                                    이름/사번
+                                </Button>
+                            }
+                        />
 
-                    <tbody>
-                        {employees.map((e) => (
-                            <tr
-                                key={e.id}
-                                onClick={() => navigate(`/employees/${e.id}`)}
-                            >
-                                <td>{e.employeeNumber}</td>
-                                <td>{e.name}</td>
-                                <td>{e.departmentName || "부서 미지정"}</td>
-                                <td>{e.positionName || "직급 미지정"}</td>
-                                <td>{e.email}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        <PopoverContent align="start" className="w-[280px]">
+                            <PopoverHeader>
+                                <PopoverTitle>텍스트 검색</PopoverTitle>
+                            </PopoverHeader>
 
-                {/* 등록 버튼 */}
-                <div className="action-area">
-                    <button
-                        className="btn-primary"
-                        type="button"
-                        onClick={() => navigate("/employees/new")}
+                            <form onSubmit={submitDraft} className="flex flex-col gap-3">
+                                <Input
+                                    name="name"
+                                    placeholder="이름"
+                                    value={draftCondition.name}
+                                    onChange={handleDraftChange}
+                                />
+                                <Input
+                                    name="employeeNumber"
+                                    placeholder="사번"
+                                    value={draftCondition.employeeNumber}
+                                    onChange={handleDraftChange}
+                                />
+
+                                <div className="flex justify-end gap-2 pt-2">
+                                    <Button type="submit">
+                                        <SearchIcon />
+                                        적용
+                                    </Button>
+                                </div>
+                            </form>
+                        </PopoverContent>
+                    </Popover>
+
+                    <Select
+                        value={String(condition.positionId)}
+                        onValueChange={(value) => handleImmediateChange("positionId", value)}
                     >
-                        직원 등록
-                    </button>
+                        <SelectTrigger className="w-[140px]" size="sm">
+                            <SelectValue placeholder="직급 전체" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="">전체 직급</SelectItem>
+                                {plist.map((position) => (
+                                    <SelectItem key={position.id} value={String(position.id)}>
+                                        {position.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Select
+                        value={String(condition.departmentId)}
+                        onValueChange={(value) => handleImmediateChange("departmentId", value)}
+                    >
+                        <SelectTrigger className="w-[140px]" size="sm">
+                            <SelectValue placeholder="부서 전체" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="">전체 부서</SelectItem>
+                                {dlist.map((department) => (
+                                    <SelectItem key={department.id} value={String(department.id)}>
+                                        {department.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Button type="button" variant="outline" size="sm" onClick={reset}>
+                        <XIcon />
+                        초기화
+                    </Button>
                 </div>
-                
-                <Pagination page={page} totalPages={totalPages} onPageChange={setPage}/>
 
+                <Button size="sm" onClick={() => navigate("/employees/new")} className="primary-button">
+                    직원 등록
+                </Button>
             </div>
+
+            <div className="list-table-wrapper">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[100px]">사번</TableHead>
+                            <TableHead>이름</TableHead>
+                            <TableHead>부서</TableHead>
+                            <TableHead>직급</TableHead>
+                            <TableHead className="text-right">이메일</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {employees.map((e) => (
+                            <TableRow key={e.id} onClick={() => navigate(`/employees/${e.id}`)}>
+                                <TableCell className="font-medium">{e.employeeNumber}</TableCell>
+                                <TableCell>{e.name}</TableCell>
+                                <TableCell>{e.departmentName || "부서 미지정"}</TableCell>
+                                <TableCell>{e.positionName || "직급 미지정"}</TableCell>
+                                <TableCell className="text-right">{e.email}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
     );
 }

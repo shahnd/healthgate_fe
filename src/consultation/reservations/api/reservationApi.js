@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8006/healthgate/consultation";
+const BASE_URL = "http://localhost:8006/healthgate/consultation/reservations";
 
 // 인가 체크
 const getAuthConfig = () => {
@@ -14,7 +14,7 @@ const getAuthConfig = () => {
 // 예약 목록 조회
 function selectAllReservationApi(scheduledDate) {
     const response = axios({
-        url : `${BASE_URL}/reservations/list`,
+        url : `${BASE_URL}/list`,
         method : "get",
         params : { scheduledDate },
         ...getAuthConfig()
@@ -36,7 +36,7 @@ function selectReservationApi(id) {
 // 예약 신청 전 조회
 function selectDateApi (scheduledDate) {
     const response = axios({
-        url : `${BASE_URL}/reservations/views`,
+        url : `${BASE_URL}/views`,
         method : "get",
         params : { scheduledDate },
         ...getAuthConfig()
@@ -45,9 +45,9 @@ function selectDateApi (scheduledDate) {
 }
 
 // 예약 신청
-function insertReservationApi (consultation) {
+function saveReservationApi (consultation) {
     const response = axios({
-        url : `${BASE_URL}/reservations/save`,
+        url : `${BASE_URL}/save`,
         method : "post",
         data : consultation,
         ...getAuthConfig()
@@ -57,7 +57,7 @@ function insertReservationApi (consultation) {
 // 예약 수정
 function updateReservationApi (id, consultation) {
     const response = axios({
-        url : `${BASE_URL}/reservations/save/${id}`,
+        url : `${BASE_URL}/save/${id}`,
         method : "put",
         data : consultation,
         ...getAuthConfig()
@@ -75,5 +75,5 @@ function cancelReservationApi (id) {
     return response;
 }
 
-export { selectAllReservationApi, selectReservationApi, selectDateApi, insertReservationApi,
+export { selectAllReservationApi, selectReservationApi, selectDateApi, saveReservationApi,
          updateReservationApi, cancelReservationApi };

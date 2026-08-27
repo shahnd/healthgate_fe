@@ -3,7 +3,6 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 
-import Sidebar from "./common/components/Sidebar";
 
 import LoginComponent from "./login/components/LoginComponent";
 import DashboardComponent from "./dashboard/DashboardComponent";
@@ -19,11 +18,16 @@ import HospitalDetailComponent from "./hospital/components/HospitalDetailCompone
 import HospitalUpdateComponent from "./hospital/components/HospitalUpdateComponent";
 
 import NoticeListComponent from "./notice/components/NoticeListComponent";
+import NoticeCreateComponent from "./notice/components/NoticeCreateComponent";
+import NoticeDetailComponent from "./notice/components/NoticeDetailComponent";
+import NoticeUpdateComponent from "./notice/components/NoticeUpdateComponent";
 
-import ReservationListComponent from './consultation/reservations/components/ReservationListComponent'
-import ReservationComponent from './consultation/reservations/components/ReservationComponent'
+import ReservationListComponent from './consultation/reservations/components/ReservationListComponent';
+import ReservationComponent from './consultation/reservations/components/ReservationComponent';
+import ReservationDetailComponent from './consultation/reservations/components/ReservationDetailComponent';
 import ConsultationListComponent from './consultation/consultations/components/ConsultationListComponent';
-import ReservationDetailComponent from './consultation/reservations/components/ReservationDetailComponent'
+import ConsultationDetailComponent from './consultation/consultations/components/ConsultationDetailComponent';
+import ConsultationComponent from './consultation/consultations/components/ConsultationComponent';
 
 import MyPageComponent from "./login/components/MyPageComponent";
 import BioInputComponent from "./bioinput/components/BioInputComponent";
@@ -33,13 +37,16 @@ import CheckupTargetListComponent from "./checkup/components/CheckupTargetListCo
 import CheckupReminderSettingComponent from "./checkup/components/CheckupReminderSettingComponent";
 import CheckupReminderHistoryComponent from "./checkup/components/CheckupReminderHistoryComponent";
 import AttendanceListComponent from "./attendance/components/AttendanceListComponent";
+import { AppSidebar } from "./components/app-sidebar";
+import { SidebarInset } from "./components/ui/sidebar";
+import { SiteHeader } from "./components/site-header";
 
 function App() {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-
-      <main className="min-w-0 flex-1 bg-slate-50">
+    <div className="flex min-h-screen w-full">
+      <AppSidebar />
+      <SidebarInset>
+        <SiteHeader/>
         <Routes>
           {/* 로그인 및 대시보드 */}
           <Route path="/login" element={<LoginComponent />} />
@@ -56,7 +63,10 @@ function App() {
           <Route path="/hospitals/:id/edit" element={<HospitalUpdateComponent />} />
 
           {/* 공지사항 */}
-          <Route path="/notice/list" element={<NoticeListComponent />} />
+          <Route path="/notices/list" element={<NoticeListComponent />} />
+          <Route path="/notices/new" element={<NoticeCreateComponent />} />
+          <Route path="/notices/:noticeId" element={<NoticeDetailComponent />} />
+          <Route path="/notices/:noticeId/edit" element={<NoticeUpdateComponent />} />
 
           {/* 직원 관리 */}
           <Route path="/employees" element={<EmployeeListComponent />} />
@@ -72,6 +82,8 @@ function App() {
           <Route path="/consultation/reservation/:id?" element={<ReservationComponent />} />
           <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
           <Route path="/consultation/list" element={<ConsultationListComponent />} />
+          <Route path="/consultation/detail/:id" element={<ConsultationDetailComponent />} />
+          <Route path="/consultation/:id" element={<ConsultationComponent />} />
 
           {/* 건강검진 관리 */}
           <Route
@@ -95,7 +107,8 @@ function App() {
             element={<Navigate to="/checkup/targets" replace />}
           />
         </Routes>
-      </main>
+      </SidebarInset>
+
     </div>
   );
 }

@@ -167,7 +167,7 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.notices ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/notice/list">공지사항 조회</NavLink></li>
+                <li><NavLink to="/notices/list">공지사항 조회</NavLink></li>
               </ul>
             </div>
           </div>

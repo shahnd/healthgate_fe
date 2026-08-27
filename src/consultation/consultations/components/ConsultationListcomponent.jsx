@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { selectConsultationListApi } from "../api/consultationApi";
 import { useAuthStore } from "../../../store/useAuthStore";
 
-export default function ConsultationListcomponent() {
+export default function ConsultationListComponent() {
 
     // ============================ 객체 및 보조 함수
     let navigate = useNavigate();
