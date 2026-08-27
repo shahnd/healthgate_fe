@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserInfo, useAuthStore } from "../../store/useAuthStore";
 import "../styles/sidebar.css";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Sidebar() {
   const user = useUserInfo();
@@ -58,7 +59,7 @@ export default function Sidebar() {
           </NavLink>
 
           <NavLink
-            to="/profile"
+            to="/attendance"
             className={({ isActive }) =>
               `sidebar-menu-item ${isActive ? "active" : ""}`
             }
@@ -140,7 +141,7 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.hospitals ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/hospital/list">병원 조회</NavLink></li>
+                <li><NavLink to="/hospitals/list">병원 조회</NavLink></li>
               </ul>
             </div>
           </div>
@@ -166,7 +167,7 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.notices ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/notice/list">공지사항 조회</NavLink></li>
+                <li><NavLink to="/notices/list">공지사항 조회</NavLink></li>
               </ul>
             </div>
           </div>
@@ -208,6 +209,7 @@ export default function Sidebar() {
             시스템
           </NavLink>
         </div>
+        <ModeToggle /> &lt;-- 임시 다크 모드 스위치
       </nav>
 
       <div className="sidebar-user">
