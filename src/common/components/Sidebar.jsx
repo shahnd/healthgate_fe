@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserInfo, useAuthStore } from "../../store/useAuthStore";
 import "../styles/sidebar.css";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Sidebar() {
   const user = useUserInfo();
@@ -27,6 +28,7 @@ export default function Sidebar() {
     localStorage.removeItem("access_token");
     logout();
     alert("로그아웃 되었습니다.");
+    navigate("/login");
   };
 
   return (
@@ -57,7 +59,7 @@ export default function Sidebar() {
           </NavLink>
 
           <NavLink
-            to="/profile"
+            to="/attendance"
             className={({ isActive }) =>
               `sidebar-menu-item ${isActive ? "active" : ""}`
             }
@@ -114,7 +116,10 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.checkups ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/checkup/list">건강검진 대상자 조회</NavLink></li>
+                <li><NavLink to="/checkup/statistics">검진 완료율 통계</NavLink></li>
+                <li><NavLink to="/checkup/targets">검진 대상자 목록</NavLink></li>
+                <li><NavLink to="/checkup/reminder-settings">자동 알림 설정</NavLink></li>
+                <li><NavLink to="/checkup/reminders/history">알림 발송 이력</NavLink></li>
               </ul>
             </div>
           </div>
@@ -162,7 +167,7 @@ export default function Sidebar() {
 
             <div className={`sidebar-submenu-wrapper ${openMenus.notices ? "open" : ""}`}>
               <ul className="sidebar-submenu">
-                <li><NavLink to="/notice/list">공지사항 조회</NavLink></li>
+                <li><NavLink to="/notices/list">공지사항 조회</NavLink></li>
               </ul>
             </div>
           </div>
@@ -204,6 +209,7 @@ export default function Sidebar() {
             시스템
           </NavLink>
         </div>
+        <ModeToggle /> &lt;-- 임시 다크 모드 스위치
       </nav>
 
       <div className="sidebar-user">

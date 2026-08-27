@@ -10,7 +10,7 @@
     flex-shrink: 0;
 
     border-right: 1px solid var(--color-border);
-    background: var(--color-surface);
+    background: var(--color-background);
 }
 
 /* 로고 */
@@ -28,20 +28,20 @@
 .sidebar-logo h1 {
     margin: 0;
 
-    color: var(--color-text-main);
+    color: var(--color-primary);
     font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.025em;
 }
 
 .sidebar-logo h1 span {
-    color: var(--color-primary-600);
+    color: var(--color-primary);
 }
 
 .sidebar-logo p {
     margin: 2px 0 0;
 
-    color: var(--color-text-muted);
+    color: var(--color-primary);
     font-size: 11px;
     font-weight: 500;
 }
@@ -59,7 +59,7 @@
     margin: 0 0 8px;
     padding: 0 12px;
 
-    color: var(--color-text-muted);
+    color: var(--color-muted-foreground);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -87,7 +87,7 @@
 
     border-radius: 8px;
 
-    color: var(--color-text-sub);
+    color: var(--color-secondary-foreground);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
@@ -102,28 +102,28 @@
     height: 20px;
     flex-shrink: 0;
 
-    color: var(--color-text-muted);
+    color: var(--color-muted-foreground);
 }
 
 .sidebar-menu-item:hover {
     background: #f1f5f9;
-    color: var(--color-text-main);
+    color: var(--color-primary-foreground);
 }
 
 .sidebar-menu-item:hover .sidebar-icon {
-    color: var(--color-text-sub);
+    color: var(--color-secondary-foreground);
 }
 
 /* 활성 메뉴 */
 
 .sidebar-menu-item.active {
-    background: var(--color-primary-50);
-    color: var(--color-primary-700);
+    background: var(--color-foreground);
+    color: var(--color-background);
     font-weight: 600;
 }
 
 .sidebar-menu-item.active .sidebar-icon {
-    color: var(--color-primary-600);
+    color: var(--color-primary-foreground);
 }
 
 /* 보건 상담 제목 */
@@ -135,13 +135,13 @@
 
     padding: 8px 12px;
 
-    color: var(--color-text-main);
+    color: var(--color-primary);
     font-size: 14px;
     font-weight: 450;
 }
 
 .sidebar-menu-heading .sidebar-icon {
-    color: var(--color-text-muted);
+    color: var(--color-muted-foreground);
 }
 
 /* 서브 메뉴 */
@@ -166,7 +166,7 @@
 
     border-radius: 6px;
 
-    color: var(--color-text-sub);
+    color: var(--color-secondary-foreground);
     font-size: 14px;
     text-decoration: none;
 
@@ -177,7 +177,7 @@
 
 .sidebar-submenu a:hover {
     background: #f1f5f9;
-    color: var(--color-text-main);
+    color: var(--color-primary-foreground);
 }
 
 /* 사용자 영역 */
@@ -205,8 +205,8 @@
 
     border-radius: 50%;
 
-    background: var(--color-primary-100);
-    color: var(--color-primary-700);
+    background: var(--color-background);
+    color: var(--color-primary-foreground);
 
     font-size: 14px;
     font-weight: 700;
@@ -221,7 +221,7 @@
     margin: 0;
     overflow: hidden;
 
-    color: var(--color-text-main);
+    color: var(--color-primary-foreground);
     font-size: 14px;
     font-weight: 600;
 
@@ -230,7 +230,7 @@
 }
 
 .sidebar-user-text span {
-    color: var(--color-text-muted);
+    color: var(--color-muted-foreground);
     font-size: 12px;
 }
 
@@ -247,14 +247,14 @@
     border-radius: 6px;
 
     background: transparent;
-    color: var(--color-text-muted);
+    color: var(--color-muted-foreground);
 
     cursor: pointer;
 }
 
 .sidebar-mypage-button:hover {
     background: #f1f5f9;
-    color: var(--color-text-main);
+    color: var(--color-primary-foreground);
 }
 
 /* 로그인 */
@@ -269,7 +269,7 @@
 
     border-radius: 8px;
 
-    background: var(--color-text-main);
+    background: var(--color-background);
     color: white;
 
     font-size: 14px;
@@ -294,7 +294,7 @@
     border-radius: 8px;
 
     background: transparent;
-    color: var(--color-text-muted);
+    color: var(--color-muted-foreground);
 
     font-size: 12px;
     font-weight: 500;
@@ -307,8 +307,8 @@
 }
 
 .sidebar-logout:hover {
-    background: #fef2f2;
-    color: var(--color-danger);
+    background: var(--color-muted);
+    color: var(--color-destructive);
 }
 
 /* 모바일에서는 숨김 */

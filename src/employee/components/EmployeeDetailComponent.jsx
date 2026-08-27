@@ -2,7 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MetricLineChart from "../../common/components/MetricLineChart";
-import "../styles/EmployeeDetailComponent.css";
+import "@/common/styles/DetailComponent.css";
+import { Button } from "@/components/ui/button";
+import "@/common/styles/Common.css"
+
 
 export default function EmployeeDetailComponent() {
 
@@ -30,16 +33,23 @@ export default function EmployeeDetailComponent() {
                     `http://localhost:8006/healthgate/biometrics/${id}`
                 );
 
-                const formatted = response2.data.data.map((d) => ({
+                const formatted = response2.data.data.map((d) => {
+                const dateObj = new Date(d.measuredAt);
+                const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+                const dd = String(dateObj.getDate()).padStart(2, "0");
+
+                return {
                     ...d,
-                    time: new Date(d.measuredAt).toLocaleTimeString(
-                        "ko-KR",
-                        {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }
-                    ),
-                }));
+                    time: `${mm}/${dd}`, // "08/27"
+                    fullTime: new Date(d.measuredAt).toLocaleString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    }),
+                };
+                });
 
                 setBioData(formatted);
 
@@ -72,135 +82,80 @@ export default function EmployeeDetailComponent() {
 
 
     return (
-        <div className="page employee-detail">
-
-            {/* 페이지 헤더 */}
+        <div className="detail-page">
             <div className="page-header">
-                <div>
-                    <h2>직원 상세</h2>
-                    <p>
-                        {data.name} · {data.employeeNumber}
-                    </p>
-                </div>
+                <h1>{data.name || "직원 상세"}</h1>
+                <p>사번 {data.employeeNumber}</p>
+            </div>
 
-                <div className="detail-actions">
-                    <button
-                        className="btn btn-edit"
-                        onClick={() => navigate(`/employees/${id}/edit`)}
-                    >
-                        편집
-                    </button>
-
-                    <button
-                        className="btn btn-delete"
-                        onClick={handleDelete}
-                    >
-                        삭제
-                    </button>
-                </div>
+            <div className="detail-actions">
+                <Button className="primary-button" onClick={() => navigate(`/employees/${id}/edit`)}>
+                    편집
+                </Button>
+                <Button className="primary-button" onClick={handleDelete}>
+                    삭제
+                </Button>
             </div>
 
 
-            {/* 탭 */}
-            <div className="detail-tabs">
-
+            <nav aria-label="직원 상세 메뉴">
                 <button
-                    className={`detail-tab ${
-                        activeTab === "info" ? "active" : ""
-                    }`}
+                    aria-selected={activeTab === "info"}
                     onClick={() => setActiveTab("info")}
                 >
-                    직원 정보
+                    기본 정보
                 </button>
-
                 <button
-                    className={`detail-tab ${
-                        activeTab === "health" ? "active" : ""
-                    }`}
+                    aria-selected={activeTab === "health"}
                     onClick={() => setActiveTab("health")}
                 >
                     건강 데이터
                 </button>
+            </nav>
 
-            </div>
-
-
-            {/* 탭 내용 */}
-            <div className="tab-content">
-
+            <main>
                 {activeTab === "info" && (
-
-                    <div className="card employee-info-card">
-
-                        <div className="employee-info-grid">
-
-                            <div className="info-item">
-                                <span className="info-label">사번</span>
-                                <span className="info-value">
-                                    {data.employeeNumber}
-                                </span>
+                    <section data-detail-section="info">
+                        <dl>
+                            <div>
+                                <dt>사번</dt>
+                                <dd>{data.employeeNumber}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">이름</span>
-                                <span className="info-value">
-                                    {data.name}
-                                </span>
+                            <div>
+                                <dt>이름</dt>
+                                <dd>{data.name}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">전화번호</span>
-                                <span className="info-value">
-                                    {data.phone}
-                                </span>
+                            <div>
+                                <dt>부서</dt>
+                                <dd>{data.departments?.name || "부서 미지정"}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">이메일</span>
-                                <span className="info-value">
-                                    {data.email}
-                                </span>
+                            <div>
+                                <dt>직급</dt>
+                                <dd>{data.positions?.name || "직급 미지정"}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">부서</span>
-                                <span className="info-value">
-                                    {data.departments?.name}
-                                </span>
+                            <div>
+                                <dt>이메일</dt>
+                                <dd>{data.email || "-"}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">직급</span>
-                                <span className="info-value">
-                                    {data.positions?.name}
-                                </span>
+                            <div>
+                                <dt>전화번호</dt>
+                                <dd>{data.phone || "-"}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">입사일</span>
-                                <span className="info-value">
-                                    {data.hireDate}
-                                </span>
+                            <div>
+                                <dt>입사일</dt>
+                                <dd>{data.hireDate || "-"}</dd>
                             </div>
-
-                            <div className="info-item">
-                                <span className="info-label">재직 상태</span>
-                                <span className="info-value">
-                                    {data.status}
-                                </span>
+                            <div>
+                                <dt>재직 상태</dt>
+                                <dd>{data.status || "-"}</dd>
                             </div>
-
-                        </div>
-
-                    </div>
-
+                        </dl>
+                    </section>
                 )}
 
-
                 {activeTab === "health" && (
-
-                    <div className="chart-grid">
-
+                    <section data-detail-section="health">
+                        {/* 기존 MetricLineChart 3개 */}
                         <MetricLineChart
                             data={bioData}
                             title="심박수"
@@ -210,8 +165,8 @@ export default function EmployeeDetailComponent() {
                                 {
                                     dataKey: "heartRate",
                                     name: "심박수",
-                                    color: "#ef4444"
-                                }
+                                    color: "#ef4444",
+                                },
                             ]}
                         />
 
@@ -224,13 +179,13 @@ export default function EmployeeDetailComponent() {
                                 {
                                     dataKey: "systolicBp",
                                     name: "최고혈압",
-                                    color: "#3b82f6"
+                                    color: "#3b82f6",
                                 },
                                 {
                                     dataKey: "diastolicBp",
                                     name: "최저혈압",
-                                    color: "#60a5fa"
-                                }
+                                    color: "#60a5fa",
+                                },
                             ]}
                         />
 
@@ -243,16 +198,13 @@ export default function EmployeeDetailComponent() {
                                 {
                                     dataKey: "temperature",
                                     name: "체온",
-                                    color: "#3b82f6"
-                                }
+                                    color: "#3b82f6",
+                                },
                             ]}
                         />
-                    </div>
-
+                    </section>
                 )}
-
-            </div>
-
+            </main>
         </div>
     );
 }
