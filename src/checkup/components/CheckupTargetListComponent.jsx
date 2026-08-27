@@ -20,6 +20,17 @@ export default function CheckupTargetListComponent() {
 
   const [year, setYear] = useState(currentYear);
   const [targetList, setTargetList] = useState([]);
+
+  // 현재 화면에서 Excel 업로드가 완료됐는지 여부
+  const [hasUploadedExcel, setHasUploadedExcel] =
+    useState(false);
+
+  /**
+   * 대상자 상태 필터
+   * ALL: 전체 / COMPLETED: 완료 / INCOMPLETE: 미완료
+   */
+  const [statusFilter, setStatusFilter] =
+    useState("ALL");
   const [reminderHistory, setReminderHistory] =
     useState([]);
 
@@ -131,12 +142,12 @@ export default function CheckupTargetListComponent() {
     }, []);
 
   /**
-   * 화면 최초 출력 및 연도 변경 시 조회
+   * 최초 화면에서는 알림 이력만 조회한다.
+   * 대상자 목록은 Excel 업로드 성공 후 조회한다.
    */
   useEffect(() => {
-    loadTargetList();
     loadReminderHistory();
-  }, [loadTargetList, loadReminderHistory]);
+  }, [loadReminderHistory]);
 
   /**
    * 카운트다운 표시를 위해 1초마다 현재 시각 갱신
@@ -300,6 +311,7 @@ export default function CheckupTargetListComponent() {
 
       // 업로드 결과를 반영하기 위해 목록 재조회
       await loadTargetList();
+      setHasUploadedExcel(true);
 
       setUploadNotice({
         message:
@@ -482,6 +494,23 @@ export default function CheckupTargetListComponent() {
       currentYear + 1 - index
   );
 
+  /**
+   * 선택한 상태에 따라 화면에 표시할 대상자를 필터링한다.
+   */
+  const filteredTargetList = targetList.filter(
+    (target) => {
+      if (statusFilter === "COMPLETED") {
+        return target.completed;
+      }
+
+      if (statusFilter === "INCOMPLETE") {
+        return !target.completed;
+      }
+
+      return true;
+    }
+  );
+
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       {/* 페이지 제목 */}
@@ -510,11 +539,11 @@ export default function CheckupTargetListComponent() {
             id="targetCheckupYear"
             value={year}
             onChange={(event) => {
-              setYear(
-                Number(event.target.value)
-              );
-
+              setYear(Number(event.target.value));
+              setStatusFilter("ALL");
               setUploadNotice(null);
+              setTargetList([]);
+              setHasUploadedExcel(false);
             }}
             className="
               rounded-lg border border-slate-300
@@ -535,13 +564,47 @@ export default function CheckupTargetListComponent() {
             )}
           </select>
 
+          <label
+            htmlFor="targetStatusFilter"
+            className="ml-3 font-semibold text-slate-700"
+          >
+            검진 상태
+          </label>
+
+          <select
+            id="targetStatusFilter"
+            value={statusFilter}
+            onChange={(event) =>
+              setStatusFilter(event.target.value)
+            }
+            className="
+              rounded-lg border border-slate-300
+              bg-white px-4 py-2 text-slate-700
+              outline-none focus:border-blue-500
+              focus:ring-2 focus:ring-blue-100
+            "
+          >
+            <option value="ALL">
+              전체
+            </option>
+
+            <option value="COMPLETED">
+              검진 완료
+            </option>
+
+            <option value="INCOMPLETE">
+              검진 미완료
+            </option>
+          </select>
+
           <button
             type="button"
             onClick={async () => {
-              await Promise.all([
-                loadTargetList(),
-                loadReminderHistory(),
-              ]);
+              if (hasUploadedExcel) {
+                await loadTargetList();
+              }
+
+              await loadReminderHistory();
 
               setNow(Date.now());
             }}
@@ -656,8 +719,8 @@ export default function CheckupTargetListComponent() {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              총 {targetList.length}명의 대상자가
-              조회되었습니다.
+              전체 {targetList.length}명 중{" "}
+              {filteredTargetList.length}명이 조회되었습니다.
             </p>
           </div>
 
@@ -719,18 +782,22 @@ export default function CheckupTargetListComponent() {
                     건강검진 대상자를 불러오는 중입니다.
                   </td>
                 </tr>
-              ) : targetList.length ===
+              ) : filteredTargetList.length ===
                 0 ? (
                 <tr>
                   <td
                     colSpan="7"
                     className="px-6 py-14 text-center text-slate-500"
                   >
-                    해당 연도의 검진 대상자가 없습니다.
+                    {!hasUploadedExcel
+                      ? "Excel 파일을 업로드하면 검진 대상자 목록이 표시됩니다."
+                      : targetList.length === 0
+                        ? "업로드한 파일에 해당 연도의 검진 대상자가 없습니다."
+                        : "선택한 상태에 해당하는 대상자가 없습니다."}
                   </td>
                 </tr>
               ) : (
-                targetList.map((target) => {
+                filteredTargetList.map((target) => {
                   const remainingCooldown =
                     getRemainingCooldown(
                       target.checkupId

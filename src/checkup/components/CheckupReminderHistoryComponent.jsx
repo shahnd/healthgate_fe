@@ -12,6 +12,7 @@ export default function CheckupReminderHistoryComponent() {
   const [historyList, setHistoryList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [downloading, setDownloading] = useState(false);
 
   // 화면 표시용 필터
   const [channelFilter, setChannelFilter] =
@@ -57,11 +58,10 @@ export default function CheckupReminderHistoryComponent() {
     loadReminderHistory();
   }, [loadReminderHistory]);
 
-  /**
-   * 선택한 채널과 발송 구분으로 목록 필터링
-   */
-  const filteredHistoryList =
-    historyList.filter((history) => {
+    /**
+     * 선택한 채널과 발송 구분으로 목록 필터링
+     */
+    const filteredHistoryList = historyList.filter((history) => {
       const channelMatched =
         channelFilter === "ALL" ||
         history.channel === channelFilter;
@@ -75,6 +75,70 @@ export default function CheckupReminderHistoryComponent() {
 
       return channelMatched && typeMatched;
     });
+
+    /**
+     * 현재 필터 조건으로 Excel 로그 다운로드
+     */
+    const downloadReminderHistoryExcel = async () => {
+      setDownloading(true);
+      setErrorMessage("");
+
+      try {
+        const params = {};
+
+        if (channelFilter !== "ALL") {
+          params.channel = channelFilter;
+        }
+
+        if (typeFilter === "MANUAL") {
+          params.manual = true;
+        } else if (typeFilter === "AUTOMATIC") {
+          params.manual = false;
+        }
+
+        const response = await axios.get(
+          `${CHECKUP_API_URL}/reminders/history/excel`,
+          {
+            params,
+            responseType: "blob",
+          }
+        );
+
+        const blobUrl = window.URL.createObjectURL(
+          new Blob([response.data])
+        );
+
+        const downloadLink = document.createElement("a");
+
+        const today = new Date()
+          .toISOString()
+          .slice(0, 10)
+          .replaceAll("-", "");
+
+        downloadLink.href = blobUrl;
+        downloadLink.download =
+          `건강검진_알림발송이력_${today}.xlsx`;
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error(
+          "알림 발송 이력 Excel 다운로드 실패:",
+          error
+        );
+
+        setErrorMessage(
+          "알림 발송 이력 Excel 파일을 다운로드하지 못했습니다."
+        );
+      } finally {
+        setDownloading(false);
+      }
+    };
+
+ 
 
   return (
     <div className="min-h-screen bg-slate-50 p-8">
@@ -182,6 +246,24 @@ export default function CheckupReminderHistoryComponent() {
             "
           >
             {loading ? "조회 중..." : "새로고침"}
+          </button>
+
+          <button
+            type="button"
+            onClick={downloadReminderHistoryExcel}
+            disabled={downloading || loading}
+            className="
+              rounded-lg !bg-emerald-600
+              px-5 py-2 font-semibold
+              !text-white transition
+              hover:!bg-emerald-700
+              disabled:cursor-not-allowed
+              disabled:!bg-slate-400
+            "
+          >
+            {downloading
+              ? "다운로드 중..."
+              : "Excel 다운로드"}
           </button>
         </div>
       </section>
