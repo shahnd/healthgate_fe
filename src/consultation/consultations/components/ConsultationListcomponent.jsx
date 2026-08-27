@@ -1,11 +1,17 @@
 import { useNavigate } from "react-router-dom"
 import { useEffect, useMemo, useState } from "react";
 import { selectConsultationListApi } from "../api/consultationApi";
+import { useAuthStore } from "../../../store/useAuthStore";
 
 export default function ConsultationListComponent() {
 
     // ============================ 객체 및 보조 함수
     let navigate = useNavigate();
+    // 유저 정보
+    const authStore = useAuthStore();
+    const user = authStore?.user;
+    const role = user?.role;
+    const loginUserId = user?.id;
 
     // 오늘 날짜 객체
     const today = new Date();
@@ -65,10 +71,26 @@ export default function ConsultationListComponent() {
         "EXPIRED" : "취소"
     };
 
+    // 상태별 색상 매핑
+    const statusColorMap = {
+        "RESERVED": "#919191", // 미완료/예약 (주황빛 등)
+        "FINISHED": "#27ae60", // 완료 (초록빛)
+        "EXPIRED": "#e74c3c",  // 취소 (붉은빛)
+    };
+    
     // 상태값 -> 한글 변환
     const formatStatus = (status) => {
         return statusMap[status] || status;
     }
+
+    // 한글 변환 + 색상 적용
+    const formatStatusWithColor = (status) => {
+        return (
+            <span style={{ color: statusColorMap[status] || "#000000", fontWeight: "bold" }}>
+                { formatStatus(status) }
+            </span>
+        );
+    };
 
     // 시작 끝 차이 계산
     const monthDiff = (startStr, endStr) => {
@@ -118,8 +140,21 @@ export default function ConsultationListComponent() {
     const selectConsultationList = async () => {
         try {
 
-            const response = await selectConsultationListApi();
-            setConsultationList(response.data);
+            const response = await selectConsultationListApi(startMonth, endMonth);
+            console.log("통신 후 원본 데이터 : ", response.data);
+            console.log("현재 role : ", role, " / 내 ID : ", loginUserId);
+
+            let items = response.data;
+
+            // 권한 체크
+            if (role !== "HEALTH_ADMIN") {
+                console.log("관리자 아니다? 필터링");
+
+                // 상담사 아닐 경우 본인 것만 조회
+                items = items.filter((item) => item.employee?.id === loginUserId);
+            }
+
+            setConsultationList(items);
         } catch (error) {
             console.log("상담 목록 조회 통신 실패" + error);
         }
@@ -127,8 +162,11 @@ export default function ConsultationListComponent() {
 
     // 페이지 최초 진입 - 상담 목록 조회
     useEffect(() => {
-        selectConsultationList();
-    }, []);
+        // loginUserId가 존재할 때만 API를 호출하도록 방어 코드 추가
+        if (loginUserId !== undefined && loginUserId !== null) {
+            selectConsultationList();
+        }
+    }, [role, loginUserId]);
 
     // 검색 버튼 클릭 시 실행
     const searchConsultation = e => {
@@ -258,19 +296,29 @@ export default function ConsultationListComponent() {
                     </tr>
                 </thead>
                 <tbody align="center">
-                    { filteredList.map((item, index) => {
-                        return(
-                            <tr key={ index }
-                                onClick={() => { navigate(`/consultation/detail/${item.id}`); }}>
-                                <td>{ item.id }</td>
-                                <td>{ item.employee?.name }</td>
-                                <td>{ item.employee?.departments?.name }</td>
-                                <td>{ item.scheduledDate }</td>
-                                <td>{ formatScheduledTurn(item.scheduledTurn) }</td>
-                                <td><b>{ formatStatus(item.status) }</b></td>
+                    { 
+                        filteredList.length === 0 ? (
+                            <tr>
+                                <td colSpan={ 6 } style={{ color : "#888888" }}>
+                                    조회된 내용이 없습니다.
+                                </td>
                             </tr>
+                        ) : (
+                            filteredList.map((item, index) => {
+                                return(
+                                    <tr key={ index }
+                                        onClick={() => { navigate(`/consultation/detail/${item.id}`); }}>
+                                        <td>{ item.id }</td>
+                                        <td>{ item.employee?.name }</td>
+                                        <td>{ item.employee?.departments?.name }</td>
+                                        <td>{ item.scheduledDate }</td>
+                                        <td>{ formatScheduledTurn(item.scheduledTurn) }</td>
+                                        <td><b>{ formatStatusWithColor(item.status) }</b></td>
+                                    </tr>
+                                )
+                            })
                         )
-                    }) }
+                    }
                 </tbody>
             </table>
 
