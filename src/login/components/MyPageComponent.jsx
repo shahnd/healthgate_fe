@@ -2,10 +2,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useUserInfo } from "../../store/useAuthStore";
 import "@/common/styles/DetailComponent.css";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function MyPageComponent() {
     const user = useUserInfo();
     const [data, setData] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getEmployee = async () => {
@@ -37,7 +40,11 @@ export default function MyPageComponent() {
                     <p>{data.name} | {data.employeeNumber}</p>
                 </div>
 
+                <div>
+                    <Button onClick={() => navigate('/mypage/password')}>비밀번호 변경</Button>
+                </div>
             </header>
+
 
             <main>
                 <section data-detail-section="info">

@@ -9,6 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
+import { ModeToggle } from "./mode-toggle";
 
 const breadcrumbMap = {
   "/dashboard": ["대시보드"],
@@ -64,7 +65,7 @@ export function SiteHeader() {
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex w-full items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
 
         <Separator
@@ -91,6 +92,10 @@ export function SiteHeader() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+
+        <div className="flex-1 flex justify-end items-center pl-4">
+            <ModeToggle/>
+        </div>
       </div>
     </header>
   );

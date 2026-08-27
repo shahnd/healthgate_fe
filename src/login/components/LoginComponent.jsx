@@ -56,7 +56,7 @@ export default function LoginComponent() {
     };
 
     return (
-        <div className="grid min-h-screen place-items-center">
+        <div className="grid min-h-screen w-full place-items-center">
             <LoginForm
                 formRef={formRef}
                 onSubmit={handleLogin}
