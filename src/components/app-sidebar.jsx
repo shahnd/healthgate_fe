@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useUserInfo } from "@/store/useAuthStore"
 import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon } from "lucide-react"
+import { ModeToggle } from "./mode-toggle"
 
 
 const data = {

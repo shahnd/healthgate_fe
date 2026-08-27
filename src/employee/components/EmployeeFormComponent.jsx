@@ -46,6 +46,7 @@ export default function EmployeeFormComponent({
                             value={formData.employeeNumber || ""}
                             onChange={onChange}
                             required
+                            readOnly={!isCreate}
                         />
                     </div>
 
