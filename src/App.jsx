@@ -44,8 +44,8 @@ function App() {
           {/* 병원 관리 */}
           <Route path="/hospitals/list" element={<HospitalListComponent />} />
           <Route path="/hospitals/new" element={<HospitalCreateComponent />} />
-          <Route path="/hospitals/:id" element={<HospitalDetailComponent />} />
-          <Route path="/hospitals/:id/edit" element={<HospitalUpdateComponent />} />
+          <Route path="/hospitals/:hospitalId" element={<HospitalDetailComponent />} />
+          <Route path="/hospitals/:hospitalId/edit" element={<HospitalUpdateComponent />} />
 
           {/* 공지사항 */}
           <Route path="/notice/list" element={<NoticeListComponent />} />
