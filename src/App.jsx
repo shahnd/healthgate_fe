@@ -42,6 +42,7 @@ import { SidebarInset } from "./components/ui/sidebar";
 import { SiteHeader } from "./components/site-header";
 import PrivateRoute from "./common/components/PrivateRoute";
 import ChangePasswordComponent from "./login/components/ChangePasswordComponent";
+import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage";
 
 function App() {
   const location = useLocation();
@@ -72,6 +73,7 @@ function App() {
             <Route path="/mypage/password" element={<ChangePasswordComponent/>} />
             <Route path="/attendance" element={<AttendanceListComponent/>}/>
             <Route path="/bioinput" element={<BioInputComponent/>} />
+            <Route path="/safety-briefings/today" element={<TodaySafetyBriefingPage />} />
 
             {/* 공지사항 */}
             <Route path="/notices/list" element={<NoticeListComponent />} />
