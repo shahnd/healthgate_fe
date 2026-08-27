@@ -23,7 +23,8 @@ export default function HospitalDetailComponent() {
                                             isColonCancerExamAvailable : false,
                                             isLiverCancerExamAvailable : false,
                                             isLungCancerExamAvailable : false,
-                                            createdAt : ""});
+                                            createdAt : "",
+                                            status : ""});
 
     useEffect(() => {
 
@@ -33,7 +34,7 @@ export default function HospitalDetailComponent() {
 
                 const response = await selectHospitalApi(hospitalId);
 
-                // console.log(response.data);
+                 console.log(response.data);
 
                 if(response.data != "") {
                     // > 조회된 내용이 있다면
@@ -65,8 +66,6 @@ export default function HospitalDetailComponent() {
         try {
 
             const response = await deleteHospitalApi(hospitalId);
-
-            // console.log(response.data);
 
             if(response.data == "success") {
                 // > 삭제 성공일 경우
@@ -108,11 +107,48 @@ export default function HospitalDetailComponent() {
                     </tr>
                     <tr>
                         <th>검진가능 항목</th>
-                        <td>{ hospital.isGeneralExamAvailable }</td>
-                        <td>{ hospital.isStomachCancerExamAvailable }</td>
-                        <td>{ hospital.isColonCancerExamAvailable } </td>
-                        <td>{ hospital.isLiverCancerExamAvailable }</td>
-                        <td>{ hospital.isLungCancerExamAvailable } </td>
+                        <td onClick={(e) => e.stopPropagation()}>
+                            <label>
+                            <input
+                                type="checkbox"
+                                checked={Boolean(hospital.generalExamAvailable)}
+                                readOnly
+                            />
+                            일반검진
+                            </label>
+                            <label>
+                            <input
+                                type="checkbox"
+                                checked={Boolean(hospital.stomachCancerExamAvailable)}
+                                readOnly
+                            />
+                            위암검진
+                            </label>
+                            <label>
+                            <input
+                                type="checkbox"
+                                checked={Boolean(hospital.colonCancerExamAvailable)}
+                                readOnly
+                            />
+                            대장암검진
+                            </label>
+                            <label>
+                            <input
+                                type="checkbox"
+                                checked={Boolean(hospital.liverCancerExamAvailable)}
+                                readOnly
+                            />
+                            간암검진
+                            </label>
+                            <label>
+                            <input
+                                type="checkbox"
+                                checked={Boolean(hospital.lungCancerExamAvailable)}
+                                readOnly
+                            />
+                            폐암검진
+                            </label>
+                        </td>
                     </tr>
                     <tr>
                         <th>병원 홈페이지</th>
@@ -128,7 +164,7 @@ export default function HospitalDetailComponent() {
                     </tr>
                     <tr>
                         <th>등록일</th>
-                        <td colSpan="5">{ hospital.createdAt }</td>
+                        <td colSpan="5">{ hospital.createdAt?.substring(0, 10) }</td>
                     </tr>
                     <tr>
                         <th>수정일</th>
@@ -140,17 +176,17 @@ export default function HospitalDetailComponent() {
            <br/><br/>
 
            <div className="action-area">
-                <button className="btn-primary"
+                <button className="btn-primary" 
                         onClick={ () => { navigate("/hospitals/list"); } }>
                     목록으로
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn-primary"
-                        onClick={ () => { navigate("/hospitals/${ hospitalId }", {state : {hospitalId}}); } }>
+                <button className="btn-primary" 
+                        onClick={ () => { navigate(`/hospitals/${ hospitalId }/edit`, {state : {hospitalId}}); } }>
                     수정하기
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn-secondary"
+                <button className="btn-secondary" 
                         onClick={ deleteHospital }>
                     삭제하기
                 </button>
