@@ -1,80 +1,101 @@
 .detail-page {
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     width: 100%;
     padding: 1.5rem 2rem 2rem;
 }
+/* DetailInfoCard.css
+   Card + dl/dt/dd 기반 상세 정보 레이아웃 공통 스타일
+   (예: EmployeeDetailComponent의 "기본 정보" 섹션)
+*/
 
-.detail-page > .page-header {
-    padding-right: 12rem;
+.detail-info-card {
+    /* 대시보드에서 가로로 넓게 배치돼도 카드 자체가 무한정 늘어나지 않게 제한 */
+    max-width: 48rem;
+    margin: 0 auto; /* 카드 자체를 부모 영역 안에서 가운데 정렬 */
 }
 
-.detail-actions {
-    position: absolute;
-    top: 1.5rem;
-    right: 2rem;
+/* 열 개수를 breakpoint마다 "고정"하는 게 포인트.
+   auto-fit처럼 유동적이면 마지막 행 아이템 개수를 CSS가 예측할 수 없어서
+   border 처리가 불가능해짐 */
+.detail-info-card dl {
+    display: grid;
+    grid-template-columns: 1fr; /* 모바일: 1열 */
+    gap: 0;
+}
+
+@media (min-width: 640px) {
+    .detail-info-card dl {
+        grid-template-columns: repeat(2, 1fr); /* 태블릿: 2열 */
+    }
+}
+
+@media (min-width: 960px) {
+    .detail-info-card dl {
+        grid-template-columns: repeat(3, 1fr); /* 데스크톱: 3열 */
+    }
+}
+
+/* 이메일처럼 줄바꿈 없이 전체 다 보여줘야 하는 항목에 사용.
+   dt/dd가 있는 div에 className="full-row" 만 추가하면 됨.
+   예) <div className="full-row"><dt>이메일</dt><dd>{data.email}</dd></div> */
+.detail-info-card dl > div {
     display: flex;
-    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 0.75rem 1rem 0.75rem 0;
+    border-bottom: 1px solid var(--border, #e5e7eb);
 }
 
-.detail-page nav[aria-label="직원 상세 메뉴"] {
-    display: flex;
-    gap: 0.25rem;
-    border-bottom: 1px solid var(--border);
+.detail-info-card dl > div.full-row {
+    grid-column: 1 / -1; /* 몇 열 레이아웃이든 상관없이 한 줄 전체 차지 */
 }
 
-.detail-page nav[aria-label="직원 상세 메뉴"] button {
-    padding: 0.625rem 1rem;
+.detail-info-card dl > div.full-row dd {
+    white-space: nowrap;
+    overflow-x: auto; /* 그래도 넘치면 줄바꿈 대신 가로 스크롤 */
+}
+
+/*
+ * "진짜 마지막 행"만 정확히 골라내는 공식.
+ * 열 개수가 N일 때 :nth-child(Nn+1) 은 각 행의 "첫 칸"들만 의미하고,
+ * :nth-last-child(-n+N) 은 뒤에서 N개(=마지막 행이 가질 수 있는 최대 칸 수)를 의미한다.
+ * 이 둘의 교집합은 총 개수가 N의 배수든 아니든 상관없이
+ * 항상 "마지막 행의 첫 번째 칸" 딱 하나만 정확히 찾아낸다.
+ * 그 뒤로 ~ 로 형제를 전부 이으면 마지막 행 전체가 잡힌다.
+ * (8개, 3열 예시: 1,4,7이 각 행의 첫칸 / 6,7,8이 뒤에서 3개 → 교집합 7
+ *  → 7 ~ 이후(8) 까지 포함 = 7,8 정확히 마지막 행)
+ */
+
+/* 모바일: 1열 → 그냥 마지막 요소 하나 */
+.detail-info-card dl > div:last-child {
+    border-bottom: none;
+}
+
+@media (min-width: 640px) {
+    .detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2),
+    .detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2) ~ div {
+        border-bottom: none;
+    }
+}
+
+@media (min-width: 960px) {
+    .detail-info-card dl > div:nth-child(3n+1):nth-last-child(-n+3),
+    .detail-info-card dl > div:nth-child(3n+1):nth-last-child(-n+3) ~ div {
+        border-bottom: none;
+    }
+}
+
+.detail-info-card dt {
+    flex: 0 0 6.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--muted-foreground);
-    border-bottom: 2px solid transparent;
-    background: none;
-    cursor: pointer;
+    color: var(--muted-foreground, #6b7280);
 }
 
-.detail-page nav[aria-label="직원 상세 메뉴"] button[aria-selected="true"] {
-    color: var(--foreground);
-    border-bottom-color: var(--primary);
-}
-
-.detail-page section[data-detail-section="info"] dl {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem 2rem;
-    margin: 0;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--card);
-}
-
-.detail-page section[data-detail-section="info"] dl > div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-}
-
-.detail-page section[data-detail-section="info"] dt {
-    color: var(--muted-foreground);
-    font-size: 0.8125rem;
-    font-weight: 500;
-}
-
-.detail-page section[data-detail-section="info"] dd {
-    margin: 0;
-    color: var(--foreground);
-    font-size: 0.9375rem;
-}
-
-.detail-page section[data-detail-section="health"] {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
-}
-
-.detail-page section[data-detail-section="health"] > *:first-child {
-    grid-column: 1 / -1;
+.detail-info-card dd {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--foreground, #111827);
+    word-break: break-word;
 }

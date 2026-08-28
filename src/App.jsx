@@ -42,6 +42,7 @@ import { SidebarInset } from "./components/ui/sidebar";
 import { SiteHeader } from "./components/site-header";
 import PrivateRoute from "./common/components/PrivateRoute";
 import ChangePasswordComponent from "./login/components/ChangePasswordComponent";
+import SettingsComponent from "./settingsMenu/components/SettingsComponent";
 import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage";
 
 function App() {
@@ -117,6 +118,9 @@ function App() {
             <Route path="/employees/:id" element={<EmployeeDetailComponent />} />
             <Route path="/employees/:id/edit" element={<EmployeeUpdateComponent />} />
             <Route path="/employees/new" element={<EmployeeCreateComponent />} />
+
+            
+            <Route path="/settings" element={<SettingsComponent />} />
           </Route>
         </Routes>
 
