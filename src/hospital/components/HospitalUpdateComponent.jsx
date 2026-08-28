@@ -3,6 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState,useEffect } from "react";
 
 import { selectHospitalApi, updateHospitalApi } from "../api/hospitalApi";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+import "@/common/styles/FormComponent.css";
+import "@/common/styles/Common.css"
 
 export default function HospitalUpdateComponent() {
 
@@ -121,112 +128,156 @@ export default function HospitalUpdateComponent() {
     };
 
     return (
-        <div className="page">
-            <h1 className="page-title">검진 가능 병원 수정</h1>
-
-            <div className="card">
-                <form>
-                    <table className="form-table">
-                        <tbody>
-                            <tr>
-                                <th>제목</th>
-                                <td>
-                                    <input type="text" 
-                                    name="name" 
-                                    value={ hospital.name }
-                                    onChange={ handleInputChange } required />
-                                </td>                                
-                            </tr>
-                            <tr>
-                                <th>주소</th>
-                                <td>
-                                    <input type="text" 
-                                    name="address" 
-                                    value={ hospital.address } 
-                                    onChange={ handleInputChange } required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>전화번호</th>
-                                <td>
-                                    <input type="text" 
-                                    name="phone" 
-                                    value={ hospital.phone }
-                                    onChange={ handleInputChange } />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>url</th>
-                                <td>
-                                    <input type="text" 
-                                    name="url" 
-                                    value={ hospital.url }
-                                    onChange={ handleInputChange } />
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>안내문구</th>
-                                <td><textarea name="description" 
-                                     value={ hospital.description }
-                                     onChange= { handleInputChange } /> 
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>검진가능 항목</th>
-                                <td>
-                                    <label>
-                                        일반검진
-                                        <input type="checkbox"
-                                        name="generalExamAvailable"
-                                        checked={ Boolean(hospital.generalExamAvailable)}
-                                        onChange={handleInputChange} />
-                                    </label>
-                                    <label>
-                                        위암검진
-                                        <input type="checkbox"
-                                        name="stomachCancerExamAvailable"
-                                        checked={ Boolean(hospital.stomachCancerExamAvailable)}
-                                        onChange={handleInputChange} />
-                                    </label>
-                                    <label>
-                                        대장암검진
-                                        <input type="checkbox"
-                                        name="colonCancerExamAvailable"
-                                        checked={ Boolean(hospital.colonCancerExamAvailable)}
-                                        onChange={handleInputChange} />
-                                    </label>  
-                                    <label>
-                                        간암검진
-                                        <input type="checkbox"
-                                        name="liverCancerExamAvailable"
-                                        checked={ Boolean(hospital.liverCancerExamAvailable)} 
-                                        onChange={handleInputChange} />
-                                    </label>
-                                    <label>
-                                        폐암검진
-                                        <input type="checkbox"
-                                        name="lungCancerExamAvailable"
-                                        checked={ Boolean(hospital.lungCancerExamAvailable)}
-                                        onChange={handleInputChange} /> 
-                                    </label> 
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                <div className="action-area">
-                    <button type="submit" className="btn btn-outline-primary btn-sm"
-                                            onClick={ updateHospital }>
-                                수정하기
-                    </button>
-                
-                    <button type="button" className="btn btn-outline-secondary btn-sm"
-                                            onClick={ handleReset }>
-                                초기화           
-                    </button>
-                </div>
-              </form>
+        <div className="detail-page">
+            <div className="page-header">
+                <h1>검진 가능 병원 수정</h1>
+                <p>병원 정보를 수정해 주세요.</p>
             </div>
+
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>병원 정보 수정</CardTitle>
+                    <CardDescription>
+                        검진 가능 병원 정보를 수정해 주세요.
+                    </CardDescription>
+                </CardHeader>
+
+                <form onSubmit={updateHospital}>
+                    <CardContent>
+                        <dl>
+                            <div>
+                                <Label htmlFor="name">병원명</Label>
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    name="name"
+                                    value={hospital.name || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="address">주소</Label>
+                                <Input
+                                    id="address"
+                                    type="text"
+                                    name="address"
+                                    value={hospital.address || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="phone">전화번호</Label>
+                                <Input
+                                    id="phone"
+                                    type="text"
+                                    name="phone"
+                                    value={hospital.phone || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="url">병원 홈페이지</Label>
+                                <Input
+                                    id="url"
+                                    type="text"
+                                    name="url"
+                                    value={hospital.url || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+
+                            <div>
+                                <Label htmlFor="description">병원 안내</Label>
+                                <Input
+                                    id="description"
+                                    name="description"
+                                    value={hospital.description || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+
+                            <div>
+                                <Label>검진가능 항목</Label>
+
+                                <div>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="generalExamAvailable"
+                                            checked={Boolean(hospital.generalExamAvailable)}
+                                            onChange={handleInputChange}
+                                        />
+                                        일반검진
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="stomachCancerExamAvailable"
+                                            checked={Boolean(hospital.stomachCancerExamAvailable)}
+                                            onChange={handleInputChange}
+                                        />
+                                        위암검진
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="colonCancerExamAvailable"
+                                            checked={Boolean(hospital.colonCancerExamAvailable)}
+                                            onChange={handleInputChange}
+                                        />
+                                        대장암검진
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="liverCancerExamAvailable"
+                                            checked={Boolean(hospital.liverCancerExamAvailable)}
+                                            onChange={handleInputChange}
+                                        />
+                                        간암검진
+                                    </label>
+
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            name="lungCancerExamAvailable"
+                                            checked={Boolean(hospital.lungCancerExamAvailable)}
+                                            onChange={handleInputChange}
+                                        />
+                                        폐암검진
+                                    </label>
+                                </div>
+                            </div>
+                        </dl>
+                    </CardContent>
+
+                    <CardFooter>
+                        <Button
+                            className="primary-button"
+                            type="button"
+                            variant="outline"
+                            onClick={handleReset}
+                        >
+                            초기화
+                        </Button>
+
+                        <Button
+                            className="primary-button"
+                            type="submit"
+                        >
+                            수정
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Card>
         </div>
     );
         
