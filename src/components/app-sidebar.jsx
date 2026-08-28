@@ -87,7 +87,7 @@ const data = {
     },
     {
       title: "공지사항 관리",
-      url: "/notice/list",
+      url: "/notices/list",
       icon: (
         <MegaphoneIcon />
       ),

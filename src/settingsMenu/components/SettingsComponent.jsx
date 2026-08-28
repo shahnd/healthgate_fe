@@ -4,7 +4,7 @@ import "../styles/SettingsComponent.css"
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -76,42 +76,43 @@ export default function SettingsComponent() {
             <p>시스템 설정</p>
         </div>
 
-        <Card className="max-w-2xl">
+        <Card className="settings-card">
             <CardHeader>
-            <CardTitle>임계점 설정</CardTitle>
-            <CardDescription>시스템 경고 임계값을 관리합니다.</CardDescription>
+                <CardTitle>임계점 설정</CardTitle>
+                <CardDescription>시스템 경고 임계값을 관리합니다.</CardDescription>
             </CardHeader>
 
             <CardContent>
-            <div className="threshold-list">
-                {data.map((s) => {
-                const inputId = `threshold-${s.id}`;
-                return (
-                    <div key={s.id} className="threshold-row">
-                    <Label htmlFor={inputId} className="threshold-row__label">
-                        {METRICNAME_MAP[s.metricName] || s.metricName}
-                    </Label>
+                <div>
+                    {data.map((s) => {
+                        const inputId = `threshold-${s.id}`;
+                        return (
+                            <div key={s.id}>
+                                <Label htmlFor={inputId}>
+                                    {METRICNAME_MAP[s.metricName] || s.metricName}
+                                </Label>
 
-                    <Badge variant={RISK_VARIANT_MAP[s.riskLevel] ?? "default"}>
-                        {RISK_LEVEL_MAP[s.riskLevel] || s.riskLevel}
-                    </Badge>
+                                <Badge variant={RISK_VARIANT_MAP[s.riskLevel] ?? "default"}>
+                                    {RISK_LEVEL_MAP[s.riskLevel] || s.riskLevel}
+                                </Badge>
 
-                    <Input
-                        id={inputId}
-                        type="number"
-                        value={s.value}
-                        onChange={(e) => handleChange(s.id, Number(e.target.value))}
-                        className="threshold-row__input"
-                    />
-                    </div>
-                );
-                })}
-            </div>
-
-            <Button onClick={handleSubmit} className="mt-4">
-                적용
-            </Button>
+                                <Input
+                                    id={inputId}
+                                    type="number"
+                                    value={s.value}
+                                    onChange={(e) => handleChange(s.id, Number(e.target.value))}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
             </CardContent>
+
+            <CardFooter>
+                <Button className="primary-button" onClick={handleSubmit}>
+                    적용
+                </Button>
+            </CardFooter>
         </Card>
         </div>
     )

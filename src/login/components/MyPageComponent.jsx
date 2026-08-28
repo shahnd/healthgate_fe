@@ -2,8 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useUserInfo } from "../../store/useAuthStore";
 import "@/common/styles/DetailComponent.css";
+import "@/common/styles/ActionButton.css";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function MyPageComponent() {
     const user = useUserInfo();
@@ -34,21 +36,20 @@ export default function MyPageComponent() {
 
     return (
         <div className="detail-page">
-            <header>
-                <div>
-                    <h1>{data.name}님의 마이페이지</h1>
-                    <p>{data.name} | {data.employeeNumber}</p>
-                </div>
-
-                <div>
-                    <Button onClick={() => navigate('/mypage/password')}>비밀번호 변경</Button>
-                </div>
-            </header>
+            <div className="page-header">
+                <h1>{data.name}님의 마이페이지</h1>
+                <p>{data.name} | {data.employeeNumber}</p>
+            </div>
 
 
-            <main>
-                <section data-detail-section="info">
-                    <dl>
+
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>기본 정보</CardTitle>
+                    <CardDescription>나의 기본 정보를 확인할 수 있습니다.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <dl className="detail-list">
                         <div>
                             <dt>사번</dt>
                             <dd>{data.employeeNumber || "-"}</dd>
@@ -89,8 +90,11 @@ export default function MyPageComponent() {
                             <dd>{data.status || "-"}</dd>
                         </div>
                     </dl>
-                </section>
-            </main>
+                </CardContent>
+                <CardFooter>
+                    <Button className="primary-button" onClick={() => navigate('/mypage/password')}>비밀번호 변경</Button>
+                </CardFooter>
+            </Card>
         </div>
     );
 }

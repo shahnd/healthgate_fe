@@ -1,18 +1,69 @@
-.threshold-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* SettingsCard.css
+   Card 기반 설정/임계값 리스트 공통 스타일
+   (예: 임계점 설정 카드)
+   className은 .settings-card 하나만 쓰고, 내부는 태그/구조 선택자로 스타일링
+*/
+
+.settings-card {
+    max-width: 55rem;
+    margin: 0 auto;
 }
 
-.threshold-row {
-  display: grid;
-  grid-template-columns: auto auto 1fr auto;
-  align-items: center;
-  gap: 8px;
+.settings-card > div:first-child {
+    padding: 1.25rem 1.5rem 1.75rem;
+    border-bottom: 1px solid #e2e8f0; /* slate-200 */
 }
 
-.threshold-row__input {
-  width: 100%;
-  max-width: 160px;
-  justify-self: end;
+.settings-card [data-slot="card-content"] {
+    padding: 1.5rem;
+}
+
+.settings-card [data-slot="card-title"] {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b; /* slate-800 */
+}
+
+.settings-card [data-slot="card-description"] {
+    font-size: 0.875rem;
+    color: #64748b; /* slate-500 */
+}
+
+.settings-card [data-slot="card-footer"] {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #e2e8f0; /* slate-200 */
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* 임계값 리스트: CardContent 바로 아래 div가 리스트 컨테이너 */
+.settings-card [data-slot="card-content"] > div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 리스트의 각 행: 컨테이너의 자식 div */
+.settings-card [data-slot="card-content"] > div > div {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9; /* slate-100 */
+}
+
+.settings-card [data-slot="card-content"] > div > div:last-child {
+    border-bottom: none;
+}
+
+.settings-card label {
+    flex: 0 0 8rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155; /* slate-700 */
+}
+
+.settings-card input {
+    margin-left: auto;
+    width: 15rem;
 }

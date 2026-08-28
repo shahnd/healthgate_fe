@@ -4,7 +4,11 @@ import { useUserInfo } from "../../store/useAuthStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import "@/common/styles/DetailComponent.css";
+import "@/common/styles/Common.css";
+import "@/common/styles/ActionButton.css";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export default function ChangePasswordComponent() {
     const user = useUserInfo();
@@ -69,70 +73,68 @@ export default function ChangePasswordComponent() {
 
     return (
         <div className="detail-page">
-            <header>
-                <div>
-                    <h1>{data.name}님의 비밀번호 변경</h1>
-                    <p>{data.name} | {data.employeeNumber}</p>
-                </div>
-            </header>
+            <div className="page-header">
+                <h1>{data.name}님의 비밀번호 변경</h1>
+                <p>{data.name} | {data.employeeNumber}</p>
+            </div>
 
             <main>
-                <form onSubmit={handleSubmit}>
-                    <section data-detail-section="info">
-                        <dl>
-                            <div>
-                                <dt>현재 비밀번호</dt>
-                                <dd>
-                                    <Input 
-                                        id="currentPassword" 
-                                        type="password" 
-                                        placeholder="현재 비밀번호를 입력하세요" 
+                <Card className="detail-info-card">
+                    <CardHeader>
+                        <CardTitle>비밀번호 변경</CardTitle>
+                        <CardDescription>보안을 위해 새 비밀번호로 변경할 수 있습니다.</CardDescription>
+                    </CardHeader>
+
+                    <form onSubmit={handleSubmit}>
+                        <CardContent>
+                            <dl className="grid-cols-1">
+                                <div className="full-row !items-center !gap-3">
+                                    <Label htmlFor="currentPassword">현재 비밀번호</Label>
+                                    <Input
+                                        id="currentPassword"
+                                        type="password"
+                                        placeholder="현재 비밀번호를 입력하세요"
                                         value={passwordData.currentPassword}
                                         onChange={handleChange}
-                                        required 
+                                        required
                                         className="max-w-xs"
                                     />
-                                </dd>
-                            </div>
+                                </div>
 
-                            <div>
-                                <dt>새 비밀번호</dt>
-                                <dd>
-                                    <Input 
-                                        id="newPassword" 
-                                        type="password" 
-                                        placeholder="새 비밀번호를 입력하세요" 
+                                <div className="full-row !items-center !gap-3">
+                                    <Label htmlFor="newPassword">새 비밀번호</Label>
+                                    <Input
+                                        id="newPassword"
+                                        type="password"
+                                        placeholder="새 비밀번호를 입력하세요"
                                         value={passwordData.newPassword}
                                         onChange={handleChange}
-                                        required 
+                                        required
                                         className="max-w-xs"
                                     />
-                                </dd>
-                            </div>
+                                </div>
 
-                            <div>
-                                <dt>새 비밀번호 확인</dt>
-                                <dd>
-                                    <Input 
-                                        id="confirmPassword" 
-                                        type="password" 
-                                        placeholder="새 비밀번호를 한 번 더 입력하세요" 
+                                <div className="full-row !items-center !gap-3">
+                                    <Label htmlFor="confirmPassword">새 비밀번호 확인</Label>
+                                    <Input
+                                        id="confirmPassword"
+                                        type="password"
+                                        placeholder="새 비밀번호를 한 번 더 입력하세요"
                                         value={passwordData.confirmPassword}
                                         onChange={handleChange}
-                                        required 
+                                        required
                                         className="max-w-xs"
                                     />
-                                </dd>
-                            </div>
-                        </dl>
-                    </section>
-                    
-                    {/* 버튼 영역 */}
-                    <div className="flex gap-2 mt-6">
-                        <Button type="submit">변경하기</Button>
-                        <Button type="button" variant="outline">취소</Button>
-                    </div>
-                </form>
+                                </div>
+                            </dl>
+                        </CardContent>
+
+                        <CardFooter>
+                            <Button className="primary-button" type="button" variant="outline">취소</Button>
+                            <Button className="primary-button" type="submit">변경하기</Button>
+                        </CardFooter>
+                    </form>
+                </Card>
             </main>
         </div>
     );

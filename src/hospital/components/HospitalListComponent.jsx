@@ -6,7 +6,14 @@ import { searchHospitalListApi } from "../api/hospitalApi";
 
 import HospitalItemComponent from "./HospitalItemComponent";
 
-import "../styles/HospitalListComponent.css";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
+
+import "@/common/styles/ListComponent.css";
+import "@/common/styles/ActionButton.css";
+import { Pagination } from "@/common/components/Pagination"
 
 export default function HospitalListComponent() {
  
@@ -48,6 +55,7 @@ export default function HospitalListComponent() {
 
     // 페이징바 쿼리스트링 처리
     const cpage = parseInt(searchParams.get("cpage")) || 1;
+    let totalPages = 1;
     
     // 조회된 데이터를 배열에 담아둘 변수 셋팅
     const [dataList,setDataList] = useState([]);
@@ -132,6 +140,7 @@ export default function HospitalListComponent() {
         navigate('/hospitals/list');
     };
 
+
     // list, pi 값을 출력해주는 후처리 함수
     const handleResponse = response => {
 
@@ -147,6 +156,7 @@ export default function HospitalListComponent() {
         setDataList(trArr);
 
         const pageInfo = response.data.pi;
+        totalPages = pageInfo.maxPage;
 
         const btnArr = [];
 
@@ -269,108 +279,116 @@ export default function HospitalListComponent() {
         searchIsLungCancer]);
 
     return(
-        <div className="page">
-             <h1 className="page-title"> 병원 검진가능 조회 목록</h1>
-            <div>
-                <br />
-                
-                <div className="action-area">
-                    <button type="button" className="btn-primary"
-                            onClick={ () => { navigate("/hospitals/new");}}>
-                        + 병원등록
-                    </button>
-                </div>
+        <div className="list-page">
+            <div className="page-header">
+                <h1>병원 목록 조회</h1>
+                <p>검진가능 병원을 조회합니다.</p>
             </div>
 
-            <br/><br/>
             {/* 검색창 */}
-            <div className="card">
-                <form className="search2-form">
-                    <input type="text" 
-                        name="keywordName" 
+            <form className="list-toolbar">
+                <div>
+                    <Input
+                        type="text"
+                        name="keywordName"
                         placeholder="병원이름"
-                        value={ keywordName } 
-                        onChange={ handleInputChange } /> 
-                
-                    <input type="text" 
-                        name="keywordAddress" 
+                        value={keywordName}
+                        onChange={handleInputChange}
+                    />
+
+                    <Input
+                        type="text"
+                        name="keywordAddress"
                         placeholder="병원주소"
-                        value={ keywordAddress } 
-                        onChange={ handleInputChange } />   
-                    <div>
-                        검진 가능 항목 : 
-                        <label>
+                        value={keywordAddress}
+                        onChange={handleInputChange}
+                    />
+
+                    <div className="checkbox-group">
+                        <label style={{ display: "flex", alignItems: "center", gap: "0.25rem", whiteSpace: "nowrap" }}>
                             <input
-                            type="checkbox"
-                            name="isGeneral"
-                            checked={isGeneral}
-                            onChange={handleInputChange}
+                                type="checkbox"
+                                name="isGeneral"
+                                checked={isGeneral}
+                                onChange={handleInputChange}
+                                style={{ width: "0.875rem", height: "0.875rem", flex: "0 0 auto", margin: 0 }}
                             />
                             일반검진
                         </label>
-                        <label>
+
+                        <label style={{ display: "flex", alignItems: "center", gap: "0.25rem", whiteSpace: "nowrap" }}>
                             <input
-                            type="checkbox"
-                            name="isStomachCancer"
-                            checked={isStomachCancer}
-                            onChange={handleInputChange}
+                                type="checkbox"
+                                name="isStomachCancer"
+                                checked={isStomachCancer}
+                                onChange={handleInputChange}
+                                style={{ width: "0.875rem", height: "0.875rem", flex: "0 0 auto", margin: 0 }}
                             />
                             위암검진
                         </label>
-                        <label>
+
+                        <label style={{ display: "flex", alignItems: "center", gap: "0.25rem", whiteSpace: "nowrap" }}>
                             <input
-                            type="checkbox"
-                            name="isColonCancer"
-                            checked={isColonCancer}
-                            onChange={handleInputChange}
+                                type="checkbox"
+                                name="isColonCancer"
+                                checked={isColonCancer}
+                                onChange={handleInputChange}
+                                style={{ width: "0.875rem", height: "0.875rem", flex: "0 0 auto", margin: 0 }}
                             />
                             대장암검진
                         </label>
-                        <label>
+
+                        <label style={{ display: "flex", alignItems: "center", gap: "0.25rem", whiteSpace: "nowrap" }}>
                             <input
-                            type="checkbox"
-                            name="isLiverCancer"
-                            checked={isLiverCancer}
-                            onChange={handleInputChange}
+                                type="checkbox"
+                                name="isLiverCancer"
+                                checked={isLiverCancer}
+                                onChange={handleInputChange}
+                                style={{ width: "0.875rem", height: "0.875rem", flex: "0 0 auto", margin: 0 }}
                             />
                             간암검진
                         </label>
-                        <label>
+
+                        <label style={{ display: "flex", alignItems: "center", gap: "0.25rem", whiteSpace: "nowrap" }}>
                             <input
-                            type="checkbox"
-                            name="isLungCancer"
-                            checked={isLungCancer}
-                            onChange={handleInputChange}
+                                type="checkbox"
+                                name="isLungCancer"
+                                checked={isLungCancer}
+                                onChange={handleInputChange}
+                                style={{ width: "0.875rem", height: "0.875rem", flex: "0 0 auto", margin: 0 }}
                             />
                             폐암검진
                         </label>
                     </div>
+                    <Button type="button" variant="outline" size="icon" onClick={handleReset}>
+                        <RotateCcw className="h-4 w-4" />
+                    </Button>
 
-                    <button type="button" className="btn-secondary"
-                    onClick={handleReset}
-                        >초기화</button>
-            
-                    <button type="submit" className="btn-primary"
-                    onClick={ handleClick }>검색</button> 
+                    <Button type="submit" size="sm" onClick={handleClick}>
+                        검색
+                    </Button>
+                </div>
 
-                </form>
+                <Button className="primary-button" type="button" size="sm" onClick={() => navigate("/hospitals/new")}>
+                    + 병원등록
+                </Button>
+            </form>
+
+            <div className="list-table-wrapper">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>병원명</TableHead>
+                            <TableHead>주소</TableHead>
+                            <TableHead>전화번호</TableHead>
+                            <TableHead className="w-[600px]">검진가능항목</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {dataList}
+                    </TableBody>
+                </Table>
             </div>
-
-            <br/><br/>
-            <div className="card">
-              <table className="data-table">
-                <thead>
-                    <tr>
-                        <th>병원명</th>
-                        <th>주소</th>
-                        <th>전화번호</th>
-                        <th>검진가능항목</th>
-                    </tr>
-                </thead>
-                <tbody>{ dataList }</tbody>
-              </table>
-            </div>
-            <br></br>
 
             <div align="center" className="pagination">{ pageList }</div>
         </div>

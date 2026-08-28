@@ -5,6 +5,7 @@
     width: 100%;
     padding: 1.5rem 2rem 2rem;
 }
+
 /* DetailInfoCard.css
    Card + dl/dt/dd 기반 상세 정보 레이아웃 공통 스타일
    (예: EmployeeDetailComponent의 "기본 정보" 섹션)
@@ -16,25 +17,47 @@
     margin: 0 auto; /* 카드 자체를 부모 영역 안에서 가운데 정렬 */
 }
 
-/* 열 개수를 breakpoint마다 "고정"하는 게 포인트.
-   auto-fit처럼 유동적이면 마지막 행 아이템 개수를 CSS가 예측할 수 없어서
-   border 처리가 불가능해짐 */
+/* CardHeader/CardTitle 사용 전제 (bare h2를 Card 바로 아래 두지 않기).
+   CheckupReminder의 섹션 헤더(border-b border-slate-200)와 톤 통일 */
+.detail-info-card > div:first-child {
+    padding: 1.25rem 1.5rem 1.75rem; /* 하단 여백을 더 줘서 부제목 아래 숨 쉴 공간 확보 */
+    border-bottom: 1px solid #e2e8f0; /* slate-200 */
+}
+
+.detail-info-card [data-slot="card-content"],
+.detail-info-card .card-content {
+    padding: 1.5rem; /* px-6 py-6 */
+}
+
+.detail-info-card [data-slot="card-title"],
+.detail-info-card .card-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 700; /* font-bold */
+    color: #1e293b; /* slate-800, 다른 섹션 h2와 동일 톤 */
+}
+
+.detail-info-card [data-slot="card-description"],
+.detail-info-card .card-description {
+    font-size: 0.875rem; /* text-sm */
+    color: #64748b; /* slate-500, 다른 섹션 부제목과 동일 톤 */
+}
+
+/* CardFooter 사용 전제 (버튼을 Card 바로 아래 두지 않기).
+   바디-푸터 사이도 헤더-바디처럼 구분선 + 버튼은 우측 정렬 + 간격.
+   className 없이도 shadcn의 data-slot 속성으로 자동으로 잡힘 */
+.detail-info-card [data-slot="card-footer"],
+.detail-info-card-footer {
+    padding: 1.25rem 1.5rem; /* 헤더와 동일한 리듬 */
+    border-top: 1px solid #e2e8f0; /* slate-200 */
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
 .detail-info-card dl {
     display: grid;
-    grid-template-columns: 1fr; /* 모바일: 1열 */
+    grid-template-columns: repeat(2, 1fr); /* 2열 고정 - 반응형 없음 */
     gap: 0;
-}
-
-@media (min-width: 640px) {
-    .detail-info-card dl {
-        grid-template-columns: repeat(2, 1fr); /* 태블릿: 2열 */
-    }
-}
-
-@media (min-width: 960px) {
-    .detail-info-card dl {
-        grid-template-columns: repeat(3, 1fr); /* 데스크톱: 3열 */
-    }
 }
 
 /* 이메일처럼 줄바꿈 없이 전체 다 보여줘야 하는 항목에 사용.
@@ -43,9 +66,12 @@
 .detail-info-card dl > div {
     display: flex;
     align-items: flex-start;
-    padding: 0.75rem 1rem 0.75rem 0;
-    border-bottom: 1px solid var(--border, #e5e7eb);
+    padding: 1rem 1.25rem 1rem 0; /* CheckupReminder의 px-5 py-4 리듬과 맞춤 */
+    border-bottom: 1px solid #f1f5f9; /* slate-100 */
+    transition: background-color 0.15s;
 }
+
+
 
 .detail-info-card dl > div.full-row {
     grid-column: 1 / -1; /* 몇 열 레이아웃이든 상관없이 한 줄 전체 차지 */
@@ -57,45 +83,59 @@
 }
 
 /*
- * "진짜 마지막 행"만 정확히 골라내는 공식.
- * 열 개수가 N일 때 :nth-child(Nn+1) 은 각 행의 "첫 칸"들만 의미하고,
- * :nth-last-child(-n+N) 은 뒤에서 N개(=마지막 행이 가질 수 있는 최대 칸 수)를 의미한다.
- * 이 둘의 교집합은 총 개수가 N의 배수든 아니든 상관없이
+ * "진짜 마지막 행"만 정확히 골라내는 공식 (2열 고정 기준).
+ * :nth-child(2n+1) 은 각 행의 "첫 칸"(홀수 번째)만 의미하고,
+ * :nth-last-child(-n+2) 은 뒤에서 2개(=마지막 행이 가질 수 있는 최대 칸 수)를 의미한다.
+ * 이 둘의 교집합은 총 개수가 짝수든 홀수든 상관없이
  * 항상 "마지막 행의 첫 번째 칸" 딱 하나만 정확히 찾아낸다.
- * 그 뒤로 ~ 로 형제를 전부 이으면 마지막 행 전체가 잡힌다.
- * (8개, 3열 예시: 1,4,7이 각 행의 첫칸 / 6,7,8이 뒤에서 3개 → 교집합 7
- *  → 7 ~ 이후(8) 까지 포함 = 7,8 정확히 마지막 행)
+ * 그 뒤로 ~ 로 형제를 이으면 마지막 행 전체가 잡힌다.
+ * (7개 예시: 홀수번째 1,3,5,7 / 뒤에서 2개 6,7 → 교집합 7 → 7만 해당, 마지막 행이 1개라 맞음)
+ * (8개 예시: 홀수번째 1,3,5,7 / 뒤에서 2개 7,8 → 교집합 7 → 7~8, 마지막 행 2개 다 맞음)
  */
-
-/* 모바일: 1열 → 그냥 마지막 요소 하나 */
-.detail-info-card dl > div:last-child {
+.detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2),
+.detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2) ~ div {
     border-bottom: none;
-}
-
-@media (min-width: 640px) {
-    .detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2),
-    .detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2) ~ div {
-        border-bottom: none;
-    }
-}
-
-@media (min-width: 960px) {
-    .detail-info-card dl > div:nth-child(3n+1):nth-last-child(-n+3),
-    .detail-info-card dl > div:nth-child(3n+1):nth-last-child(-n+3) ~ div {
-        border-bottom: none;
-    }
 }
 
 .detail-info-card dt {
     flex: 0 0 6.5rem;
     font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--muted-foreground, #6b7280);
+    font-weight: 600; /* CheckupReminder의 label과 동일한 font-semibold */
+    color: #334155; /* slate-700 */
 }
 
 .detail-info-card dd {
     flex: 1;
     font-size: 0.875rem;
-    color: var(--foreground, #111827);
+    color: #475569; /* slate-600, 테이블 tr 텍스트 톤과 통일 */
     word-break: break-word;
+}
+
+/* 이메일처럼 긴 문자열 줄바꿈용 (Common.css의 .break-word와 병행 사용 가능) */
+.detail-info-card dd.break-word {
+    word-break: break-all;
+}
+
+/* 폼 전용 (dl > div 안이 dt/dd 대신 label/input 조합일 때).
+   dl/div 레이아웃(그리드, 줄 구분선, hover, 마지막 행 처리)은 위의 규칙을 그대로 공유하고
+   내용물(label/input)만 dt/dd와 같은 flex 역할을 하도록 태그 선택자로 지정 */
+.detail-info-card dl label {
+    flex: 0 0 6.5rem;
+    font-size: 0.875rem;
+    font-weight: 600; /* dt와 동일한 semibold 톤 */
+    color: #334155; /* slate-700 */
+}
+
+.detail-info-card dl input,
+.detail-info-card dl button[role="combobox"] {
+    flex: 1;
+    font-size: 0.875rem;
+    color: #475569; /* slate-600, dd와 동일 톤 */
+}
+
+/* readOnly 필드(예: 수정 화면의 사번)는 수정 불가임을 시각적으로 구분 */
+.detail-info-card dl input[readonly] {
+    background-color: #f8fafc; /* slate-50 */
+    color: #94a3b8; /* slate-400 */
+    cursor: not-allowed;
 }
