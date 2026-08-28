@@ -5,6 +5,7 @@ import MetricLineChart from "../../common/components/MetricLineChart";
 import "@/common/styles/DetailComponent.css";
 import { Button } from "@/components/ui/button";
 import "@/common/styles/Common.css"
+import { Card, CardContent } from "@/components/ui/card";
 
 
 export default function EmployeeDetailComponent() {
@@ -84,8 +85,8 @@ export default function EmployeeDetailComponent() {
     return (
         <div className="detail-page">
             <div className="page-header">
-                <h1>{data.name || "직원 상세"}</h1>
-                <p>사번 {data.employeeNumber}</p>
+                <h1>직원 상세</h1>
+                <p>{data.name} | {data.employeeNumber}</p>
             </div>
 
             <div className="detail-actions">
@@ -98,58 +99,73 @@ export default function EmployeeDetailComponent() {
             </div>
 
 
-            <nav aria-label="직원 상세 메뉴">
-                <button
-                    aria-selected={activeTab === "info"}
-                    onClick={() => setActiveTab("info")}
-                >
-                    기본 정보
-                </button>
-                <button
-                    aria-selected={activeTab === "health"}
-                    onClick={() => setActiveTab("health")}
-                >
-                    건강 데이터
-                </button>
+            <nav aria-label="직원 상세 메뉴" className="flex gap-[0.25rem] border-b border-border">
+            <button
+                aria-selected={activeTab === "info"}
+                onClick={() => setActiveTab("info")}
+                className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
+                activeTab === "info"
+                    ? "text-foreground border-primary"
+                    : "text-muted-foreground border-transparent"
+                }`}
+            >
+                기본 정보
+            </button>
+            <button
+                aria-selected={activeTab === "health"}
+                onClick={() => setActiveTab("health")}
+                className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
+                activeTab === "health"
+                    ? "text-foreground border-primary"
+                    : "text-muted-foreground border-transparent"
+                }`}
+            >
+                건강 데이터
+            </button>
             </nav>
 
-            <main>
+
+            <div className="detail-page">
                 {activeTab === "info" && (
                     <section data-detail-section="info">
-                        <dl>
-                            <div>
-                                <dt>사번</dt>
-                                <dd>{data.employeeNumber}</dd>
-                            </div>
-                            <div>
-                                <dt>이름</dt>
-                                <dd>{data.name}</dd>
-                            </div>
-                            <div>
-                                <dt>부서</dt>
-                                <dd>{data.departments?.name || "부서 미지정"}</dd>
-                            </div>
-                            <div>
-                                <dt>직급</dt>
-                                <dd>{data.positions?.name || "직급 미지정"}</dd>
-                            </div>
-                            <div>
-                                <dt>이메일</dt>
-                                <dd>{data.email || "-"}</dd>
-                            </div>
-                            <div>
-                                <dt>전화번호</dt>
-                                <dd>{data.phone || "-"}</dd>
-                            </div>
-                            <div>
-                                <dt>입사일</dt>
-                                <dd>{data.hireDate || "-"}</dd>
-                            </div>
-                            <div>
-                                <dt>재직 상태</dt>
-                                <dd>{data.status || "-"}</dd>
-                            </div>
-                        </dl>
+                        <Card className="detail-info-card">
+                            <CardContent>
+                                <dl>
+                                <div>
+                                    <dt>사번</dt>
+                                    <dd>{data.employeeNumber}</dd>
+                                </div>
+                                <div>
+                                    <dt>이름</dt>
+                                    <dd>{data.name}</dd>
+                                </div>
+                                <div>
+                                    <dt>부서</dt>
+                                    <dd>{data.departments?.name || "부서 미지정"}</dd>
+                                </div>
+                                <div>
+                                    <dt>직급</dt>
+                                    <dd>{data.positions?.name || "직급 미지정"}</dd>
+                                </div>
+                                <div>
+                                    <dt>이메일</dt>
+                                    <dd>{data.email || "-"}</dd>
+                                </div>
+                                <div>
+                                    <dt>전화번호</dt>
+                                    <dd>{data.phone || "-"}</dd>
+                                </div>
+                                <div>
+                                    <dt>입사일</dt>
+                                    <dd>{data.hireDate || "-"}</dd>
+                                </div>
+                                <div>
+                                    <dt>재직 상태</dt>
+                                    <dd>{data.status || "-"}</dd>
+                                </div>
+                                </dl>
+                            </CardContent>
+                        </Card>
                     </section>
                 )}
 
@@ -204,7 +220,7 @@ export default function EmployeeDetailComponent() {
                         />
                     </section>
                 )}
-            </main>
+            </div>
         </div>
     );
 }

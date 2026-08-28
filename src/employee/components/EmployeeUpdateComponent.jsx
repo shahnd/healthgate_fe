@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployeeFormComponent from "./EmployeeFormComponent";
+import "@/common/styles/Common.css"
+
 
 export default function EmployeeUpdateComponent() {
     const navigate = useNavigate();
