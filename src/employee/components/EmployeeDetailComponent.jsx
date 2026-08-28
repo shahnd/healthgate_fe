@@ -5,7 +5,7 @@ import MetricLineChart from "../../common/components/MetricLineChart";
 import "@/common/styles/DetailComponent.css";
 import { Button } from "@/components/ui/button";
 import "@/common/styles/Common.css"
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 
 export default function EmployeeDetailComponent() {
@@ -87,48 +87,42 @@ export default function EmployeeDetailComponent() {
             <div className="page-header">
                 <h1>직원 상세</h1>
                 <p>{data.name} | {data.employeeNumber}</p>
+                <nav aria-label="직원 상세 메뉴" className="flex gap-1 -mb-[calc(1rem+1px)]">
+                    <button
+                        aria-selected={activeTab === "info"}
+                        onClick={() => setActiveTab("info")}
+                        className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
+                            activeTab === "info"
+                                ? "text-foreground border-primary"
+                                : "text-muted-foreground border-transparent"
+                        }`}
+                    >
+                        기본 정보
+                    </button>
+                    <button
+                        aria-selected={activeTab === "health"}
+                        onClick={() => setActiveTab("health")}
+                        className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
+                            activeTab === "health"
+                                ? "text-foreground border-primary"
+                                : "text-muted-foreground border-transparent"
+                        }`}
+                    >
+                        건강 데이터
+                    </button>
+                </nav>
             </div>
 
-            <div className="detail-actions">
-                <Button className="primary-button" onClick={() => navigate(`/employees/${id}/edit`)}>
-                    편집
-                </Button>
-                <Button className="primary-button" onClick={handleDelete}>
-                    삭제
-                </Button>
-            </div>
-
-
-            <nav aria-label="직원 상세 메뉴" className="flex gap-[0.25rem] border-b border-border">
-            <button
-                aria-selected={activeTab === "info"}
-                onClick={() => setActiveTab("info")}
-                className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
-                activeTab === "info"
-                    ? "text-foreground border-primary"
-                    : "text-muted-foreground border-transparent"
-                }`}
-            >
-                기본 정보
-            </button>
-            <button
-                aria-selected={activeTab === "health"}
-                onClick={() => setActiveTab("health")}
-                className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
-                activeTab === "health"
-                    ? "text-foreground border-primary"
-                    : "text-muted-foreground border-transparent"
-                }`}
-            >
-                건강 데이터
-            </button>
-            </nav>
 
 
             <div className="detail-page">
                 {activeTab === "info" && (
                     <section data-detail-section="info">
                         <Card className="detail-info-card">
+                            <CardHeader>
+                                <CardTitle>기초정보</CardTitle>
+                                <CardDescription>직원 기초정보</CardDescription>
+                            </CardHeader>
                             <CardContent>
                                 <dl>
                                 <div>
@@ -165,6 +159,14 @@ export default function EmployeeDetailComponent() {
                                 </div>
                                 </dl>
                             </CardContent>
+                            <CardFooter>
+                                <Button className="primary-button" onClick={() => navigate(`/employees/${id}/edit`)}>
+                                    편집
+                                </Button>
+                                <Button className="primary-button" onClick={handleDelete}>
+                                    삭제
+                                </Button>
+                            </CardFooter>
                         </Card>
                     </section>
                 )}

@@ -101,15 +101,21 @@ export default function EmployeeUpdateComponent() {
     }
 
     return (
-        <EmployeeFormComponent
-            mode="update"
-            formData={formData}
-            departmentList={departmentList}
-            positionList={positionList}
-            onChange={handleChange}
-            onSelectChange={handleSelectChange}
-            onSubmit={handleSubmit}
-            onCancel={() => navigate(`/employees/${id}`)}
-        />
+        <div className="detail-page">
+            <div className="page-header">
+                <h1>직원 정보 수정</h1>
+                <p>직원 정보 수정 페이지</p>
+            </div>
+            <EmployeeFormComponent
+                mode="update"
+                formData={formData}
+                departmentList={departmentList}
+                positionList={positionList}
+                onChange={handleChange}
+                onSelectChange={handleSelectChange}
+                onSubmit={handleSubmit}
+                onCancel={() => navigate(`/employees/${id}`)}
+            />
+        </div>
     );
 }

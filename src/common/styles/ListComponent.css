@@ -26,6 +26,15 @@
     flex: 0 0 11rem;
 }
 
+/* 체크박스 그룹: 줄바꿈되어도 깨지지 않게 */
+.list-toolbar .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+}
+
 .list-table-wrapper {
     width: 100%;
     overflow: hidden;

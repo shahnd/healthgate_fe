@@ -81,6 +81,13 @@ export default function EmployeeCreateComponent() {
     }
 
     return(
+        <div className="detail-page">
+            <div className="page-header">
+                <h1>직원 등록</h1>
+                <p>직원을 정보를 등록합니다.</p>
+            </div>
+
+
             <EmployeeFormComponent
                     mode="create"
                     formData={formData}
@@ -100,5 +107,6 @@ export default function EmployeeCreateComponent() {
                     onSubmit={handleSubmit}
                     onCancel={() => navigate("/employees")}
                 />
+        </div>
     );
 }
