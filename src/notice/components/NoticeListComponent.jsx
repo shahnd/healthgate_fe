@@ -6,7 +6,6 @@ import { selectNoticeListApi, searchNoticeListApi } from "../api/NoticeApi";
 
 import NoticeItemComponent from "./NoticeItemComponent";
 
-// import '../../common/styles/pagination.css'
 
 export default function NoticeListComponent() {
 

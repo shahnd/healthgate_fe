@@ -32,7 +32,6 @@ export function NavUser({
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     logout();
-    alert("로그아웃 되었습니다.");
     navigate("/login");
   };
   return (

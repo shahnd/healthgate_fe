@@ -10,6 +10,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import "@/common/styles/FormComponent.css";
+import "@/common/styles/Common.css"
+
 
 export default function EmployeeFormComponent({
     formData,
@@ -27,7 +29,7 @@ export default function EmployeeFormComponent({
 
     return (
         <div className="form-page">
-            <div>
+            <div className="page-header">
                 <h1>{isCreate ? "직원 등록" : "직원 정보 수정"}</h1>
                 <p>
                     {isCreate
@@ -46,6 +48,7 @@ export default function EmployeeFormComponent({
                             value={formData.employeeNumber || ""}
                             onChange={onChange}
                             required
+                            readOnly={!isCreate}
                         />
                     </div>
 

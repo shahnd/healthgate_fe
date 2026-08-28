@@ -4,6 +4,25 @@ import {
   useEffect,
   useState,
 } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import "@/common/styles/ActionButton.css";
+import "@/common/styles/ListComponent.css";
 
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
@@ -20,6 +39,17 @@ export default function CheckupTargetListComponent() {
 
   const [year, setYear] = useState(currentYear);
   const [targetList, setTargetList] = useState([]);
+
+  // 현재 화면에서 Excel 업로드가 완료됐는지 여부
+  const [hasUploadedExcel, setHasUploadedExcel] =
+    useState(false);
+
+  /**
+   * 대상자 상태 필터
+   * ALL: 전체 / COMPLETED: 완료 / INCOMPLETE: 미완료
+   */
+  const [statusFilter, setStatusFilter] =
+    useState("ALL");
   const [reminderHistory, setReminderHistory] =
     useState([]);
 
@@ -131,12 +161,12 @@ export default function CheckupTargetListComponent() {
     }, []);
 
   /**
-   * 화면 최초 출력 및 연도 변경 시 조회
+   * 최초 화면에서는 알림 이력만 조회한다.
+   * 대상자 목록은 Excel 업로드 성공 후 조회한다.
    */
   useEffect(() => {
-    loadTargetList();
     loadReminderHistory();
-  }, [loadTargetList, loadReminderHistory]);
+  }, [loadReminderHistory]);
 
   /**
    * 카운트다운 표시를 위해 1초마다 현재 시각 갱신
@@ -300,6 +330,7 @@ export default function CheckupTargetListComponent() {
 
       // 업로드 결과를 반영하기 위해 목록 재조회
       await loadTargetList();
+      setHasUploadedExcel(true);
 
       setUploadNotice({
         message:
@@ -482,85 +513,105 @@ export default function CheckupTargetListComponent() {
       currentYear + 1 - index
   );
 
+  /**
+   * 선택한 상태에 따라 화면에 표시할 대상자를 필터링한다.
+   */
+  const filteredTargetList = targetList.filter(
+    (target) => {
+      if (statusFilter === "COMPLETED") {
+        return target.completed;
+      }
+
+      if (statusFilter === "INCOMPLETE") {
+        return !target.completed;
+      }
+
+      return true;
+    }
+  );
+
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="list-page">
       {/* 페이지 제목 */}
-      <section className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">
+      <div className="list-header">
+        <h1>
           건강검진 대상자 목록
         </h1>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p>
           연도별 건강검진 대상자의 수검 상태를
           조회하고 관리합니다.
         </p>
-      </section>
+      </div>
 
       {/* 연도 선택 */}
-      <section className="mb-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-center gap-3">
-          <label
-            htmlFor="targetCheckupYear"
-            className="font-semibold text-slate-700"
-          >
-            검진 연도
-          </label>
-
-          <select
-            id="targetCheckupYear"
-            value={year}
-            onChange={(event) => {
-              setYear(
-                Number(event.target.value)
-              );
-
+      <div className="list-toolbar">
+        <div>
+          <Select
+            value={String(year)}
+            onValueChange={(value) => {
+              setYear(Number(value));
+              setStatusFilter("ALL");
               setUploadNotice(null);
+              setTargetList([]);
+              setHasUploadedExcel(false);
             }}
-            className="
-              rounded-lg border border-slate-300
-              bg-white px-4 py-2 text-slate-700
-              outline-none focus:border-blue-500
-              focus:ring-2 focus:ring-blue-100
-            "
           >
-            {yearOptions.map(
-              (optionYear) => (
-                <option
-                  key={optionYear}
-                  value={optionYear}
-                >
-                  {optionYear}년
-                </option>
-              )
-            )}
-          </select>
+            <SelectTrigger className="w-[140px]" size="sm">
+              <SelectValue placeholder="검진 연도" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {yearOptions.map((optionYear) => (
+                  <SelectItem key={optionYear} value={String(optionYear)}>
+                    {optionYear}년
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-          <button
+          <Select
+            value={statusFilter}
+            onValueChange={setStatusFilter}
+          >
+            <SelectTrigger className="w-[140px]" size="sm">
+              <SelectValue placeholder="검진 상태" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="ALL">전체</SelectItem>
+                <SelectItem value="COMPLETED">검진 완료</SelectItem>
+                <SelectItem value="INCOMPLETE">검진 미완료</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Button
             type="button"
             onClick={async () => {
-              await Promise.all([
-                loadTargetList(),
-                loadReminderHistory(),
-              ]);
+              if (hasUploadedExcel) {
+                await loadTargetList();
+              }
+
+              await loadReminderHistory();
 
               setNow(Date.now());
             }}
             disabled={loading}
-            className="
-              rounded-lg !bg-slate-800
-              px-5 py-2 text-sm
-              font-semibold !text-white
-              transition hover:!bg-slate-700
-              disabled:cursor-not-allowed
-              disabled:!bg-slate-400
-            "
+            variant="outline"
+            size="sm"
           >
             {loading
               ? "조회 중..."
               : "새로고침"}
-          </button>
+          </Button>
         </div>
-      </section>
+
+        <Button size="sm" onClick={openExcelModal} className="primary-button">
+          엑셀 업로드
+        </Button>
+      </div>
 
       {/* 조회 오류 안내 */}
       {errorMessage && (
@@ -648,89 +699,66 @@ export default function CheckupTargetListComponent() {
       )}
 
       {/* 검진 대상자 목록 */}
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-          <div>
-            <h2 className="text-lg font-bold text-slate-800">
-              검진 대상자 목록
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              총 {targetList.length}명의 대상자가
-              조회되었습니다.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={openExcelModal}
-            className="
-              rounded-lg !bg-blue-600
-              px-4 py-2 text-sm
-              font-semibold !text-white
-              transition hover:!bg-blue-700
-            "
-          >
-            엑셀 업로드
-          </button>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-slate-100">
-              <tr className="text-left text-sm text-slate-600">
-                <th className="px-6 py-3">
+      <div className="list-table-wrapper">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">
                   사번
-                </th>
+                </TableHead>
 
-                <th className="px-6 py-3">
+                <TableHead>
                   이름
-                </th>
+                </TableHead>
 
-                <th className="px-6 py-3">
+                <TableHead>
                   검진 연도
-                </th>
+                </TableHead>
 
-                <th className="px-6 py-3">
+                <TableHead>
                   검진일
-                </th>
+                </TableHead>
 
-                <th className="px-6 py-3">
+                <TableHead>
                   검진 요약
-                </th>
+                </TableHead>
 
-                <th className="px-6 py-3">
+                <TableHead>
                   상태
-                </th>
+                </TableHead>
 
-                <th className="px-6 py-3">
+                <TableHead>
                   알림
-                </th>
-              </tr>
-            </thead>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
 
-            <tbody>
+            <TableBody>
               {loading ? (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan="7"
                     className="px-6 py-14 text-center text-slate-500"
                   >
                     건강검진 대상자를 불러오는 중입니다.
-                  </td>
-                </tr>
-              ) : targetList.length ===
+                  </TableCell>
+                </TableRow>
+              ) : filteredTargetList.length ===
                 0 ? (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan="7"
                     className="px-6 py-14 text-center text-slate-500"
                   >
-                    해당 연도의 검진 대상자가 없습니다.
-                  </td>
-                </tr>
+                    {!hasUploadedExcel
+                      ? "Excel 파일을 업로드하면 검진 대상자 목록이 표시됩니다."
+                      : targetList.length === 0
+                        ? "업로드한 파일에 해당 연도의 검진 대상자가 없습니다."
+                        : "선택한 상태에 해당하는 대상자가 없습니다."}
+                  </TableCell>
+                </TableRow>
               ) : (
-                targetList.map((target) => {
+                filteredTargetList.map((target) => {
                   const remainingCooldown =
                     getRemainingCooldown(
                       target.checkupId
@@ -744,7 +772,7 @@ export default function CheckupTargetListComponent() {
                     coolingDown;
 
                   return (
-                    <tr
+                    <TableRow
                       key={target.checkupId}
                       className="
                         border-t border-slate-100
@@ -752,37 +780,37 @@ export default function CheckupTargetListComponent() {
                         hover:bg-slate-50
                       "
                     >
-                      <td className="px-6 py-4">
+                      <TableCell className="font-medium">
                         {target.employeeNo}
-                      </td>
+                      </TableCell>
 
-                      <td className="px-6 py-4 font-semibold">
+                      <TableCell>
                         {target.employeeName}
-                      </td>
+                      </TableCell>
 
-                      <td className="px-6 py-4">
+                      <TableCell>
                         {target.checkupYear}년
-                      </td>
+                      </TableCell>
 
-                      <td className="px-6 py-4">
+                      <TableCell>
                         {target.checkupDate ??
                           "-"}
-                      </td>
+                      </TableCell>
 
-                      <td className="px-6 py-4">
+                      <TableCell>
                         {target.checkupSummary ??
                           "-"}
-                      </td>
+                      </TableCell>
 
-                      <td className="px-6 py-4">
+                      <TableCell>
                         <CheckupStatusBadge
                           completed={
                             target.completed
                           }
                         />
-                      </td>
+                      </TableCell>
 
-                      <td className="px-6 py-4">
+                      <TableCell>
                         <div className="flex flex-col items-start gap-1">
                           <button
                             type="button"
@@ -833,15 +861,14 @@ export default function CheckupTargetListComponent() {
                             </span>
                           )}
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            </TableBody>
+          </Table>
+      </div>
 
       {/* Excel 파일 업로드 모달 */}
       {excelModalOpen && (

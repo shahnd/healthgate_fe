@@ -6,6 +6,8 @@ import { useServerFilter } from "@/common/hooks/useServerFilter";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
 
 const getToday = () => {
     const today = new Date();
@@ -36,7 +38,7 @@ export default function AttendanceListComponent() {
     const [plist, setPlist] = useState([]);
 
     // 여기는 팝오버/적용 버튼 없이 전부 즉시 반영이라 handleImmediateChange만 사용
-    const { condition, handleImmediateChange } = useServerFilter(EMPTY_CONDITION, {
+    const { condition, handleImmediateChange, reset } = useServerFilter(EMPTY_CONDITION, {
         onApply: () => setPage(1),
     });
 
@@ -69,9 +71,10 @@ export default function AttendanceListComponent() {
         handleImmediateChange(name, value);
     };
 
+ 
     return (
         <div className="list-page">
-            <div className="list-header">
+            <div className="page-header">
                 <h1>출근 조회</h1>
                 <p>직원별 출근 현황을 조회합니다.</p>
             </div>
@@ -148,10 +151,15 @@ export default function AttendanceListComponent() {
                             <SelectGroup>
                                 <SelectItem value="">전체 상태</SelectItem>
                                 <SelectItem value="ATTENDANCE">출근</SelectItem>
+                                <SelectItem value="WARNING">출근(주의)</SelectItem>
                                 <SelectItem value="DENY">출근거부</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
+
+                    <Button variant="outline" size="icon" onClick={reset}>
+                        <RotateCcw className="h-2 w-2"/>
+                    </Button>
                 </div>
             </div>
 

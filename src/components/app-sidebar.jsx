@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useUserInfo } from "@/store/useAuthStore"
 import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon } from "lucide-react"
+import { ModeToggle } from "./mode-toggle"
 
 
 const data = {
@@ -28,6 +29,10 @@ const data = {
         {
           title: "출근자 건강 정보",
           url: "/attendance",
+        },
+        {
+          title: "오늘의 안전 브리핑",
+          url: "/safety-briefings/today",
         },
       ],
     },

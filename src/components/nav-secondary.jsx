@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom";
 
 export function NavSecondary({
   items,
@@ -20,9 +21,11 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton render={<a href={item.url} />}>
-                {item.icon}
-                <span>{item.title}</span>
+              <SidebarMenuButton asChild>
+                <Link to={item.url} className="flex w-full items-center gap-2">
+                  {item.icon}
+                  <span className="truncate">{item.title}</span> {/* 글자가 길어질 때를 대비해 truncate 추가 */}
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
