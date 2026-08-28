@@ -12,12 +12,12 @@ const getAuthConfig = () => {
 };
 
 // 목록 조회
-function selectConsultationListApi(startMonth, endMonth) {
+function selectConsultationListApi({ startMonth, endMonth}) {
 
     const response = axios ({
         url : `${ BASE_URL }/list`,
         method : "get",
-        params : { startMonth, endMonth },
+        params : { startMonth, endMonth},
         ...getAuthConfig()
     });
 

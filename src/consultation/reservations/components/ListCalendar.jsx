@@ -16,21 +16,8 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-// 일정 생성 예시
-const events = [
-  {
-    title: 'SAMPLE',
-    start: new Date(2026, 7, 20, 10, 0),
-    end: new Date(2026, 7, 20, 11, 0),
-  },
-]
-
 // 커스텀 툴바
 const CustomToolbar = (toolbar) => {
-  // '오늘' 버튼 클릭 핸들러
-  const goToToday = () => {
-    toolbar.onNavigate('TODAY');
-  };
   // '이전' 버튼 클릭 핸들러
   const goToBack = () => {
     toolbar.onNavigate('PREV');
@@ -90,7 +77,6 @@ function ListCalendar({ dataList, onSelectEvent}) {
         }}
         components={{ toolbar: CustomToolbar, }}
         onSelectEvent={onSelectEvent}  // prop 된 이벤트 클릭 핸들러
-        // onSelectSlot={(slotInfo) => console.log(slotInfo)}  // 빈 슬롯 클릭(날짜 선택)
         selectable  // 슬롯 선택 가능하게
         style={{ height: '100%' }}
         messages={{

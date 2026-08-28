@@ -1,27 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { selectReservationApi, cancelReservationApi } from "../api/reservationApi";
-
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function ReservationDetailComponent() {
 
     let navigate = useNavigate();
     // 예약번호 변수
     const { id } = useParams();
+    // 유저 정보 변수
+    const user = useAuthStore(state => state.user);
+    const role = user?.role;
+    const loginUserId = user?.id;
+
     // 출력 데이터 변수
     const [reservation, setReservation] = useState({
         employee : {
-            id : "",
+            id : id,
             name : "",
             department : { name : "" },
-            position : { name : "" }
+            position : { name : "" },
+            phone : ""
         },
         id : id,
-        manager : "허준", // 상담사 하드코딩
+        manager : "",
         reason : "",
         scheduledDate : "",
         scheduledTurn : "",
-        status : ""
+        status : "",
+        createAt : ""
     });
 
     // 차시 -> 시간 매핑
@@ -43,8 +50,8 @@ export default function ReservationDetailComponent() {
         return timeRange ? `${turnNumber}차 ${timeRange}` : "-";
     }
 
+    // 페이지 최초 진입 - 예약 단건 조회
     useEffect(() => {
-        // console.log(id);
         // 상세 정보 조회
         const selectReservation = async () => {
 
@@ -54,7 +61,17 @@ export default function ReservationDetailComponent() {
                 
                 const response = await selectReservationApi(id);
 
-                // console.log(response.data);
+                // 권한 체크
+                if (role !== "HEALTH_ADMIN") {
+                    // 상담사 아닐 경우 조회 시
+                    if (response.data.employee?.id != loginUserId) {
+                        // 본인이 아니면 접근 제한
+                        alert("접근 권한이 없습니다.")
+                        navigate("/consultation/list");
+                        return;
+                    }
+                }
+
                 if(response.data != "") {
 
                     setReservation(response.data);
@@ -63,14 +80,26 @@ export default function ReservationDetailComponent() {
                     alert("예약이 없거나 취소되었습니다.");
                 }
                 
-                // console.log(reservation);
             } catch (error) {
                 console.log("예약 상세 조회 통신 실패" + error);
+
+                if(error.response && error.response.status === 403) {
+
+                    alert("접근 권한이 없습니다.");
+                    navigate("/consultation/list");
+                } else if(error.response && error.response.status === 404) {
+
+                    alert("숨겨졌거나 삭제된 데이터 입니다.");
+                    navigate("/consultation/list");
+                } else {
+
+                    alert("데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.")
+                }
             }
         }
 
         selectReservation();
-    }, [id]);
+    }, [id, loginUserId]);
 
     const cancelReservation = async () => {
 
@@ -109,11 +138,11 @@ export default function ReservationDetailComponent() {
                     </tr>
                     <tr>
                         <th>부서명</th>
-                        <td>{ reservation.employee?.department?.name || "-" }</td>
+                        <td>{ reservation.employee?.departments?.name || "-" }</td>
                     </tr>
                     <tr>
                         <th>직급</th>
-                        <td>{ reservation.employee?.position?.name || "-" }</td>
+                        <td>{ reservation.employee?.positions?.name || "-" }</td>
                     </tr>
                     <tr>
                         <th>연락처</th>
