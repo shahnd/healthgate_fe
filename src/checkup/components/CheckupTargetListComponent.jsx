@@ -23,9 +23,18 @@ import {
 } from "@/components/ui/table";
 import "@/common/styles/ActionButton.css";
 import "@/common/styles/ListComponent.css";
+import "@/common/styles/Common.css";
 
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
+
+const STATUS_FILTER_LABELS = {
+  ALL: "전체",
+  COMPLETED: "검진 완료",
+  INCOMPLETE: "검진 미완료",
+};
+
+const UPLOADED_YEARS_KEY = "healthgate.checkup.uploadedYears";
 
 /**
  * 수동 알림 재발송 제한 시간
@@ -41,8 +50,9 @@ export default function CheckupTargetListComponent() {
   const [targetList, setTargetList] = useState([]);
 
   // 현재 화면에서 Excel 업로드가 완료됐는지 여부
-  const [hasUploadedExcel, setHasUploadedExcel] =
-    useState(false);
+  const [hasUploadedExcel, setHasUploadedExcel] = useState(
+    () => hasUploadedYear(currentYear)
+  );
 
   /**
    * 대상자 상태 필터
@@ -167,6 +177,16 @@ export default function CheckupTargetListComponent() {
   useEffect(() => {
     loadReminderHistory();
   }, [loadReminderHistory]);
+
+  /**
+   * Excel 업로드 직후 브라우저를 새로고침한 경우에만
+   * 저장된 대상자 목록을 다시 조회한다.
+   */
+  useEffect(() => {
+    if (hasUploadedExcel && targetList.length === 0) {
+      loadTargetList();
+    }
+  }, [hasUploadedExcel, loadTargetList, targetList.length]);
 
   /**
    * 카운트다운 표시를 위해 1초마다 현재 시각 갱신
@@ -331,6 +351,7 @@ export default function CheckupTargetListComponent() {
       // 업로드 결과를 반영하기 위해 목록 재조회
       await loadTargetList();
       setHasUploadedExcel(true);
+      rememberUploadedYear(year);
 
       setUploadNotice({
         message:
@@ -372,6 +393,21 @@ export default function CheckupTargetListComponent() {
     } finally {
       setUploadingExcel(false);
     }
+  };
+
+  /**
+   * 현재 연도의 Excel 업로드 표시 상태를 삭제한다.
+   */
+  const clearUploadedTargets = () => {
+    if (!window.confirm(`${year}년 업로드 목록을 삭제하시겠습니까?`)) {
+      return;
+    }
+
+    forgetUploadedYear(year);
+    setTargetList([]);
+    setHasUploadedExcel(false);
+    setUploadNotice(null);
+    setStatusFilter("ALL");
   };
 
   /**
@@ -533,7 +569,7 @@ export default function CheckupTargetListComponent() {
   return (
     <div className="list-page">
       {/* 페이지 제목 */}
-      <div className="list-header">
+      <div className="page-header">
         <h1>
           건강검진 대상자 목록
         </h1>
@@ -550,11 +586,13 @@ export default function CheckupTargetListComponent() {
           <Select
             value={String(year)}
             onValueChange={(value) => {
-              setYear(Number(value));
+              const selectedYear = Number(value);
+
+              setYear(selectedYear);
               setStatusFilter("ALL");
               setUploadNotice(null);
               setTargetList([]);
-              setHasUploadedExcel(false);
+              setHasUploadedExcel(hasUploadedYear(selectedYear));
             }}
           >
             <SelectTrigger className="w-[140px]" size="sm">
@@ -576,7 +614,9 @@ export default function CheckupTargetListComponent() {
             onValueChange={setStatusFilter}
           >
             <SelectTrigger className="w-[140px]" size="sm">
-              <SelectValue placeholder="검진 상태" />
+              <SelectValue placeholder="검진 상태">
+                {STATUS_FILTER_LABELS[statusFilter]}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -608,9 +648,22 @@ export default function CheckupTargetListComponent() {
           </Button>
         </div>
 
-        <Button size="sm" onClick={openExcelModal} className="primary-button">
-          엑셀 업로드
-        </Button>
+        <div>
+          <Button size="sm" onClick={openExcelModal} className="primary-button">
+            엑셀 업로드
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={clearUploadedTargets}
+            disabled={!hasUploadedExcel}
+            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            삭제
+          </Button>
+        </div>
       </div>
 
       {/* 조회 오류 안내 */}
@@ -1206,6 +1259,40 @@ function formatRemainingTime(
     String(minutes).padStart(2, "0"),
     String(seconds).padStart(2, "0"),
   ].join(":");
+}
+
+/**
+ * 완료율 통계 화면에서 사용할 수 있도록
+ * Excel 업로드가 완료된 연도를 세션에 기록한다.
+ */
+function rememberUploadedYear(year) {
+  const uploadedYears = getUploadedYears();
+
+  sessionStorage.setItem(
+    UPLOADED_YEARS_KEY,
+    JSON.stringify([...new Set([...uploadedYears, year])])
+  );
+}
+
+function forgetUploadedYear(year) {
+  const uploadedYears = getUploadedYears().filter(
+    (uploadedYear) => uploadedYear !== year
+  );
+
+  sessionStorage.setItem(
+    UPLOADED_YEARS_KEY,
+    JSON.stringify(uploadedYears)
+  );
+}
+
+function hasUploadedYear(year) {
+  return getUploadedYears().includes(year);
+}
+
+function getUploadedYears() {
+  return JSON.parse(
+    sessionStorage.getItem(UPLOADED_YEARS_KEY) ?? "[]"
+  );
 }
 
 /**

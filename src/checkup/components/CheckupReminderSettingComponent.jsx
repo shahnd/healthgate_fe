@@ -1,13 +1,13 @@
 import axios from "axios";
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import "@/common/styles/ActionButton.css";
+import "@/common/styles/Common.css";
+import "@/common/styles/ListComponent.css";
 
-const CHECKUP_API_URL =
-  "http://localhost:8006/healthgate/checkups";
-
+const CHECKUP_API_URL = "http://localhost:8006/healthgate/checkups";
 const INITIAL_SETTING_FORM = {
   settingType: "INCOMPLETE",
   messageTemplate: "건강검진을 완료해 주세요.",
@@ -19,145 +19,44 @@ const INITIAL_SETTING_FORM = {
 
 export default function CheckupReminderSettingComponent() {
   const [settingList, setSettingList] = useState([]);
-
-  const [editingSettingId, setEditingSettingId] =
-    useState(null);
-
-  const [settingForm, setSettingForm] = useState({
-    ...INITIAL_SETTING_FORM,
-  });
-
+  const [editingSettingId, setEditingSettingId] = useState(null);
+  const [settingForm, setSettingForm] = useState({ ...INITIAL_SETTING_FORM });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  /**
-   * 자동 알림 설정 목록 조회
-   */
   const loadReminderSettings = useCallback(async () => {
     setLoading(true);
     setErrorMessage("");
-
     try {
-      const response = await axios.get(
-        `${CHECKUP_API_URL}/reminder-settings`
-      );
-
+      const response = await axios.get(`${CHECKUP_API_URL}/reminder-settings`);
       setSettingList(response.data ?? []);
     } catch (error) {
-      console.error(
-        "자동 알림 설정 조회 실패:",
-        error
-      );
-
-      setErrorMessage(
-        "자동 알림 설정을 불러오지 못했습니다."
-      );
-
+      console.error("자동 알림 설정 조회 실패:", error);
+      setErrorMessage("자동 알림 설정을 불러오지 못했습니다.");
       setSettingList([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  /**
-   * 화면 최초 출력 시 설정 목록 조회
-   */
   useEffect(() => {
     loadReminderSettings();
   }, [loadReminderSettings]);
 
-  /**
-   * 자동 알림 입력값 변경
-   */
   const changeSettingForm = (event) => {
-    const {
-      name,
-      value,
-      type,
-      checked,
-    } = event.target;
-
-    setSettingForm((previousForm) => ({
-      ...previousForm,
-      [name]:
-        type === "checkbox" ? checked : value,
-    }));
+    const { name, value } = event.target;
+    setSettingForm((previous) => ({ ...previous, [name]: value }));
   };
 
-  /**
-   * 자동 알림 설정 등록 또는 수정
-   */
-  const saveReminderSetting = async (event) => {
-    event.preventDefault();
-
-    if (!settingForm.messageTemplate.trim()) {
-      alert("메시지 템플릿을 입력해 주세요.");
-      return;
-    }
-
-    if (!settingForm.scheduleTime) {
-      alert("실행 시간을 선택해 주세요.");
-      return;
-    }
-
-    const requestData = {
-      settingType: settingForm.settingType,
-
-      messageTemplate:
-        settingForm.messageTemplate.trim(),
-
-      cronSchedule: createCronSchedule(
-        settingForm.scheduleType,
-        settingForm.scheduleDay,
-        settingForm.scheduleTime
-      ),
-
-      active: settingForm.active,
-    };
-
-    setSaving(true);
-
-    try {
-      if (editingSettingId !== null) {
-        await axios.put(
-          `${CHECKUP_API_URL}/reminder-settings/${editingSettingId}`,
-          requestData
-        );
-
-        alert("자동 알림 설정이 수정되었습니다.");
-      } else {
-        await axios.post(
-          `${CHECKUP_API_URL}/reminder-settings`,
-          requestData
-        );
-
-        alert("자동 알림 설정이 등록되었습니다.");
-      }
-
-      resetSettingForm();
-      await loadReminderSettings();
-    } catch (error) {
-      console.error(
-        "자동 알림 설정 저장 실패:",
-        error
-      );
-
-      alert("자동 알림 설정 저장에 실패했습니다.");
-    } finally {
-      setSaving(false);
-    }
+  const resetSettingForm = () => {
+    setEditingSettingId(null);
+    setSettingForm({ ...INITIAL_SETTING_FORM });
   };
 
-  /**
-   * 기존 설정 수정 시작
-   */
   const startEditingSetting = (setting) => {
-    const schedule =
-      parseCronSchedule(setting.cronSchedule);
-
+    const schedule = parseCronSchedule(setting.cronSchedule);
     setEditingSettingId(setting.settingId);
-
     setSettingForm({
       settingType: setting.settingType,
       messageTemplate: setting.messageTemplate,
@@ -166,576 +65,233 @@ export default function CheckupReminderSettingComponent() {
       scheduleTime: schedule.scheduleTime,
       active: setting.active,
     });
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
   };
 
-  /**
-   * 입력 폼 초기화
-   */
-  const resetSettingForm = () => {
-    setEditingSettingId(null);
-
-    setSettingForm({
-      ...INITIAL_SETTING_FORM,
-    });
+  const refreshSettings = async () => {
+    await loadReminderSettings();
+    resetSettingForm();
   };
+
+  const saveReminderSetting = async (event) => {
+    event.preventDefault();
+    if (!settingForm.messageTemplate.trim()) {
+      alert("메시지 템플릿을 입력해 주세요.");
+      return;
+    }
+    if (!settingForm.scheduleTime) {
+      alert("실행 시간을 선택해 주세요.");
+      return;
+    }
+
+    const requestData = {
+      settingType: settingForm.settingType,
+      messageTemplate: settingForm.messageTemplate.trim(),
+      cronSchedule: createCronSchedule(settingForm.scheduleType, settingForm.scheduleDay, settingForm.scheduleTime),
+      active: settingForm.active,
+    };
+
+    setSaving(true);
+    try {
+      if (editingSettingId !== null) {
+        await axios.put(`${CHECKUP_API_URL}/reminder-settings/${editingSettingId}`, requestData);
+        alert("자동 알림 설정이 수정되었습니다.");
+      } else {
+        await axios.post(`${CHECKUP_API_URL}/reminder-settings`, requestData);
+        alert("자동 알림 설정이 등록되었습니다.");
+      }
+      resetSettingForm();
+      await loadReminderSettings();
+    } catch (error) {
+      console.error("자동 알림 설정 저장 실패:", error);
+      alert("자동 알림 설정 저장에 실패했습니다.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const activeCount = settingList.filter((setting) => setting.active).length;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
-      {/* 페이지 제목 */}
-      <section className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">
-          자동 알림 설정
-        </h1>
+    <div className="list-page">
+      <div className="page-header">
+        <h1>자동 알림 설정</h1>
+        <p>건강검진 자동 알림의 발송 조건과 일정을 관리합니다.</p>
+      </div>
 
-        <p className="mt-2 text-sm text-slate-500">
-          건강검진 자동 알림의 메시지와 실행 일정을
-          관리합니다.
-        </p>
-      </section>
-
-      {/* 오류 안내 */}
       {errorMessage && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
-          {errorMessage}
-        </div>
+        <div className="rounded-lg border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">{errorMessage}</div>
       )}
 
-      {/* 자동 알림 입력 폼 */}
-      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-bold text-slate-800">
-              {editingSettingId !== null
-                ? "자동 알림 설정 수정"
-                : "자동 알림 설정 등록"}
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              알림 종류와 실행 주기, 메시지를
-              설정해 주세요.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={loadReminderSettings}
-            disabled={loading}
-            className="
-              rounded-lg !bg-slate-800
-              px-4 py-2 text-sm
-              font-semibold !text-white
-              transition hover:!bg-slate-700
-              disabled:cursor-not-allowed
-              disabled:!bg-slate-400
-            "
-          >
-            {loading ? "조회 중..." : "새로고침"}
-          </button>
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-white px-5 py-4">
+        <div className="flex items-center gap-5 text-sm">
+          <span className="font-semibold">전체 설정 {settingList.length}</span>
+          <span className="h-5 w-px bg-slate-200" />
+          <span>활성화 <strong className="ml-1 text-emerald-600">{activeCount}</strong></span>
+          <span className="h-5 w-px bg-slate-200" />
+          <span>비활성화 <strong className="ml-1">{settingList.length - activeCount}</strong></span>
         </div>
+        <Button type="button" variant="outline" size="sm" onClick={resetSettingForm}>새 설정 등록</Button>
+      </div>
 
-        <form
-          onSubmit={saveReminderSetting}
-          className="grid grid-cols-1 gap-5 lg:grid-cols-2"
-        >
-          {/* 알림 종류 */}
-          <div>
-            <label
-              htmlFor="settingType"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              알림 설정 종류
-            </label>
+      <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)]">
+        <section className="min-w-0 rounded-lg border bg-white p-5">
+          <h2 className="mb-4 text-base font-bold">등록된 자동 알림 설정</h2>
+          <div className="list-table-wrapper">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>설정 종류</TableHead>
+                  <TableHead>발송 일정</TableHead>
+                  <TableHead>메시지</TableHead>
+                  <TableHead className="w-[112px]">상태</TableHead>
+                  <TableHead className="w-[88px]">관리</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow><TableCell colSpan="5" className="py-14 text-center text-slate-500">자동 알림 설정을 불러오는 중입니다.</TableCell></TableRow>
+                ) : settingList.length === 0 ? (
+                  <TableRow><TableCell colSpan="5" className="py-14 text-center text-slate-500">등록된 자동 알림 설정이 없습니다.</TableCell></TableRow>
+                ) : settingList.map((setting) => (
+                  <TableRow key={setting.settingId} className={editingSettingId === setting.settingId ? "bg-slate-50" : ""}>
+                    <TableCell>{getSettingTypeName(setting.settingType)}</TableCell>
+                    <TableCell>
+                      <p className="font-medium">{getScheduleDescription(setting.cronSchedule)}</p>
+                      <p className="mt-1 font-mono text-xs text-slate-400">{setting.cronSchedule}</p>
+                    </TableCell>
+                    <TableCell title={setting.messageTemplate}>{setting.messageTemplate}</TableCell>
+                    <TableCell className="!overflow-visible !text-clip"><ActiveStatusBadge active={setting.active} /></TableCell>
+                    <TableCell className="!overflow-visible !text-clip"><Button type="button" variant="outline" size="sm" onClick={() => startEditingSetting(setting)}>수정</Button></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </section>
 
-            <select
-              id="settingType"
-              name="settingType"
-              value={settingForm.settingType}
-              onChange={changeSettingForm}
-              className="
-                w-full rounded-lg
-                border border-slate-300
-                bg-white px-4 py-2
-                outline-none focus:border-blue-500
-              "
-            >
-              <option value="INCOMPLETE">
-                미검진자 알림
-              </option>
-
-              <option value="BEFORE_CHECKUP">
-                검진일 이전 알림
-              </option>
-            </select>
+        <section className="rounded-lg border bg-white p-5">
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <h2 className="text-base font-bold">{editingSettingId !== null ? "알림 설정 수정" : "새 알림 설정 등록"}</h2>
+            <Button type="button" variant="outline" size="sm" onClick={refreshSettings} disabled={loading || saving}>
+              {loading ? "조회 중..." : "새로고침"}
+            </Button>
           </div>
 
-          {/* 실행 주기 */}
-          <div>
-            <label
-              htmlFor="scheduleType"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              실행 주기
-            </label>
+          <form onSubmit={saveReminderSetting} className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormSelect id="settingType" name="settingType" label="설정 종류" value={settingForm.settingType} onChange={changeSettingForm}>
+                <option value="INCOMPLETE">미검진자 알림</option>
+                <option value="BEFORE_CHECKUP">검진일 이전 알림</option>
+              </FormSelect>
+              <FormSelect id="scheduleType" name="scheduleType" label="실행 주기" value={settingForm.scheduleType} onChange={changeSettingForm}>
+                <option value="DAILY">매일</option>
+                <option value="WEEKDAY">평일</option>
+                <option value="WEEKLY">매주</option>
+              </FormSelect>
+            </div>
 
-            <select
-              id="scheduleType"
-              name="scheduleType"
-              value={settingForm.scheduleType}
-              onChange={changeSettingForm}
-              className="
-                w-full rounded-lg
-                border border-slate-300
-                bg-white px-4 py-2
-                outline-none focus:border-blue-500
-              "
-            >
-              <option value="DAILY">
-                매일
-              </option>
+            {settingForm.scheduleType === "WEEKLY" && (
+              <FormSelect id="scheduleDay" name="scheduleDay" label="실행 요일" value={settingForm.scheduleDay} onChange={changeSettingForm}>
+                <option value="MON">월요일</option><option value="TUE">화요일</option><option value="WED">수요일</option>
+                <option value="THU">목요일</option><option value="FRI">금요일</option><option value="SAT">토요일</option><option value="SUN">일요일</option>
+              </FormSelect>
+            )}
 
-              <option value="WEEKDAY">
-                평일
-              </option>
-
-              <option value="WEEKLY">
-                매주
-              </option>
-            </select>
-          </div>
-
-          {/* 매주 실행 요일 */}
-          {settingForm.scheduleType === "WEEKLY" && (
             <div>
-              <label
-                htmlFor="scheduleDay"
-                className="mb-2 block text-sm font-semibold text-slate-700"
-              >
-                실행 요일
-              </label>
-
-              <select
-                id="scheduleDay"
-                name="scheduleDay"
-                value={settingForm.scheduleDay}
-                onChange={changeSettingForm}
-                className="
-                  w-full rounded-lg
-                  border border-slate-300
-                  bg-white px-4 py-2
-                  outline-none focus:border-blue-500
-                "
-              >
-                <option value="MON">월요일</option>
-                <option value="TUE">화요일</option>
-                <option value="WED">수요일</option>
-                <option value="THU">목요일</option>
-                <option value="FRI">금요일</option>
-                <option value="SAT">토요일</option>
-                <option value="SUN">일요일</option>
-              </select>
+              <label htmlFor="scheduleTime" className="mb-2 block text-sm font-semibold">실행 시간</label>
+              <input id="scheduleTime" name="scheduleTime" type="time" value={settingForm.scheduleTime} onChange={changeSettingForm}
+                className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500" />
             </div>
-          )}
 
-          {/* 실행 시간 */}
-          <div>
-            <label
-              htmlFor="scheduleTime"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              실행 시간
-            </label>
-
-            <input
-              id="scheduleTime"
-              name="scheduleTime"
-              type="time"
-              value={settingForm.scheduleTime}
-              onChange={changeSettingForm}
-              className="
-                w-full rounded-lg
-                border border-slate-300
-                bg-white px-4 py-2
-                outline-none focus:border-blue-500
-              "
-            />
-
-            <p className="mt-1 text-xs text-slate-400">
-              자동 알림을 실행할 시간을 선택해 주세요.
-            </p>
-          </div>
-
-          {/* 메시지 템플릿 */}
-          <div className="lg:col-span-2">
-            <label
-              htmlFor="messageTemplate"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              메시지 템플릿
-            </label>
-
-            <textarea
-              id="messageTemplate"
-              name="messageTemplate"
-              value={settingForm.messageTemplate}
-              onChange={changeSettingForm}
-              rows="5"
-              className="
-                w-full resize-none rounded-lg
-                border border-slate-300
-                px-4 py-3 outline-none
-                focus:border-blue-500
-              "
-            />
-          </div>
-
-          {/* 활성화 및 저장 버튼 */}
-          <div className="flex items-center justify-between gap-4 lg:col-span-2">
-            <label className="flex items-center gap-2">
-              <input
-                name="active"
-                type="checkbox"
-                checked={settingForm.active}
-                onChange={changeSettingForm}
-                className="h-4 w-4"
-              />
-
-              <span className="text-sm font-semibold text-slate-700">
-                자동 알림 활성화
-              </span>
-            </label>
-
-            <div className="flex gap-3">
-              {editingSettingId !== null && (
-                <button
-                  type="button"
-                  onClick={resetSettingForm}
-                  disabled={saving}
-                  className="
-                    rounded-lg
-                    border border-slate-300
-                    !bg-white px-4 py-2
-                    font-semibold !text-slate-600
-                    transition hover:!bg-slate-50
-                  "
-                >
-                  수정 취소
-                </button>
-              )}
-
-              <button
-                type="submit"
-                disabled={saving}
-                className="
-                  rounded-lg !bg-blue-600
-                  px-5 py-2 font-semibold
-                  !text-white transition
-                  hover:!bg-blue-700
-                  disabled:cursor-not-allowed
-                  disabled:!bg-blue-300
-                "
-              >
-                {saving
-                  ? "저장 중..."
-                  : editingSettingId !== null
-                    ? "설정 수정"
-                    : "설정 등록"}
-              </button>
+            <div>
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <label htmlFor="messageTemplate" className="text-sm font-semibold">메시지 템플릿</label>
+                <span className="text-xs text-slate-400">{settingForm.messageTemplate.length} / 500</span>
+              </div>
+              <textarea id="messageTemplate" name="messageTemplate" value={settingForm.messageTemplate} onChange={changeSettingForm}
+                maxLength="500" rows="5" className="w-full resize-none rounded-lg border border-slate-300 px-3 py-3 text-sm outline-none focus:border-blue-500" />
             </div>
-          </div>
-        </form>
-      </section>
 
-      {/* 저장된 자동 알림 설정 목록 */}
-      <section className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-6 py-5">
-          <h2 className="text-lg font-bold text-slate-800">
-            등록된 자동 알림 설정
-          </h2>
+            <div>
+              <p className="mb-3 text-sm font-semibold">자동 알림 상태</p>
+              <div className="flex items-center gap-3">
+                <Switch id="active" checked={settingForm.active}
+                  onCheckedChange={(active) => setSettingForm((previous) => ({ ...previous, active }))} />
+                <label htmlFor="active" className="text-sm text-slate-700">{settingForm.active ? "활성화" : "비활성화"}</label>
+              </div>
+            </div>
 
-          <p className="mt-1 text-sm text-slate-500">
-            총 {settingList.length}개의 설정이
-            등록되어 있습니다.
-          </p>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-slate-100">
-              <tr className="text-left text-sm text-slate-600">
-                <th className="px-5 py-3">
-                  설정 종류
-                </th>
-
-                <th className="px-5 py-3">
-                  메시지
-                </th>
-
-                <th className="px-5 py-3">
-                  실행 일정
-                </th>
-
-                <th className="px-5 py-3">
-                  상태
-                </th>
-
-                <th className="px-5 py-3">
-                  관리
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan="5"
-                    className="px-5 py-12 text-center text-slate-500"
-                  >
-                    자동 알림 설정을 불러오는 중입니다.
-                  </td>
-                </tr>
-              ) : settingList.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="5"
-                    className="px-5 py-12 text-center text-slate-500"
-                  >
-                    등록된 자동 알림 설정이 없습니다.
-                  </td>
-                </tr>
-              ) : (
-                settingList.map((setting) => (
-                  <tr
-                    key={setting.settingId}
-                    className="
-                      border-t border-slate-100
-                      text-sm text-slate-700
-                      hover:bg-slate-50
-                    "
-                  >
-                    <td className="px-5 py-4">
-                      {getSettingTypeName(
-                        setting.settingType
-                      )}
-                    </td>
-
-                    <td className="px-5 py-4">
-                      {setting.messageTemplate}
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <p className="font-semibold text-slate-700">
-                        {getScheduleDescription(
-                          setting.cronSchedule
-                        )}
-                      </p>
-
-                      <p className="mt-1 font-mono text-xs text-slate-400">
-                        {setting.cronSchedule}
-                      </p>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <ActiveStatusBadge
-                        active={setting.active}
-                      />
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          startEditingSetting(setting)
-                        }
-                        className="
-                          rounded-lg
-                          border border-blue-300
-                          !bg-white px-3 py-2
-                          font-semibold !text-blue-600
-                          transition hover:!bg-blue-50
-                        "
-                      >
-                        수정
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button type="button" variant="outline" onClick={resetSettingForm} disabled={saving}>취소</Button>
+              <Button type="submit" className="primary-button" disabled={saving}>
+                {saving ? "저장 중..." : editingSettingId !== null ? "저장" : "등록"}
+              </Button>
+            </div>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }
 
-/**
- * 화면에서 선택한 실행 주기를
- * Spring Cron 표현식으로 변환한다.
- */
-function createCronSchedule(
-  scheduleType,
-  scheduleDay,
-  scheduleTime
-) {
-  const [hour, minute] =
-    scheduleTime.split(":");
+function FormSelect({ id, name, label, value, onChange, children }) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-2 block text-sm font-semibold">{label}</label>
+      <select id={id} name={name} value={value} onChange={onChange}
+        className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500">
+        {children}
+      </select>
+    </div>
+  );
+}
 
-  if (scheduleType === "WEEKDAY") {
-    return `0 ${Number(minute)} ${Number(hour)} * * MON-FRI`;
-  }
-
-  if (scheduleType === "WEEKLY") {
-    return `0 ${Number(minute)} ${Number(hour)} * * ${scheduleDay}`;
-  }
-
+function createCronSchedule(scheduleType, scheduleDay, scheduleTime) {
+  const [hour, minute] = scheduleTime.split(":");
+  if (scheduleType === "WEEKDAY") return `0 ${Number(minute)} ${Number(hour)} * * MON-FRI`;
+  if (scheduleType === "WEEKLY") return `0 ${Number(minute)} ${Number(hour)} * * ${scheduleDay}`;
   return `0 ${Number(minute)} ${Number(hour)} * * *`;
 }
 
-/**
- * DB의 Cron 표현식을 화면 입력값으로 변환한다.
- */
 function parseCronSchedule(cronSchedule) {
-  const defaultSchedule = {
-    scheduleType: "DAILY",
-    scheduleDay: "MON",
-    scheduleTime: "09:00",
-  };
-
-  if (!cronSchedule) {
-    return defaultSchedule;
-  }
-
-  const cronParts =
-    cronSchedule.trim().split(/\s+/);
-
-  if (cronParts.length !== 6) {
-    return defaultSchedule;
-  }
-
-  const minute = String(
-    Number(cronParts[1])
-  ).padStart(2, "0");
-
-  const hour = String(
-    Number(cronParts[2])
-  ).padStart(2, "0");
-
-  const dayOfWeek = cronParts[5];
-
-  if (dayOfWeek === "MON-FRI") {
-    return {
-      scheduleType: "WEEKDAY",
-      scheduleDay: "MON",
-      scheduleTime: `${hour}:${minute}`,
-    };
-  }
-
-  if (dayOfWeek !== "*") {
-    return {
-      scheduleType: "WEEKLY",
-      scheduleDay: dayOfWeek,
-      scheduleTime: `${hour}:${minute}`,
-    };
-  }
-
-  return {
-    scheduleType: "DAILY",
-    scheduleDay: "MON",
-    scheduleTime: `${hour}:${minute}`,
-  };
+  const fallback = { scheduleType: "DAILY", scheduleDay: "MON", scheduleTime: "09:00" };
+  if (!cronSchedule) return fallback;
+  const parts = cronSchedule.trim().split(/\s+/);
+  if (parts.length !== 6) return fallback;
+  const minute = String(Number(parts[1])).padStart(2, "0");
+  const hour = String(Number(parts[2])).padStart(2, "0");
+  if (parts[5] === "MON-FRI") return { scheduleType: "WEEKDAY", scheduleDay: "MON", scheduleTime: `${hour}:${minute}` };
+  if (parts[5] !== "*") return { scheduleType: "WEEKLY", scheduleDay: parts[5], scheduleTime: `${hour}:${minute}` };
+  return { scheduleType: "DAILY", scheduleDay: "MON", scheduleTime: `${hour}:${minute}` };
 }
 
-/**
- * Cron 표현식을 화면용 문구로 변환한다.
- */
 function getScheduleDescription(cronSchedule) {
-  const schedule =
-    parseCronSchedule(cronSchedule);
-
-  const timeText =
-    formatScheduleTime(schedule.scheduleTime);
-
-  if (schedule.scheduleType === "WEEKDAY") {
-    return `평일 ${timeText}`;
-  }
-
-  if (schedule.scheduleType === "WEEKLY") {
-    return `매주 ${getDayName(
-      schedule.scheduleDay
-    )} ${timeText}`;
-  }
-
-  return `매일 ${timeText}`;
+  const schedule = parseCronSchedule(cronSchedule);
+  const time = formatScheduleTime(schedule.scheduleTime);
+  if (schedule.scheduleType === "WEEKDAY") return `평일 ${time}`;
+  if (schedule.scheduleType === "WEEKLY") return `매주 ${getDayName(schedule.scheduleDay)} ${time}`;
+  return `매일 ${time}`;
 }
 
-/**
- * 24시간 형식을 오전·오후 형식으로 변환한다.
- */
 function formatScheduleTime(scheduleTime) {
-  const [hourText, minute] =
-    scheduleTime.split(":");
-
+  const [hourText, minute] = scheduleTime.split(":");
   const hour = Number(hourText);
-  const period = hour < 12 ? "오전" : "오후";
-  const displayHour = hour % 12 || 12;
-
-  return `${period} ${displayHour}:${minute}`;
+  return `${hour < 12 ? "오전" : "오후"} ${hour % 12 || 12}:${minute}`;
 }
 
-/**
- * 영문 요일을 한글로 변환한다.
- */
 function getDayName(day) {
-  const dayNames = {
-    MON: "월요일",
-    TUE: "화요일",
-    WED: "수요일",
-    THU: "목요일",
-    FRI: "금요일",
-    SAT: "토요일",
-    SUN: "일요일",
-  };
-
-  return dayNames[day] ?? day;
+  return { MON: "월요일", TUE: "화요일", WED: "수요일", THU: "목요일", FRI: "금요일", SAT: "토요일", SUN: "일요일" }[day] ?? day;
 }
 
-/**
- * 알림 설정 종류를 한글로 변환한다.
- */
-function getSettingTypeName(settingType) {
-  if (settingType === "INCOMPLETE") {
-    return "미검진자 알림";
-  }
-
-  if (settingType === "BEFORE_CHECKUP") {
-    return "검진일 이전 알림";
-  }
-
-  return settingType;
+function getSettingTypeName(type) {
+  if (type === "INCOMPLETE") return "미검진자 알림";
+  if (type === "BEFORE_CHECKUP") return "검진일 이전 알림";
+  return type;
 }
 
-/**
- * 활성화 상태 표시
- */
 function ActiveStatusBadge({ active }) {
   return (
-    <span
-      className={`
-        inline-flex rounded-full
-        px-3 py-1 text-xs font-semibold
-        ${
-          active
-            ? "bg-emerald-100 text-emerald-700"
-            : "bg-slate-200 text-slate-600"
-        }
-      `}
-    >
+    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${active ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
       {active ? "활성화" : "비활성화"}
     </span>
   );

@@ -4,9 +4,41 @@ import {
   useEffect,
   useState,
 } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import "@/common/styles/ActionButton.css";
+import "@/common/styles/ListComponent.css";
+import "@/common/styles/Common.css";
 
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
+
+const CHANNEL_FILTER_LABELS = {
+  ALL: "전체 채널",
+  SMS: "SMS",
+  EMAIL: "이메일",
+};
+
+const TYPE_FILTER_LABELS = {
+  ALL: "전체 구분",
+  MANUAL: "수동",
+  AUTOMATIC: "자동",
+};
 
 export default function CheckupReminderHistoryComponent() {
   const [historyList, setHistoryList] = useState([]);
@@ -16,10 +48,10 @@ export default function CheckupReminderHistoryComponent() {
 
   // 화면 표시용 필터
   const [channelFilter, setChannelFilter] =
-    useState("ALL");
+    useState("전체 채널");
 
   const [typeFilter, setTypeFilter] =
-    useState("ALL");
+    useState("전체 구분");
 
   /**
    * 알림 발송 이력 조회
@@ -58,28 +90,28 @@ export default function CheckupReminderHistoryComponent() {
     loadReminderHistory();
   }, [loadReminderHistory]);
 
-    /**
-     * 선택한 채널과 발송 구분으로 목록 필터링
-     */
-    const filteredHistoryList = historyList.filter((history) => {
-      const channelMatched =
-        channelFilter === "ALL" ||
-        history.channel === channelFilter;
+  /**
+   * 선택한 채널과 발송 구분으로 목록 필터링
+   */
+  const filteredHistoryList = historyList.filter((history) => {
+    const channelMatched =
+      channelFilter === "ALL" ||
+      history.channel === channelFilter;
 
-      const historyType =
-        history.manual ? "MANUAL" : "AUTOMATIC";
+    const historyType =
+      history.manual ? "MANUAL" : "AUTOMATIC";
 
-      const typeMatched =
-        typeFilter === "ALL" ||
-        historyType === typeFilter;
+    const typeMatched =
+      typeFilter === "ALL" ||
+      historyType === typeFilter;
 
-      return channelMatched && typeMatched;
-    });
+    return channelMatched && typeMatched;
+  });
 
-    /**
-     * 현재 필터 조건으로 Excel 로그 다운로드
-     */
-    const downloadReminderHistoryExcel = async () => {
+  /**
+   * 현재 필터 조건으로 Excel 로그 다운로드
+   */
+  const downloadReminderHistoryExcel = async () => {
       setDownloading(true);
       setErrorMessage("");
 
@@ -136,137 +168,82 @@ export default function CheckupReminderHistoryComponent() {
       } finally {
         setDownloading(false);
       }
-    };
-
- 
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="list-page">
       {/* 페이지 제목 */}
-      <section className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">
+      <div className="page-header">
+        <h1>
           알림 발송 이력
         </h1>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p>
           건강검진 대상자에게 발송한 알림 내역을
           확인합니다.
         </p>
-      </section>
+      </div>
 
       {/* 필터 및 새로고침 */}
-      <section className="mb-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-end gap-4">
-          {/* 채널 필터 */}
-          <div>
-            <label
-              htmlFor="historyChannelFilter"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              발송 채널
-            </label>
-
-            <select
-              id="historyChannelFilter"
+      <div className="list-toolbar">
+        <div>
+          <Select
               value={channelFilter}
-              onChange={(event) =>
-                setChannelFilter(event.target.value)
-              }
-              className="
-                min-w-40 rounded-lg
-                border border-slate-300
-                bg-white px-4 py-2
-                text-slate-700 outline-none
-                focus:border-blue-500
-              "
+              onValueChange={setChannelFilter}
             >
-              <option value="ALL">
-                전체
-              </option>
+            <SelectTrigger className="w-[140px]" size="sm">
+              <SelectValue placeholder="발송 채널">
+                {CHANNEL_FILTER_LABELS[channelFilter]}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="ALL">전체 채널</SelectItem>
+                <SelectItem value="SMS">SMS</SelectItem>
+                <SelectItem value="EMAIL">이메일</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-              <option value="SMS">
-                SMS
-              </option>
-
-              <option value="EMAIL">
-                이메일
-              </option>
-            </select>
-          </div>
-
-          {/* 발송 구분 필터 */}
-          <div>
-            <label
-              htmlFor="historyTypeFilter"
-              className="mb-2 block text-sm font-semibold text-slate-700"
-            >
-              발송 구분
-            </label>
-
-            <select
-              id="historyTypeFilter"
+          <Select
               value={typeFilter}
-              onChange={(event) =>
-                setTypeFilter(event.target.value)
-              }
-              className="
-                min-w-40 rounded-lg
-                border border-slate-300
-                bg-white px-4 py-2
-                text-slate-700 outline-none
-                focus:border-blue-500
-              "
+              onValueChange={setTypeFilter}
             >
-              <option value="ALL">
-                전체
-              </option>
+            <SelectTrigger className="w-[140px]" size="sm">
+              <SelectValue placeholder="발송 구분">
+                {TYPE_FILTER_LABELS[typeFilter]}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="ALL">전체 구분</SelectItem>
+                <SelectItem value="MANUAL">수동</SelectItem>
+                <SelectItem value="AUTOMATIC">자동</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-              <option value="MANUAL">
-                수동
-              </option>
-
-              <option value="AUTOMATIC">
-                자동
-              </option>
-            </select>
-          </div>
-
-          {/* 새로고침 */}
-          <button
+          <Button
             type="button"
             onClick={loadReminderHistory}
             disabled={loading}
-            className="
-              rounded-lg !bg-slate-800
-              px-5 py-2 font-semibold
-              !text-white transition
-              hover:!bg-slate-700
-              disabled:cursor-not-allowed
-              disabled:!bg-slate-400
-            "
+            variant="outline"
+            size="sm"
           >
             {loading ? "조회 중..." : "새로고침"}
-          </button>
-
-          <button
-            type="button"
-            onClick={downloadReminderHistoryExcel}
-            disabled={downloading || loading}
-            className="
-              rounded-lg !bg-emerald-600
-              px-5 py-2 font-semibold
-              !text-white transition
-              hover:!bg-emerald-700
-              disabled:cursor-not-allowed
-              disabled:!bg-slate-400
-            "
-          >
-            {downloading
-              ? "다운로드 중..."
-              : "Excel 다운로드"}
-          </button>
+          </Button>
         </div>
-      </section>
+
+        <Button
+          type="button"
+          size="sm"
+          onClick={downloadReminderHistoryExcel}
+          disabled={downloading || loading}
+          className="primary-button"
+        >
+          {downloading ? "다운로드 중..." : "엑셀 다운로드"}
+        </Button>
+      </div>
 
       {/* 오류 메시지 */}
       {errorMessage && (
@@ -276,75 +253,63 @@ export default function CheckupReminderHistoryComponent() {
       )}
 
       {/* 발송 이력 테이블 */}
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 px-6 py-5">
-          <h2 className="text-lg font-bold text-slate-800">
-            건강검진 알림 발송 내역
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-500">
-            총 {filteredHistoryList.length}건의 발송 이력이
-            조회되었습니다.
-          </p>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-slate-100">
-              <tr className="text-left text-sm text-slate-600">
-                <th className="px-5 py-3">
+      <div className="list-table-wrapper">
+        <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">
                   번호
-                </th>
+                </TableHead>
 
-                <th className="px-5 py-3">
+                <TableHead>
                   검진 ID
-                </th>
+                </TableHead>
 
-                <th className="px-5 py-3">
+                <TableHead>
                   채널
-                </th>
+                </TableHead>
 
-                <th className="px-5 py-3">
+                <TableHead>
                   메시지 내용
-                </th>
+                </TableHead>
 
-                <th className="px-5 py-3">
+                <TableHead>
                   발송 일시
-                </th>
+                </TableHead>
 
-                <th className="px-5 py-3">
+                <TableHead>
                   상태
-                </th>
+                </TableHead>
 
-                <th className="px-5 py-3">
+                <TableHead>
                   구분
-                </th>
-              </tr>
-            </thead>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
 
-            <tbody>
+            <TableBody>
               {loading ? (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan="7"
-                    className="px-5 py-14 text-center text-slate-500"
+                    className="px-6 py-14 text-center text-slate-500"
                   >
                     알림 발송 이력을 불러오는 중입니다.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : filteredHistoryList.length === 0 ? (
-                <tr>
-                  <td
+                <TableRow>
+                  <TableCell
                     colSpan="7"
-                    className="px-5 py-14 text-center text-slate-500"
+                    className="px-6 py-14 text-center text-slate-500"
                   >
                     조건에 해당하는 알림 발송 이력이
                     없습니다.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 filteredHistoryList.map((history) => (
-                  <tr
+                  <TableRow
                     key={history.reminderId}
                     className="
                       border-t border-slate-100
@@ -352,57 +317,47 @@ export default function CheckupReminderHistoryComponent() {
                       hover:bg-slate-50
                     "
                   >
-                    <td className="px-5 py-4">
+                    <TableCell className="font-medium">
                       {history.reminderId}
-                    </td>
+                    </TableCell>
 
-                    <td className="px-5 py-4">
+                    <TableCell>
                       {history.checkupId}
-                    </td>
+                    </TableCell>
 
-                    <td className="px-5 py-4">
+                    <TableCell>
                       <ChannelBadge
                         channel={history.channel}
                       />
-                    </td>
+                    </TableCell>
 
-                    <td className="max-w-md px-5 py-4">
+                    <TableCell className="max-w-md whitespace-normal">
                       <p className="whitespace-pre-wrap break-words">
                         {history.content}
                       </p>
-                    </td>
+                    </TableCell>
 
-                    <td className="whitespace-nowrap px-5 py-4">
+                    <TableCell>
                       {formatDateTime(history.sentAt)}
-                    </td>
+                    </TableCell>
 
-                    <td className="px-5 py-4">
+                    <TableCell>
                       <ReminderStatusBadge
                         status={history.status}
                       />
-                    </td>
+                    </TableCell>
 
-                    <td className="px-5 py-4">
+                    <TableCell>
                       <ReminderTypeBadge
                         manual={history.manual}
                       />
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* 현재 구현 상태 안내 */}
-      <section className="mt-6 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">
-        <p className="text-sm text-blue-700">
-          현재 알림 기능은 실제 SMS 또는 이메일을
-          전송하는 단계가 아니라, 발송 요청 결과를
-          알림 이력 테이블에 저장하는 방식입니다.
-        </p>
-      </section>
+            </TableBody>
+          </Table>
+      </div>
     </div>
   );
 }
