@@ -8,8 +8,6 @@ import HospitalItemComponent from "./HospitalItemComponent";
 
 import "../styles/HospitalListComponent.css";
 
-import '../../common/styles/pagination.css';
-
 export default function HospitalListComponent() {
  
     // 실행할 구문
