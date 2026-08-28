@@ -4,21 +4,26 @@ import { useCallback, useEffect, useState } from "react";
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
 
+const UPLOADED_YEARS_KEY = "healthgate.checkup.uploadedYears";
+
+const EMPTY_STATISTICS = {
+  checkupYear: 2026,
+  totalCount: 0,
+  completedCount: 0,
+  incompleteCount: 0,
+  completionRate: 0,
+};
+
 export default function CheckupStatisticsComponent() {
   const currentYear = new Date().getFullYear();
 
   const [year, setYear] = useState(2026);
 
-  const [statistics, setStatistics] = useState({
-    checkupYear: 2026,
-    totalCount: 0,
-    completedCount: 0,
-    incompleteCount: 0,
-    completionRate: 0,
-  });
+  const [statistics, setStatistics] = useState(EMPTY_STATISTICS);
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const hasUploadedExcel = hasUploadedYear(year);
 
   /**
    * 건강검진 완료율 통계 조회
@@ -53,8 +58,14 @@ export default function CheckupStatisticsComponent() {
   }, [year]);
 
   useEffect(() => {
-    loadStatistics();
-  }, [loadStatistics]);
+    if (hasUploadedExcel) {
+      loadStatistics();
+      return;
+    }
+
+    setStatistics({ ...EMPTY_STATISTICS, checkupYear: year });
+    setErrorMessage("");
+  }, [hasUploadedExcel, loadStatistics, year]);
 
   const completionRate = Number(
     statistics.completionRate ?? 0
@@ -126,8 +137,12 @@ export default function CheckupStatisticsComponent() {
 
             <button
               type="button"
-              onClick={loadStatistics}
-              disabled={loading}
+              onClick={() => {
+                if (hasUploadedExcel) {
+                  loadStatistics();
+                }
+              }}
+              disabled={loading || !hasUploadedExcel}
               className="rounded-lg bg-slate-800 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "조회 중..." : "새로고침"}
@@ -135,16 +150,22 @@ export default function CheckupStatisticsComponent() {
           </div>
         </div>
 
-        {/* 통계 카드 4개 */}
-        <div
-          className="p-6"
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(4, minmax(0, 1fr))",
-            gap: "16px",
-          }}
-        >
+        {!hasUploadedExcel ? (
+          <div className="px-6 py-16 text-center text-sm text-slate-500">
+            검진 대상자 목록에서 {year}년 Excel 파일을 업로드하면 완료율 통계가 표시됩니다.
+          </div>
+        ) : (
+          <>
+          {/* 통계 카드 4개 */}
+          <div
+            className="p-6"
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(4, minmax(0, 1fr))",
+              gap: "16px",
+            }}
+          >
           <StatisticsItem
             title="전체 대상자"
             value={statistics.totalCount}
@@ -180,10 +201,10 @@ export default function CheckupStatisticsComponent() {
             backgroundColor="#eff6ff"
             borderColor="#bfdbfe"
           />
-        </div>
+          </div>
 
-        {/* 진행률 */}
-        <div className="border-t border-slate-200 px-6 py-5">
+          {/* 진행률 */}
+          <div className="border-t border-slate-200 px-6 py-5">
           <div className="mb-3 flex items-end justify-between">
             <div>
               <h3 className="font-bold text-slate-900">
@@ -221,7 +242,9 @@ export default function CheckupStatisticsComponent() {
               전체 {statistics.totalCount ?? 0}명
             </span>
           </div>
-        </div>
+          </div>
+          </>
+        )}
       </section>
     </div>
   );
@@ -268,4 +291,12 @@ function StatisticsItem({
       </div>
     </div>
   );
+}
+
+function hasUploadedYear(year) {
+  const uploadedYears = JSON.parse(
+    sessionStorage.getItem(UPLOADED_YEARS_KEY) ?? "[]"
+  );
+
+  return uploadedYears.includes(year);
 }
