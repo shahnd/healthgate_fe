@@ -3,6 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { selectHospitalApi, deleteHospitalApi } from "../api/hospitalApi";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import "@/common/styles/DetailComponent.css";
+import "@/common/styles/Common.css"
+
 
 export default function HospitalDetailComponent() {
 
@@ -88,110 +93,138 @@ export default function HospitalDetailComponent() {
 
     // return 구문
     return (
-        <div className="page">
-        
-          <div className="card">
-           <table className="form-table">
-                 <tbody>
-                    <tr>
-                        <th>병원명</th>
-                        <td colSpan="5">{ hospital.name }</td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td colSpan="5">{ hospital.address }</td>
-                    </tr>
-                    <tr>
-                        <th>전화번호</th>
-                        <td colSpan="5">{ hospital.phone }</td>
-                    </tr>
-                    <tr>
-                        <th>검진가능 항목</th>
-                        <td onClick={(e) => e.stopPropagation()}>
-                            <label>
-                            <input
-                                type="checkbox"
-                                checked={Boolean(hospital.generalExamAvailable)}
-                                readOnly
-                            />
-                            일반검진
-                            </label>
-                            <label>
-                            <input
-                                type="checkbox"
-                                checked={Boolean(hospital.stomachCancerExamAvailable)}
-                                readOnly
-                            />
-                            위암검진
-                            </label>
-                            <label>
-                            <input
-                                type="checkbox"
-                                checked={Boolean(hospital.colonCancerExamAvailable)}
-                                readOnly
-                            />
-                            대장암검진
-                            </label>
-                            <label>
-                            <input
-                                type="checkbox"
-                                checked={Boolean(hospital.liverCancerExamAvailable)}
-                                readOnly
-                            />
-                            간암검진
-                            </label>
-                            <label>
-                            <input
-                                type="checkbox"
-                                checked={Boolean(hospital.lungCancerExamAvailable)}
-                                readOnly
-                            />
-                            폐암검진
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>병원 홈페이지</th>
-                        <td colSpan="5">{ hospital.url }</td>
-                    </tr>
-                    <tr>
-                        <th>병원 안내</th>
-                        <td colSpan="5">
-                            <p style={ {height : "200px"} }>
-                                { hospital.description }
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>등록일</th>
-                        <td colSpan="5">{ hospital.createdAt?.substring(0, 10) }</td>
-                    </tr>
-                    <tr>
-                        <th>수정일</th>
-                        <td colSpan="5">{ hospital.address }</td>
-                    </tr>
-                 </tbody>
-           </table>
+        <div className="detail-page">
+            <div className="page-header">
+                <h1>병원 상세</h1>
+                <p>{hospital.name}</p>
+            </div>
 
-           <br/><br/>
+            <div className="detail-page">
+                <section data-detail-section="info">
+                    <Card className="detail-info-card">
+                        <CardHeader>
+                            <CardTitle>병원 정보</CardTitle>
+                            <CardDescription>검진가능 병원 상세정보</CardDescription>
+                        </CardHeader>
 
-           <div className="action-area">
-                <button className="btn-primary" 
-                        onClick={ () => { navigate("/hospitals/list"); } }>
-                    목록으로
-                </button>
-                &nbsp;&nbsp;
-                <button className="btn-primary" 
-                        onClick={ () => { navigate(`/hospitals/${ hospitalId }/edit`, {state : {hospitalId}}); } }>
-                    수정하기
-                </button>
-                &nbsp;&nbsp;
-                <button className="btn-secondary" 
-                        onClick={ deleteHospital }>
-                    삭제하기
-                </button>
-           </div>
-          </div>
+                        <CardContent>
+                            <dl>
+                                <div>
+                                    <dt>병원명</dt>
+                                    <dd>{hospital.name}</dd>
+                                </div>
+
+                                <div>
+                                    <dt>주소</dt>
+                                    <dd>{hospital.address}</dd>
+                                </div>
+
+                                <div>
+                                    <dt>전화번호</dt>
+                                    <dd>{hospital.phone}</dd>
+                                </div>
+
+                                <div>
+                                    <dt>검진가능 항목</dt>
+                                    <dd>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(hospital.generalExamAvailable)}
+                                                readOnly
+                                            />
+                                            일반검진
+                                        </label>
+
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(hospital.stomachCancerExamAvailable)}
+                                                readOnly
+                                            />
+                                            위암검진
+                                        </label>
+
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(hospital.colonCancerExamAvailable)}
+                                                readOnly
+                                            />
+                                            대장암검진
+                                        </label>
+
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(hospital.liverCancerExamAvailable)}
+                                                readOnly
+                                            />
+                                            간암검진
+                                        </label>
+
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(hospital.lungCancerExamAvailable)}
+                                                readOnly
+                                            />
+                                            폐암검진
+                                        </label>
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>병원 홈페이지</dt>
+                                    <dd>{hospital.url || "-"}</dd>
+                                </div>
+
+                                <div>
+                                    <dt>병원 안내</dt>
+                                    <dd>{hospital.description || "-"}</dd>
+                                </div>
+
+                                <div>
+                                    <dt>등록일</dt>
+                                    <dd>{hospital.createdAt?.substring(0, 10)}</dd>
+                                </div>
+
+                                <div>
+                                    <dt>수정일</dt>
+                                    <dd>{hospital.updatedAt?.substring(0, 10) || "-"}</dd>
+                                </div>
+                            </dl>
+                        </CardContent>
+
+                        <CardFooter>
+                            <Button
+                                className="primary-button"
+                                onClick={() => navigate("/hospitals/list")}
+                            >
+                                목록으로
+                            </Button>
+
+                            <Button
+                                className="primary-button"
+                                onClick={() =>
+                                    navigate(`/hospitals/${hospitalId}/edit`, {
+                                        state: { hospitalId }
+                                    })
+                                }
+                            >
+                                편집
+                            </Button>
+
+                            <Button
+                                className="secondary-button"
+                                onClick={deleteHospital}
+                            >
+                                삭제
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </section>
+            </div>
         </div>
     )
 }

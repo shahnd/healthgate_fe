@@ -10,10 +10,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
+import Pagination from "@/common/components/Pagination";
 
 import "@/common/styles/ListComponent.css";
 import "@/common/styles/ActionButton.css";
-import { Pagination } from "@/common/components/Pagination"
 
 export default function HospitalListComponent() {
  
@@ -55,7 +55,7 @@ export default function HospitalListComponent() {
 
     // 페이징바 쿼리스트링 처리
     const cpage = parseInt(searchParams.get("cpage")) || 1;
-    let totalPages = 1;
+    const [totalPages, setTotalPages] = useState(1);
     
     // 조회된 데이터를 배열에 담아둘 변수 셋팅
     const [dataList,setDataList] = useState([]);
@@ -87,6 +87,19 @@ export default function HospitalListComponent() {
             
             console.log("검진가능 병원 목록 조회용 ajax 통신 실패!");
         }
+    };
+
+    const handlePageChange = (newPage) => {
+        setSearchParams({
+            cpage: newPage,
+            keywordName: searchKeywordName,
+            keywordAddress: searchKeywordAddress,
+            isGeneral: searchIsGeneral,
+            isStomachCancer: searchIsStomachCancer,
+            isColonCancer: searchIsColonCancer,
+            isLiverCancer: searchIsLiverCancer,
+            isLungCancer: searchIsLungCancer
+        });
     };
 
     // 검색어 입력 내용이 변경될 때 마다 실행할 이벤트 핸들러 함수
@@ -156,7 +169,7 @@ export default function HospitalListComponent() {
         setDataList(trArr);
 
         const pageInfo = response.data.pi;
-        totalPages = pageInfo.maxPage;
+        setTotalPages(pageInfo.maxPage);
 
         const btnArr = [];
 
@@ -390,7 +403,11 @@ export default function HospitalListComponent() {
                 </Table>
             </div>
 
-            <div align="center" className="pagination">{ pageList }</div>
+            <Pagination
+                page={cpage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 }
