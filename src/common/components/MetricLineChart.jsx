@@ -12,9 +12,11 @@ export default function MetricLineChart({ data, title, lines, yDomain, unit }) {
       <ResponsiveContainer width="100%" height={250}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" />
+          <XAxis dataKey="time"/>
           <YAxis domain={yDomain} unit={unit} />
-          <Tooltip />
+          <Tooltip
+            labelFormatter={(value, payload) => payload?.[0]?.payload?.fullTime ?? value}
+          />
           <Legend />
           {lines.map((line) => (
             <Line

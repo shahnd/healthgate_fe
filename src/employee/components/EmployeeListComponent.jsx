@@ -8,9 +8,10 @@ import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FilterIcon, SearchIcon, XIcon } from "lucide-react";
+import { FilterIcon, RotateCcw, SearchIcon, XIcon } from "lucide-react";
 import "@/common/styles/ActionButton.css";
 import "@/common/styles/ListComponent.css";
+import "@/common/styles/Common.css"
 
 const EMPTY_CONDITION = {
     name: "",
@@ -70,7 +71,7 @@ export default function EmployeeListComponent() {
 
     return (
         <div className="list-page">
-            <div className="list-header">
+            <div className="page-header">
                 <h1>직원 조회</h1>
                 <p>직원 리스트 조회</p>
             </div>
@@ -155,8 +156,7 @@ export default function EmployeeListComponent() {
                     </Select>
 
                     <Button type="button" variant="outline" size="sm" onClick={reset}>
-                        <XIcon />
-                        초기화
+                        <RotateCcw className="h-2 w-2"/>
                     </Button>
                 </div>
 
