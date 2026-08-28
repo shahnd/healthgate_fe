@@ -10,6 +10,14 @@ const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      "/healthgate": {
+        target: "http://localhost:8006",
+        changeOrigin: true,
+      },
+    },
+  },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),
