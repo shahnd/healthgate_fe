@@ -3,6 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { selectConsultationListApi } from "../api/consultationApi";
 import { useAuthStore } from "../../../store/useAuthStore";
 
+import { Input } from "@/components/ui/input";
+import Pagination from "../../../common/components/Pagination";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+
 export default function ConsultationListComponent() {
 
     // ============================ 객체 및 보조 함수
@@ -44,6 +50,9 @@ export default function ConsultationListComponent() {
 
     // 상담 목록 객체
     const [consultationList, setConsultationList] = useState([]);
+    // 페이지네이션
+    const [page, setPage] = useState(1);
+    const [size, setSize] = useState(5);
 
     // 차시 -> 시간 매핑
     const turnTimeMap = {
@@ -107,6 +116,21 @@ export default function ConsultationListComponent() {
         return toMonthStr(date);
     }
 
+    // 라벨 매핑
+    const statusLabelMap = {
+        ALL : "전체보기",
+        RESERVED : "미완료",
+        FINISHED : "완료",
+        EXPIRED : "취소"
+    }
+
+    const sortLabelMap = {
+        date_desc : "최신순",
+        date_asc : "과거순",
+        name_asc : "이름 ▲",
+        name_desc : "이름 ▼"
+    }
+
     // ============================ 동작용 함수
     // 시작 날짜 핸들러
     const handleStartMonthChange = e => {
@@ -140,15 +164,12 @@ export default function ConsultationListComponent() {
     const selectConsultationList = async () => {
         try {
 
-            const response = await selectConsultationListApi(startMonth, endMonth);
-            console.log("통신 후 원본 데이터 : ", response.data);
-            console.log("현재 role : ", role, " / 내 ID : ", loginUserId);
+            const response = await selectConsultationListApi({ startMonth, endMonth });
 
-            let items = response.data;
+            let items = response.data; 
 
             // 권한 체크
             if (role !== "HEALTH_ADMIN") {
-                console.log("관리자 아니다? 필터링");
 
                 // 상담사 아닐 경우 본인 것만 조회
                 items = items.filter((item) => item.employee?.id === loginUserId);
@@ -166,11 +187,12 @@ export default function ConsultationListComponent() {
         if (loginUserId !== undefined && loginUserId !== null) {
             selectConsultationList();
         }
-    }, [role, loginUserId]);
+    }, [role, loginUserId, startMonth, endMonth]);
 
     // 검색 버튼 클릭 시 실행
     const searchConsultation = e => {
         e.preventDefault();
+        setPage(1);
         selectConsultationList();
     }
 
@@ -179,6 +201,7 @@ export default function ConsultationListComponent() {
         const thisMonth = toMonthStr(today);
         setStartMonth(thisMonth);
         setEndMonth(thisMonth);
+        setPage(1);
     }
 
     // 이름, 상태, 정렬 실시간 반영
@@ -203,9 +226,11 @@ export default function ConsultationListComponent() {
         result.sort((a, b) => {
             switch(sortOption) {
                 case "date_asc" :
-                    return a.scheduledDate.localeCompare(b.scheduledDate);
+                    return a.scheduledDate.localeCompare(b.scheduledDate)
+                        || a.scheduledTurn.localeCompare(b.scheduledTurn);
                 case "date_desc" :
-                    return b.scheduledDate.localeCompare(a.scheduledDate);
+                    return b.scheduledDate.localeCompare(a.scheduledDate)
+                        || b.scheduledTurn.localeCompare(a.scheduledTurn);
                 case "name_asc" :
                     return (a.employee?.name || "").localeCompare(b.employee?.name || "");
                 case "name_desc" :
@@ -218,112 +243,136 @@ export default function ConsultationListComponent() {
         return result;
     }, [consultationList, nameFilter, statusFilter, sortOption]);
 
-    return(
-        <div>
-            <h2>상담 내역 조회</h2>
+    // 총 페이지수
+    const totalPages = Math.max(1, Math.ceil(filteredList.length / size));
 
-            <br /><br />
+    // 현재 페이지 구간만 잘라내기
+    const pagedList = useMemo(() => {
+        const start = (page - 1) * size;
+        return filteredList.slice(start, start + size);
+    }, [filteredList, page, size])
+
+    useEffect(() => {
+        if (page > totalPages) {
+            setPage(1);
+        }
+    }, [totalPages]);
+
+    return(
+        <div className="list-page">
+            <div className="list-header">
+                <h2>상담 내역 조회</h2>
+            </div>
+
+            <br />
 
             {/* 필터링 */}
-            <table>
-                <tbody>
-                    <tr>
-                        <th>기간</th>
-                        <td width="200" colSpan={ 2 }>
-                            <form>
-                                <input type="month"
-                                    value={ startMonth }
-                                    max={ endMonth }
-                                    onChange={ handleStartMonthChange } /> - 
-                                <input type="month"
-                                    value={ endMonth }
-                                    min={ startMonth }
-                                    onChange={ handleEndMonthChange } />
-                                <button type="button"
-                                        onClick={ handleThisMonth }>이번달</button>
-                                &nbsp;&nbsp;
-                                <button type="submit"
-                                        onClick={ searchConsultation }>검색</button>
-                            </form>
-                        </td>
-                        <td colSpan={ 3 }></td>
-                    </tr>
-                    <tr>
-                        <th width="130">이름</th>
-                        <td width="200">
-                            <input type="text"
-                                placeholder="직원명을 입력하세요."
-                                value={ nameFilter }
-                                onChange={ e => setNameFilter( e.target.value ) } />
-                        </td>
-                        <th width="130">상태</th>
-                        <td width="200">
-                            <select name="status"
-                                    value={ statusFilter }
-                                    onChange={ e => setStatusFilter( e.target.value ) }>
-                                <option value="ALL">전체보기</option>
-                                <option value="RESERVED">미완료</option>
-                                <option value="FINISHED">완료</option>
-                                <option value="EXPIRED">취소</option>
-                            </select>
-                        </td>
-                        <th width="130">정렬</th>
-                        <td width="200">
-                            <select name="sort"
-                                    value={ sortOption }
-                                    onChange={ e => setSortOption( e.target.value ) }>
-                                <option value="date_desc">최신순</option>
-                                <option value="date_asc">과거순</option>
-                                <option value="name_asc">이름 ▲</option>
-                                <option value="name_desc">이름 ▼</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br /><br />
+            <div className="list-toolbar">
+                <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-1">
+                        <Input type="month"
+                            value={ startMonth }
+                            max={ endMonth }
+                            onChange={ handleStartMonthChange } />
+                        <span>~</span>
+                        <Input type="month"
+                            value={ endMonth }
+                            min={ startMonth }
+                            onChange={ handleEndMonthChange } />
+                        <button type="button"
+                                onClick={ handleThisMonth }>이번달</button>
+                        <button type="submit"
+                                onClick={ searchConsultation }>검색</button>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Input type="text"
+                            placeholder="직원명을 입력하세요."
+                            value={ nameFilter }
+                            onChange={ e => {setNameFilter( e.target.value ); setPage(1); } } />
+
+                        <Select name="status"
+                                value={ statusFilter }
+                                onValueChange={ val => { setStatusFilter(val); setPage(1); } }>
+                            <SelectTrigger className="w-[140px]" size="sm">
+                                <SelectValue placeholder="전체 보기">
+                                    { statusLabelMap[statusFilter] }
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="ALL">전체보기</SelectItem>
+                                    <SelectItem value="RESERVED">미완료</SelectItem>
+                                    <SelectItem value="FINISHED">완료</SelectItem>
+                                    <SelectItem value="EXPIRED">취소</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Select name="sort"
+                                value={ sortOption }
+                                onValueChange={ val => { setSortOption(val); setPage(1); } }>
+                            <SelectTrigger className="w-[140px]">
+                                <SelectValue placeholder="정렬 선택">
+                                    { sortLabelMap[sortOption] }
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="date_desc">최신순</SelectItem>
+                                    <SelectItem value="date_asc">과거순</SelectItem>
+                                    <SelectItem value="name_asc">이름 ▲</SelectItem>
+                                    <SelectItem value="name_desc">이름 ▼</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            </div>
 
             {/* 목록 */}
-            <table>
-                <thead>
-                    <tr>
-                        <th width="100">예약번호</th>
-                        <th width="100">신청자</th>
-                        <th width="100">부서명</th>
-                        <th width="150">상담일</th>
-                        <th width="150">상담시간</th>
-                        <th width="100">상태</th>
-                    </tr>
-                </thead>
-                <tbody align="center">
-                    { 
-                        filteredList.length === 0 ? (
-                            <tr>
-                                <td colSpan={ 6 } style={{ color : "#888888" }}>
-                                    조회된 내용이 없습니다.
-                                </td>
-                            </tr>
-                        ) : (
-                            filteredList.map((item, index) => {
-                                return(
-                                    <tr key={ index }
-                                        onClick={() => { navigate(`/consultation/detail/${item.id}`); }}>
-                                        <td>{ item.id }</td>
-                                        <td>{ item.employee?.name }</td>
-                                        <td>{ item.employee?.departments?.name }</td>
-                                        <td>{ item.scheduledDate }</td>
-                                        <td>{ formatScheduledTurn(item.scheduledTurn) }</td>
-                                        <td><b>{ formatStatusWithColor(item.status) }</b></td>
-                                    </tr>
-                                )
-                            })
-                        )
-                    }
-                </tbody>
-            </table>
+            <div className="list-table-wrapper">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[100px]">예약번호</TableHead>
+                            <TableHead className="w-[100px]">신청자</TableHead>
+                            <TableHead className="w-[100px]">부서명</TableHead>
+                            <TableHead className="w-[150px]">상담일</TableHead>
+                            <TableHead className="w-[150px]">상담시간</TableHead>
+                            <TableHead className="w-[100px]">상태</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        { 
+                            pagedList.length === 0 ? (
+                                <TableRow className="cursor-pointer">
+                                    <TableCell align="center" colSpan={ 6 } style={{ color : "#888888" }}>
+                                        조회된 내용이 없습니다.
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                pagedList.map((item, index) => {
+                                    return(
+                                        <TableRow className="cursor-pointer" key={ index }
+                                            onClick={() => { navigate(`/consultation/detail/${item.id}`); }}>
+                                            <TableCell>{ item.id }</TableCell>
+                                            <TableCell>{ item.employee?.name }</TableCell>
+                                            <TableCell>{ item.employee?.departments?.name || "부서미지정" }</TableCell>
+                                            <TableCell>{ item.scheduledDate }</TableCell>
+                                            <TableCell>{ formatScheduledTurn(item.scheduledTurn) }</TableCell>
+                                            <TableCell><b>{ formatStatusWithColor(item.status) }</b></TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            )
+                        }
+                    </TableBody>
+                </Table>
+            </div>
 
             <br /><br />
-            {/* 페이징바 - shadcn 사용 예정 */}
+
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
     )
 }

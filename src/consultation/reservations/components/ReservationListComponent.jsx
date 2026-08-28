@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import ListCalendar from "./ListCalendar";
 import { useEffect, useState } from "react";
 import {selectAllReservationApi} from "../api/reservationApi";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function ReservationListComponent() {
 
@@ -11,6 +12,11 @@ export default function ReservationListComponent() {
   // 연월을 담을 변수
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // 유저 정보
+  const authStore = useAuthStore();
+  const user = authStore?.user;
+  const role = user?.role;
+  const loginUserId = user?.id;
   
   // 연월이 바뀔 때마다 조회 후 목록 띄우기
   useEffect(() => {
@@ -26,9 +32,14 @@ export default function ReservationListComponent() {
         
         // 전달
         const response = await selectAllReservationApi(dateStr);
-        // console.log(response.data);
+        let items = response.data;
 
-        const formattedData = response.data.map((item, index) => {
+        // 권한 체크
+        if(role !== "HEALTH_ADMIN") {
+          items = items.filter((item) => item.employee?.id === loginUserId);
+        }
+
+        const formattedData = items.map((item, index) => {
 
           // 조회된 데이터 양식 지정 - T1 홍길동 -> 1차 홍길동
           const turnNumber = item.scheduledTurn ? item.scheduledTurn.replace("T", "") : "";
@@ -51,7 +62,7 @@ export default function ReservationListComponent() {
     }
 
     selectAllReservation();
-  }, [currentDate]);
+  }, [currentDate, role, loginUserId]);
 
   // 이전 다음 버튼 클릭 시 실행할 이벤트 핸들러
   const handleNavigate = newDate => {
