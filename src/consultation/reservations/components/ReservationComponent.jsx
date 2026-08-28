@@ -3,24 +3,34 @@ import ReservationCalendar from "./ReservationCalendar";
 import { useNavigate, useParams } from "react-router-dom";
 import { saveReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
 import "../styles/reservationCalendar.css";
+import { useAuthStore } from "@/store/useAuthStore";
+import axios from "axios";
 
 export default function ReservationComponent() {
 
     // 네비게이트
     const navigate = useNavigate();
 
+    // 유저 정보 변수
+    const user = useAuthStore(state => state.user);
+    const role = user?.role;
+    const loginUserId = user?.id;
+
     // 수정모드 판별용 변수
     const { id } = useParams();
     const isEditMode = Boolean(id);
     const [originalDate, setOriginalDate] = useState("");
     const [originalTurn, setOriginalTurn] = useState("");
-    // 신청자 데이터를 담을 변수 (로그인 연동)
+
+    // 신청자 데이터를 담을 변수
     const [reservationData, setReservationData] = useState({
         id : "",
         employee : {
-            // 신청자 하드코딩
-            id : "4",
-            name : "청운종"
+            id : "",
+            name : "",
+            departments : { name : "" },
+            positions : { name : ""},
+            phone : ""
         },
         scheduledDate : "",
         scheduledTurn : "",
@@ -109,13 +119,9 @@ export default function ReservationComponent() {
             // 날짜 선택 시 선택 가능한 차시 DB로부터 조회
             const response = await selectDateApi(dateStr);
 
-            // console.log(response.data);
-            // console.log(response.data[0].scheduledTurn);
-
             // 차시 목록 (선택불가 - disabled)
             const items = response.data.map((item) => {return item.scheduledTurn });
 
-            // console.log(items);
             // 선택한 날짜와 기존 예약 날짜 일치할 때
             const isSameDate = isEditMode && (dateStr === originalDate);
 
@@ -158,7 +164,42 @@ export default function ReservationComponent() {
         }
     }
 
-    // 페이지 진입 시 실행할 구문 (내일 날짜 기준 초기화)
+    // 페이지 진입 시 - 로그인 유저 정보 조회
+    useEffect(() => {
+
+        const fetchLoginUserInfo = async () => {
+
+            if(!isEditMode && loginUserId) {
+                try {
+
+                const response = await axios.get(
+                    `http://localhost:8006/healthgate/employees/${user.id}`
+                );
+                
+                if(response.data && response.data.data) {
+                    const empData = response.data.data;
+                    setReservationData(prev => ({
+                        ...prev,
+                        employee : {
+                            id : empData.id,
+                            name : empData.name,
+                            departments : empData.departments || { name : "" },
+                            positions : empData.positions || { name : "" },
+                            phone : empData.phone || ""
+                        }
+                    }))
+                }
+
+                } catch (error) {
+                    console.log("로그인 유저 정보 조회 실패", error);
+                }
+            }
+        };
+
+        fetchLoginUserInfo();
+    }, [loginUserId, isEditMode]);
+
+    // 페이지 진입 시 - 내일 날짜 기준 초기화
     useEffect(() => {
 
         const fetchDetailData = async () => {
@@ -170,6 +211,14 @@ export default function ReservationComponent() {
 
                 if(response.data) {
                     const data = response.data;
+
+                    // 권한 체크
+                    const writerId = data.employee?.id;
+                    if(role !== "HEALTH_ADMIN" && writerId && writerId !== loginUserId){
+                        alert("접근 권한이 없습니다.");
+                        navigate("/consultation/reservation/list", { replace: true });
+                        return;
+                    }
                     
                     // 1. 전체 예약 데이터
                     setReservationData(data);
@@ -190,6 +239,19 @@ export default function ReservationComponent() {
                 }
             } catch (error) {
                 console.log("수정용 데이터 조회 실패" + error);
+
+                if(error.response && error.response.status === 403) {
+
+                    alert("접근 권한이 없습니다.");
+                    navigate("/consultation/list");
+                } else if(error.response && error.response.status === 404) {
+
+                    alert("숨겨졌거나 삭제된 데이터 입니다.");
+                    navigate("/consultation/list");
+                } else {
+
+                    alert("데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.")
+                }
             }
 
             } else {
@@ -207,12 +269,14 @@ export default function ReservationComponent() {
                 fetchSchedules(tomorrow);
             }
         }
+
         fetchDetailData();
-    }, [id]);
+    }, [id, loginUserId, role, navigate]);
 
     
     // scheduledTurn 이 바뀔 때 갱신
     useEffect(() => {
+        if (!selectedDate) return;
         const targetTurnToPass = isEditMode ? originalTurn : reservationData.scheduledTurn
         fetchSchedules(selectedDate, targetTurnToPass);
     }, [reservationData.scheduledTurn]);
@@ -253,7 +317,6 @@ export default function ReservationComponent() {
         try {
    
             const response = await saveReservationApi(reservationData);
-            // console.log(response.data);
 
             if(response.data != "") {
                 alert("상담 신청이 예약되었습니다.")
@@ -282,15 +345,15 @@ export default function ReservationComponent() {
                 <tbody>
                     <tr>
                         <th width="150">신청자</th>
-                        <td width="300">{reservationData.employee.name}</td>
+                        <td width="300">{reservationData.employee?.name}</td>
                         <th width="150">부서명</th>
-                        <td width="300">{reservationData.employee?.department?.id}</td>
+                        <td width="300">{reservationData.employee?.departments?.name}</td>
                     </tr>
                     <tr>
                         <th>연락처</th>
                         <td>{reservationData.employee?.phone || "-"}</td>
                         <th>직급</th>
-                        <td>{reservationData.employee?.position?.id || "-"}</td>
+                        <td>{reservationData.employee?.positions?.name || "-"}</td>
                     </tr>
                 </tbody>
             </table>

@@ -30,6 +30,10 @@ const data = {
           title: "출근자 건강 정보",
           url: "/attendance",
         },
+        {
+          title: "오늘의 안전 브리핑",
+          url: "/safety-briefings/today",
+        },
       ],
     },
     {

@@ -43,6 +43,7 @@ import { SiteHeader } from "./components/site-header";
 import PrivateRoute from "./common/components/PrivateRoute";
 import ChangePasswordComponent from "./login/components/ChangePasswordComponent";
 import SettingsComponent from "./settingsMenu/components/SettingsComponent";
+import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage";
 
 function App() {
   const location = useLocation();
@@ -73,6 +74,7 @@ function App() {
             <Route path="/mypage/password" element={<ChangePasswordComponent/>} />
             <Route path="/attendance" element={<AttendanceListComponent/>}/>
             <Route path="/bioinput" element={<BioInputComponent/>} />
+            <Route path="/safety-briefings/today" element={<TodaySafetyBriefingPage />} />
 
             {/* 공지사항 */}
             <Route path="/notices/list" element={<NoticeListComponent />} />
@@ -82,8 +84,8 @@ function App() {
             {/* 병원 관리 */}
             <Route path="/hospitals/list" element={<HospitalListComponent />} />
             <Route path="/hospitals/new" element={<HospitalCreateComponent />} />
-            <Route path="/hospitals/:id" element={<HospitalDetailComponent />} />
-            <Route path="/hospitals/:id/edit" element={<HospitalUpdateComponent />} />
+            <Route path="/hospitals/:hospitalId" element={<HospitalDetailComponent />} />
+            <Route path="/hospitals/:hospitalId/edit" element={<HospitalUpdateComponent />} />
           </Route>
 
           {/* 인사관리자만 접근 가능한 페이지 */}
