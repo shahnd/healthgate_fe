@@ -198,18 +198,19 @@ export default function NoticeListComponent() {
            
            {/* 검색창 */}
             <form className="list-toolber">
-               <div>
-                    <Input type="text" name="keyword" placeholder="제목을 입력하세요"
-                            value={ keyword } onChange={ handleChange } />
+                <div>
+                    <Input type="text" 
+                        name="keyword"
+                        placeholder="제목을 입력하세요"
+                        value={ keyword } 
+                        onChange={ handleChange }
+                        className="w-[500px]" />
                     <Button type="submit" size="sm"
                             onClick={ handleClick }>검색</Button>
-
-                    <Button className="primary-button" type="button" size="sm" onClick={ () => { navigate("/notices/new"); } }>
+                </div> 
+                <Button className="primary-button" type="button" size="sm" onClick={ () => navigate("/notices/new")}>
                             + 공지사항 등록
                     </Button>
-               </div> 
-
-                
             </form>
            
            
@@ -229,12 +230,12 @@ export default function NoticeListComponent() {
                         { dataList }
                    </TableBody>
                </Table>
-               
-               <Pagination
+           </div>
+
+           <Pagination
                     page={cpage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange} />
-           </div>
         </div>
     );
 }
