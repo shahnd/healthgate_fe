@@ -6,6 +6,14 @@ import { selectNoticeListApi, searchNoticeListApi } from "../api/NoticeApi";
 
 import NoticeItemComponent from "./NoticeItemComponent";
 
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
+import Pagination from "@/common/components/Pagination";
+
+import "@/common/styles/ListComponent.css";
+import "@/common/styles/ActionButton.css";
 
 export default function NoticeListComponent() {
 
@@ -20,6 +28,7 @@ export default function NoticeListComponent() {
     const searchKeyword = searchParams.get("keyword") || "";
   
     const cpage = parseInt(searchParams.get("cpage")) || 1;
+    const [totalPages, setTotalPages] = useState(1);
   
     const [dataList, setDataList] = useState([]);
 
@@ -49,7 +58,6 @@ export default function NoticeListComponent() {
 
             const response = await selectNoticeListApi(cpage);
 
-       
             handleResponse(response);
 
         } catch(error) {
@@ -61,6 +69,13 @@ export default function NoticeListComponent() {
     const handleChange = e => {
 
         setKeyword(e.target.value);
+    };
+
+    const handlePageChange = (newPage) => {
+        setSearchParams({
+            cpage: newPage,
+            keyword : searchKeyword
+        });
     };
 
     // 검색 버튼 클릭 시 (검색 최초 진입) 실행할 이벤트 핸들러 함수는 따로 분리
@@ -80,8 +95,6 @@ export default function NoticeListComponent() {
 
             const response = await searchNoticeListApi(cpage, searchKeyword);
 
-            // console.log(response.data);
-
             // 조회해온 데이터들로 후처리 - 공통 코드 작업
             handleResponse(response);
 
@@ -94,8 +107,6 @@ export default function NoticeListComponent() {
     // list, pi 값을 각각 출력해주는 후처리 공통 함수
     const handleResponse = response => {
 
-        // 실제 tbody 에 들어갈 목록데이터 처리
-        // 우선 response.data.list 를 별도의 변수로 옮겨담기
         const items = response.data.list;
 
         const trArr = items.map((item, index) => {
@@ -107,12 +118,8 @@ export default function NoticeListComponent() {
 
         setDataList(trArr);
 
-        // paging-area 에 들어갈 데이터 후처리
-        // 우선 response.data.pi 를 별도의 변수로 옮겨담기
         const pageInfo = response.data.pi;
 
-        // console.log(pageInfo);
-        // > pageInfo.startPage ~ pageInfo.endPage 까지 1씩 증가시키면서 페이징바 버튼 생성
         const btnArr = [];
 
         if(cpage == 1) {
@@ -127,8 +134,7 @@ export default function NoticeListComponent() {
 
             btnArr.push(
                 <button key="prev" className="btn btn-outline-info btn-sm" 
-                        onClick={ () => { 
-                            /* setCpage(cpage - 1); */  
+                        onClick={ () => {  
                             setSearchParams({ cpage : cpage - 1, keyword : searchKeyword });
                         } }>
                     &lt;
@@ -150,8 +156,7 @@ export default function NoticeListComponent() {
 
                 btnArr.push(
                     <button key={ p } className="btn btn-outline-info btn-sm" 
-                            onClick={ () => { 
-                                /* setCpage(p); */ 
+                            onClick={ () => {  
                                 setSearchParams({ cpage : p, keyword : searchKeyword });  
                             } }>
                         { p }
@@ -173,7 +178,7 @@ export default function NoticeListComponent() {
             btnArr.push(
                 <button key="next" className="btn btn-outline-info btn-sm" 
                         onClick={ () => { 
-                            /* setCpage(cpage + 1); */ 
+                            
                             setSearchParams({ cpage : cpage + 1, keyword : searchKeyword });
                         } }>
                     &gt;
@@ -186,45 +191,49 @@ export default function NoticeListComponent() {
     };
 
     return(
-        <div className="page">
-           <h1 className="card">공지사항 목록</h1>
+        <div className="list-page">
+            <div className="page-header">
+                <h1>공지사항 목록</h1>
+            </div>
            
-           {/* 검색창 영역 */}
-           <div className="card">
-                <form className="search-form">
-                   <input type="text" name="keyword" placeholder="제목을 입력하세요"
-                           value={ keyword } onChange={ handleChange } />
-                    <button type="submit" className="btn-primary"
-                            onClick={ handleClick }>검색</button>
-                </form>
-           </div>
+           {/* 검색창 */}
+            <form className="list-toolber">
+               <div>
+                    <Input type="text" name="keyword" placeholder="제목을 입력하세요"
+                            value={ keyword } onChange={ handleChange } />
+                    <Button type="submit" size="sm"
+                            onClick={ handleClick }>검색</Button>
+
+                    <Button className="primary-button" type="button" size="sm" onClick={ () => { navigate("/notices/new"); } }>
+                            + 공지사항 등록
+                    </Button>
+               </div> 
+
+                
+            </form>
+           
            
            {/* 공지사항 목록 */}
-           <div className="card">
-               <table className="data-table">
-                   <thead>
-                      <tr>
-                        <th>번호</th>
-                        <th>제목</th>
-                        <th>작성자</th>
-                        <th>등록일</th>
-                        <th>조회수</th>
-                      </tr>
-                   </thead>
-                   <tbody>
+           <div className="list-table-wrapper">
+               <Table>
+                   <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">번호</TableHead>
+                        <TableHead>제목</TableHead>
+                        <TableHead>작성자</TableHead>
+                        <TableHead>등록일</TableHead>
+                        <TableHead>조회수</TableHead>
+                      </TableRow>
+                   </TableHeader>
+                   <TableBody>
                         { dataList }
-                   </tbody>
-               </table>
+                   </TableBody>
+               </Table>
                
-               {/* 등록 버튼 */}
-               <div className="action-area">
-                   <button className="btn-primary" type="button" onClick={ () => { navigate("/notices/new"); } }>
-                     공지사항 등록
-                   </button>
-               </div>
- 
-               {/* 페이징바 */}
-               <div className="pagination">{ pageList }</div>
+               <Pagination
+                    page={cpage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange} />
            </div>
         </div>
     );
