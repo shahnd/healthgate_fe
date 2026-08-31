@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, UserCheck } from "lucide-react";
+import PageHeader from "@/common/components/PageHeader";
 
 const getToday = () => {
     const today = new Date();
@@ -74,10 +75,7 @@ export default function AttendanceListComponent() {
  
     return (
         <div className="list-page">
-            <div className="page-header">
-                <h1>출근 조회</h1>
-                <p>직원별 출근 현황을 조회합니다.</p>
-            </div>
+            <PageHeader title="출근 조회" description="직원별 출근 현황을 조회합니다." icon={UserCheck}/>
 
             <div className="list-toolbar">
                 <div className="flex flex-wrap items-center gap-2">

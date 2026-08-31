@@ -147,9 +147,9 @@ export default function NoticeCreateComponent() {
                                             } }>
                             초기화
                         </Button>
-                        <Button className="secondary-button" type="button"
+                        <Button size="lg" className="cursor-pointer" type="button"
                                 onClick={() => { navigate("/notices/list");} }>취소</Button> 
-                        <Button className="primary-button" type="submit" 
+                        <Button size="lg" className="cursor-pointer" type="submit" 
                                 onClick={ insertNotice }>등록</Button>
                     </CardFooter>
                 </form>  

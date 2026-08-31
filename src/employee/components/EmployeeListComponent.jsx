@@ -158,7 +158,7 @@ export default function EmployeeListComponent() {
                     </Button>
                 </div>
 
-                <Button size="sm" onClick={() => navigate("/employees/new")} className="primary-button">
+                <Button size="sm" onClick={() => navigate("/employees/new")} size="lg" className="cursor-pointer">
                     직원 등록
                 </Button>
             </div>

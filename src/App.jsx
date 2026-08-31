@@ -61,7 +61,7 @@ function App() {
     <div className="flex min-h-screen w-full">
 
 
-      <AppSidebar />
+      <AppSidebar variant="inset" className="text-[0.9rem] font-medium"/>
       <SidebarInset>
         <SiteHeader/>
         <Routes>

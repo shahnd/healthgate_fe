@@ -9,8 +9,9 @@ import HospitalItemComponent from "./HospitalItemComponent";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Building2 } from "lucide-react";
 import Pagination from "@/common/components/Pagination";
+import PageHeader from "@/common/components/PageHeader";
 
 import "@/common/styles/ListComponent.css";
 import "@/common/styles/ActionButton.css";
@@ -293,10 +294,10 @@ export default function HospitalListComponent() {
 
     return(
         <div className="list-page">
-            <div className="page-header">
-                <h1>병원 목록 조회</h1>
-                <p>검진가능 병원을 조회합니다.</p>
-            </div>
+            <PageHeader 
+            title="병원 목록 조회" 
+            description="병원정보를 조회합니다." 
+            icon={Building2}/>
 
             {/* 검색창 */}
             <form className="list-toolbar">
@@ -382,7 +383,7 @@ export default function HospitalListComponent() {
                     </Button>
                 </div>
 
-                <Button className="primary-button" type="button" size="sm" onClick={() => navigate("/hospitals/new")}>
+                <Button size="lg" className="cursor-pointer" type="button" onClick={() => navigate("/hospitals/new")}>
                     + 병원등록
                 </Button>
             </form>

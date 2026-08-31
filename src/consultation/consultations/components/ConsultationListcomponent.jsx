@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import Pagination from "../../../common/components/Pagination";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import PageHeader from "@/common/components/PageHeader";
+import { MessageCircle } from "lucide-react";
+import "@/common/styles/ListComponent.css";
+
 
 
 export default function ConsultationListComponent() {
@@ -260,11 +264,7 @@ export default function ConsultationListComponent() {
 
     return(
         <div className="list-page">
-            <div className="list-header">
-                <h2>상담 내역 조회</h2>
-            </div>
-
-            <br />
+            <PageHeader title="상담 내역 조회" description="상담 내역을 조회합니다." icon={MessageCircle}/>
 
             {/* 필터링 */}
             <div className="list-toolbar">

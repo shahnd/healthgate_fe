@@ -7,9 +7,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Building2 } from "lucide-react";
 
 import "@/common/styles/FormComponent.css";
 import "@/common/styles/Common.css"
+import PageHeader from "@/common/components/PageHeader";
 
 export default function HospitalUpdateComponent() {
 
@@ -129,10 +131,10 @@ export default function HospitalUpdateComponent() {
 
     return (
         <div className="detail-page">
-            <div className="page-header">
-                <h1>검진 가능 병원 수정</h1>
-                <p>병원 정보를 수정해 주세요.</p>
-            </div>
+            <PageHeader 
+            title="병원 정보 수정" 
+            description="병원정보를 수정합니다." 
+            icon={Building2}/>
 
             <Card className="detail-info-card">
                 <CardHeader>
@@ -261,7 +263,7 @@ export default function HospitalUpdateComponent() {
 
                     <CardFooter>
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="button"
                             variant="outline"
                             onClick={handleReset}
@@ -270,7 +272,7 @@ export default function HospitalUpdateComponent() {
                         </Button>
 
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="submit"
                         >
                             수정

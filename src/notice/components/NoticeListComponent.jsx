@@ -199,7 +199,7 @@ export default function NoticeListComponent() {
             icon={Megaphone}/>
            
            {/* 검색창 */}
-            <form className="list-toolber">
+            <form className="list-toolbar">
                 <div>
                     <Input type="text" 
                         name="keyword"
@@ -209,10 +209,10 @@ export default function NoticeListComponent() {
                         className="w-[500px]" />
                     <Button type="submit" size="sm"
                             onClick={ handleClick }>검색</Button>
-                </div> 
-                <Button className="primary-button" type="button" size="sm" onClick={ () => navigate("/notices/new")}>
+                </div>
+                <Button size="lg" className="cursor-pointer" type="button" onClick={ () => navigate("/notices/new")}>
                             + 공지사항 등록
-                    </Button>
+                </Button>
             </form>
            
            

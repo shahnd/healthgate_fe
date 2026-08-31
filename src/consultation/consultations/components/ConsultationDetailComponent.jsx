@@ -2,6 +2,12 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { selectConsultationApi } from "../api/consultationApi";
 import { useAuthStore } from "../../../store/useAuthStore";
+import PageHeader from "@/common/components/PageHeader";
+import { MessageCircle } from "lucide-react";
+import "@/common/styles/DetailComponent.css";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 
 export default function ConsultationDetailComponent () {
 
@@ -123,56 +129,97 @@ export default function ConsultationDetailComponent () {
     }, [id, role, loginUserId, navigate]);
 
     return(
-        <div>
-            <h2>상담일지 상세조회</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <th width="130">신청자</th>
-                        <td width="300">{ consultation.employee?.name } </td>
-                        <th width="130">부서명</th>
-                        <td width="300">{ consultation.employee?.departments?.name }</td>
-                    </tr>
-                    <tr>
-                        <th>예약번호</th>
-                        <td>{ consultation.id }</td>
-                        <th>직급</th>
-                        <td>{ consultation.employee?.positions?.name }</td>
-                    </tr>
-                    <tr>
-                        <th>상담일</th>
-                        <td>{ consultation.scheduledDate }</td>
-                        <th>시간</th>
-                        <td>{ formatScheduledTurn(consultation.scheduledTurn) }</td>
-                    </tr>
-                    <tr>
-                        <th>상담사</th>
-                        <td>{ consultation.manager?.name }</td>
-                        <th>상담상태</th>
-                        <td><b>{ formatStatusWithColor(consultation.status) }</b></td>
-                    </tr>
-                    <tr>
-                        <th>상담내용</th>
-                        <td colSpan={ 3 }>{ (!consultation.content || consultation.content === "")
-                                            ? <span style={{ color : "#BBBBBB" }}>일지를 작성해주세요.</span>
-                                            : consultation.content }
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div>
-                {role === "HEALTH_ADMIN" && (
-                    <>
-                        <button type="button"
-                                onClick={ () => { navigate(`/consultation/${id}`); } }>
-                                    { (!consultation.content || consultation.content === "") ? "일지 작성" : "일지 수정" }
-                        </button>
-                    </>
-                )}
-                &nbsp;&nbsp;
-                <button type="button"
-                        onClick={ () => { navigate(`/consultation/list`); } }>목록으로</button>
-            </div>
+        <div className="detail-page">
+            <PageHeader title="상담일지 상세조회" description="상담일지의 자세한 내용을 조회합니다." icon={MessageCircle}/>
+
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>상담 정보</CardTitle>
+                    <CardDescription>상담 신청 정보</CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <dl>
+                        <div>
+                            <dt>신청자</dt>
+                            <dd>{consultation.employee?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>부서명</dt>
+                            <dd>{consultation.employee?.departments?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>예약번호</dt>
+                            <dd>{consultation.id}</dd>
+                        </div>
+
+                        <div>
+                            <dt>직급</dt>
+                            <dd>{consultation.employee?.positions?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>상담일</dt>
+                            <dd>{consultation.scheduledDate}</dd>
+                        </div>
+
+                        <div>
+                            <dt>시간</dt>
+                            <dd>{formatScheduledTurn(consultation.scheduledTurn)}</dd>
+                        </div>
+
+                        <div>
+                            <dt>상담사</dt>
+                            <dd>{consultation.manager?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>상담상태</dt>
+                            <dd>
+                                <b>{formatStatusWithColor(consultation.status)}</b>
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt>상담내용</dt>
+                            <dd>
+                                {(!consultation.content || consultation.content === "")
+                                    ? <span style={{ color: "#BBBBBB" }}>일지를 작성해주세요.</span>
+                                    : consultation.content}
+                            </dd>
+                        </div>
+                    </dl>
+                </CardContent>
+
+                <CardFooter>
+                    {role === "HEALTH_ADMIN" && (
+                        <Button
+                            size="lg" className="cursor-pointer"
+                            type="button"
+                            onClick={() => {
+                                navigate(`/consultation/${id}`);
+                            }}
+                        >
+                            {(!consultation.content || consultation.content === "")
+                                ? "일지 작성"
+                                : "일지 수정"}
+                        </Button>
+                    )}
+
+                    <Button
+                        size="lg" className="cursor-pointer"
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                            navigate(`/consultation/list`);
+                        }}
+                    >
+                        목록으로
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
     );
 }

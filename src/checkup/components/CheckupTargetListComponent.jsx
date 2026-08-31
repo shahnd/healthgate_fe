@@ -24,6 +24,8 @@ import {
 import "@/common/styles/ActionButton.css";
 import "@/common/styles/ListComponent.css";
 import "@/common/styles/Common.css";
+import PageHeader from "@/common/components/PageHeader";
+import { Stethoscope } from "lucide-react";
 
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
@@ -569,16 +571,8 @@ export default function CheckupTargetListComponent() {
   return (
     <div className="list-page">
       {/* 페이지 제목 */}
-      <div className="page-header">
-        <h1>
-          건강검진 대상자 목록
-        </h1>
+      <PageHeader title="건강검진 대상자 목록" description="연도별 건강검진 대상자의 수검 상태를 조회하고 관리합니다." icon={Stethoscope}/>
 
-        <p>
-          연도별 건강검진 대상자의 수검 상태를
-          조회하고 관리합니다.
-        </p>
-      </div>
 
       {/* 연도 선택 */}
       <div className="list-toolbar">

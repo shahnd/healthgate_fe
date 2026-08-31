@@ -5,6 +5,13 @@ import { saveReservationApi, selectDateApi, selectReservationApi } from "../api/
 import "../styles/reservationCalendar.css";
 import { useAuthStore } from "@/store/useAuthStore";
 import axios from "axios";
+import PageHeader from "@/common/components/PageHeader";
+import { MessageCircle } from "lucide-react";
+import "@/common/styles/DetailComponent.css";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
 
 export default function ReservationComponent() {
 
@@ -334,63 +341,97 @@ export default function ReservationComponent() {
 
     // return 구문
     return(
-        <div>
-            <div>
+        <div className="detail-page">
+
+            {/* 아래 내용이 공통 헤더에 겹치는 것 같아서 우선 주석처리했습니다. */}
+            {/* <div>
                 <button onClick={() => { navigate("/dashboard") }}>홈</button>&gt; 
                 <button onClick={() => { navigate("/consultation/reservation/list") }}>보건상담</button> &gt; 
                 상담예약
-            </div>
-            <h2>보건 상담 예약</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <th width="150">신청자</th>
-                        <td width="300">{reservationData.employee?.name}</td>
-                        <th width="150">부서명</th>
-                        <td width="300">{reservationData.employee?.departments?.name}</td>
-                    </tr>
-                    <tr>
-                        <th>연락처</th>
-                        <td>{reservationData.employee?.phone || "-"}</td>
-                        <th>직급</th>
-                        <td>{reservationData.employee?.positions?.name || "-"}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <form className="reservation-form">
-                <div className="reservation-date">
-                    {/* 달력 - 날짜 선택 */}
-                    <ReservationCalendar onSelectSlot={ handleSelectDate }
-                                         selectedDate={ selectedDate }
-                                         currentDate={ currentDate }
-                                         onNavigate={ setCurrentDate } />
-                </div>
-                <div className="reservation-turn">
-                    {/* 차시 선택 */}
-                    상담 시간
-                    <br />
-                    예약 가능한 시간을 선택할 수 있습니다.
-                    <br />
-                    { scheduleList }
-                </div>
+            </div> */}
 
-                <br /><br />
+            <PageHeader title="상담 예약" description="보건 상담을 예약합니다." icon={MessageCircle}/>
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>{isEditMode ? "상담 예약 수정" : "상담 예약"}</CardTitle>
+                    <CardDescription>
+                        {isEditMode
+                            ? "상담 예약 정보를 수정해 주세요."
+                            : "상담 예약 정보를 입력해 주세요."}
+                    </CardDescription>
+                </CardHeader>
 
-                <div>
-                    신청 사유
-                    <textarea name="consultationContent"
-                              placeholder="신청 사유를 입력하세요."
-                              value={ reservationData.reason }
-                              onChange={handleChange}></textarea>
-                </div>
-            </form>
-            <br />
-            <div align="right">
-                <button type="submit"
-                        onClick={saveReservation}>
+                <CardContent>
+                    <dl>
+                        <div>
+                            <dt>신청자</dt>
+                            <dd>{reservationData.employee?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>부서명</dt>
+                            <dd>{reservationData.employee?.departments?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>연락처</dt>
+                            <dd>{reservationData.employee?.phone || "-"}</dd>
+                        </div>
+
+                        <div>
+                            <dt>직급</dt>
+                            <dd>{reservationData.employee?.positions?.name || "-"}</dd>
+                        </div>
+                    </dl>
+                </CardContent>
+
+                <form className="reservation-form">
+                    <CardContent>
+                        <div className="!flex gap-6 items-center">
+                            <div className="reservation-date">
+                                {/* 달력 - 날짜 선택 */}
+                                <ReservationCalendar
+                                    onSelectSlot={handleSelectDate}
+                                    selectedDate={selectedDate}
+                                    currentDate={currentDate}
+                                    onNavigate={setCurrentDate}
+                                />
+                            </div>
+
+                            <div className="reservation-turn">
+                                <div>
+                                    <h3 className="font-bold">상담 시간</h3>
+                                    <p className="text-gray-500">예약 가능한 시간을 선택할 수 있습니다.</p>
+                                </div>
+
+                                {scheduleList}
+                            </div>
+                        </div>
+
+                        <div className="mt-5">
+                            <Label htmlFor="consultationContent">신청 사유</Label>
+                            <textarea
+                                id="consultationContent"
+                                name="consultationContent"
+                                placeholder="신청 사유를 입력하세요."
+                                value={reservationData.reason}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </CardContent>
+
+                    <CardFooter>
+                        <Button
+                            size="lg" className="cursor-pointer"
+                            type="submit"
+                            onClick={saveReservation}
+                        >
                             {isEditMode ? "수정 완료" : "상담 신청"}
-                        </button>
-            </div>
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Card>
+
         </div>
     )
 }
