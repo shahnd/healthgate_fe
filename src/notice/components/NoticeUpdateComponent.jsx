@@ -6,6 +6,14 @@ import { selectNoticeFormApi, updateNoticeApi, BASE_URL } from "../api/NoticeApi
 
 import { useUserInfo } from "../../store/useAuthStore";
 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+import "@/common/styles/FormComponent.css";
+import "@/common/styles/Common.css"
+
 export default function NoticeUpdateComponent() {
 
      // 실행할 구문
@@ -44,8 +52,6 @@ export default function NoticeUpdateComponent() {
 
                 const response = await selectNoticeFormApi(noticeId);
 
-                // console.log(response.data);
-
                 setNotice(response.data.notice);
                 setNoticeFile(response.data.noticeFile || {
                                                 noticeFileId: "",
@@ -81,17 +87,13 @@ export default function NoticeUpdateComponent() {
         e.preventDefault();
         // > 기본 이벤트 제거
 
-        // console.log(board);
-
         try {
 
             // 첨부파일 정보를 얻어내기 (useRef 로 DOM 참조)
             let reupfile = reupfileRef.current;
-            // console.log(reupfile);
             // > current 속성에는 input type="file" 요소 객체 자체가 담겨있음!!
 
             // input type="file" 로 입력받은 파일 정보들은 .files 라는 배열 형식의 속성에 담김
-            // console.log(reupfile.files.length);
 
             // 요청 시 전달값 중 첨부파일이 있다면 그냥 객체가 아닌 FormData 형식의 객체에 담는다.
             const formData = new FormData(); // {}
@@ -128,8 +130,6 @@ export default function NoticeUpdateComponent() {
 
             const response = await updateNoticeApi(noticeId, formData);
 
-            console.log(response.data);
-
             if(response.data == "success") {
                 // 공지사항 수정 성공
         
@@ -151,59 +151,77 @@ export default function NoticeUpdateComponent() {
     };
 
     return (
-        <div className="page">
-           
-            <h2>공지사항 수정</h2>
+        <div className="detail-page">
+           <div className="page-header">
+                <h2>공지사항 수정</h2>
+           </div>
+            
+            <Card className="detail-info-card">
 
-            <form className="card">
-                <table className="form-table">
-                    <tbody>
-                        <tr>
-                            <th width="130">제목</th>
-                            <td>
-                                <input type="text" name="title" 
-                                                   value={ notice.title }
-                                                   onChange={ handleChange } required/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>내용</th>
-                            <td>
-                                <textarea name="content" 
-                                          value={ notice.content }
-                                          onChange={ handleChange } required></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>첨부파일</th>
-                            <td>
+                <CardHeader>
+                    <CardTitle>공지사항 정보 수정</CardTitle>
+                    <CardDescription>
+                        공지사항 정보를 수정해 주세요.
+                    </CardDescription>
+                </CardHeader>
+
+                <form>
+                    <CardContent>
+                       <dl>
+                            <div>
+                                <Label htmlFor="title">제목</Label>
+                                <Input 
+                                    id="title"  
+                                    type="text" 
+                                    name="title" 
+                                    value={ notice.title }
+                                    onChange={ handleChange } required/>
+                            </div>
+                            <div></div>
+                            <div>
+                                <Label htmlFor="content">내용</Label>
+                                <Input 
+                                        id="content"
+                                        name="content" 
+                                        value={ notice.content }
+                                        onChange={ handleChange } required/>
+                            </div>
+                            <div></div>
+                            <div>
+                                <Label>첨부파일</Label>
                                 <span>
                                     {
                                         ( noticeFile && noticeFile.originName ? 
                                         (<a href={ `${ BASE_URL }/download/${ noticeFile.savedName }/${ noticeFile.originName }` }>
                                             { noticeFile.originName }
-                                         </a>) : 
-                                         "첨부파일이 없습니다."
+                                        </a>) : 
+                                        "첨부파일이 없습니다."
                                         )
                                     }
                                 </span>
 
                                 {/* 수정할 첨부파일을 입력받는 용도 */}
-                                <input type="file" name="reupfile" ref={ reupfileRef } /> 
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <Input type="file" name="reupfile" ref={ reupfileRef } /> 
+                               
+                            </div>
+                        </dl>
+                    </CardContent>
 
-                <div className="action-area">
-                    <button type="submit" className="btn-primary"
-                                          onClick={ updateNotice }>
-                        수정하기
-                    </button>
-                    <button className="btn-secondary" type="button" onClick={() => { navigate("/notices/list");}}>취소</button> 
-                </div>
-
-            </form>
+                    <CardFooter>
+                        <Button 
+                            type="submit" 
+                            className="primary-button"
+                            variant="outline"
+                            onClick={ updateNotice }>
+                            수정하기
+                        </Button>
+                        <Button 
+                        className="secondary-button" 
+                        type="button" 
+                        onClick={() => { navigate("/notices/list");}}>취소</Button> 
+                    </CardFooter>
+                </form>
+            </Card>
         </div>
     );
 };

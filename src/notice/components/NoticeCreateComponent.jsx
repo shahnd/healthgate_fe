@@ -6,6 +6,15 @@ import { insertNoticeApi } from "../api/NoticeApi";
 
 import { useUserInfo } from "../../store/useAuthStore";
 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+
+import "@/common/styles/FormComponent.css";
+import "@/common/styles/Common.css"
+
 export default function NoticeCreateComponent() {
 
      // 실행할 구문
@@ -42,7 +51,6 @@ export default function NoticeCreateComponent() {
         
             let upfile = upfileRef.current;
             
-            // console.log(upfile);
             const formData = new FormData(); // {}
 
             formData.append("title", notice.title);
@@ -68,8 +76,7 @@ export default function NoticeCreateComponent() {
 
             } else {
                 // > 공지사항 작성 실패일 경우
-                
-                console.log(response.data);
+
                 alert("공지사항 작성에 실패했습니다.");
             }
 
@@ -79,52 +86,71 @@ export default function NoticeCreateComponent() {
         }
     };
     return (
-        <div className="page">
-            <h1 className="page-title">공지사항 등록</h1>
-
-            <div className="card">
-              <form>  
-                <table className="form-table">
-                    <tbody>
-                        <tr>
-                            <th>제목</th>
-                            <td>
-                                <input type="text" name="title" 
-                                       value={ notice.title } onChange={ handleChange } required/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>내용</th>
-                            <td>
-                                 <textarea name="content" value={ notice.content }
-                                           onChange={ handleChange } required ></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>첨부파일</th>
-                            <td>
-                                <input type="file" name="upfile" ref={ upfileRef } />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div className="action-area">
-                    <button type="reset" className="btn-secondary"
-                                         onClick={ () => {
-                                            setNotice({title : "", 
-                                                       content : "",
-                                                       authorId : user.id});
-                                         } }>
-                        초기화
-                    </button>
-                    <button className="btn-secondary" type="button"
-                              onClick={() => { navigate("/notices/list");} }>취소</button> 
-                    <button className="btn-primary" type="submit" 
-                            onClick={ insertNotice }>등록</button>
-                </div>
-              </form>  
+        <div className="detail-page">
+            <div className="page-header">
+                 <h1>공지사항 등록</h1>
             </div>
+
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>공지사항 등록</CardTitle>
+                    <CardDescription>
+                        공지사항 정보를 입력해 주세요.
+                    </CardDescription>
+                </CardHeader>
+
+                <form>  
+                    <CardContent>
+                        <dl>
+                            <div>
+                                <Label htmlFor="title">제목</Label>
+                                <Input 
+                                    id="title"
+                                    type="text" 
+                                    name="title" 
+                                    value={ notice.title } 
+                                    onChange={ handleChange } 
+                                    required/> 
+                            </div>
+                            <div></div>
+                            <div>
+                                <Label htmlFor="content">내용</Label>
+                                <Textarea
+                                    id="content" 
+                                    name="content" 
+                                    value={ notice.content }
+                                    onChange={ handleChange } 
+                                    required ></Textarea>
+                            </div>
+                            <div></div>
+                            <div>
+                                <Label>첨부파일</Label>
+                                <Input 
+                                    id="file"
+                                    type="file" 
+                                    name="upfile" 
+                                    ref={ upfileRef } />
+                                
+                            </div>
+                        </dl>
+                    </CardContent>
+
+                    <CardFooter>
+                        <Button type="button" className="secondary-button"
+                                            onClick={ () => {
+                                                setNotice({title : "", 
+                                                        content : "",
+                                                        authorId : user.id});
+                                            } }>
+                            초기화
+                        </Button>
+                        <Button className="secondary-button" type="button"
+                                onClick={() => { navigate("/notices/list");} }>취소</Button> 
+                        <Button className="primary-button" type="submit" 
+                                onClick={ insertNotice }>등록</Button>
+                    </CardFooter>
+                </form>  
+            </Card>
         </div>
     );
 };
