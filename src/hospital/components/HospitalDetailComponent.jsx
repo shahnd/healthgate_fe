@@ -5,8 +5,11 @@ import { useState, useEffect } from "react";
 import { selectHospitalApi, deleteHospitalApi } from "../api/hospitalApi";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Building2 } from "lucide-react";
+
 import "@/common/styles/DetailComponent.css";
 import "@/common/styles/Common.css"
+import PageHeader from "@/common/components/PageHeader";
 
 
 export default function HospitalDetailComponent() {
@@ -94,10 +97,10 @@ export default function HospitalDetailComponent() {
     // return 구문
     return (
         <div className="detail-page">
-            <div className="page-header">
-                <h1>병원 상세</h1>
-                <p>{hospital.name}</p>
-            </div>
+            <PageHeader 
+            title="병원 정보 상세조회" 
+            description="병원정보를 상세조회합니다." 
+            icon={Building2}/>
 
             <div className="detail-page">
                 <section data-detail-section="info">
