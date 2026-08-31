@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployeeFormComponent from "./EmployeeFormComponent";
 import "@/common/styles/Common.css"
+import PageHeader from "@/common/components/PageHeader";
+import { UserIcon } from "lucide-react";
 
 
 export default function EmployeeUpdateComponent() {
@@ -102,10 +104,7 @@ export default function EmployeeUpdateComponent() {
 
     return (
         <div className="detail-page">
-            <div className="page-header">
-                <h1>직원 정보 수정</h1>
-                <p>직원 정보 수정 페이지</p>
-            </div>
+            <PageHeader title="직원 정보 수정" description="직원 정보를 수정합니다." icon={UserIcon}/>
             <EmployeeFormComponent
                 mode="update"
                 formData={formData}

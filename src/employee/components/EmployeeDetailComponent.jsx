@@ -6,6 +6,8 @@ import "@/common/styles/DetailComponent.css";
 import { Button } from "@/components/ui/button";
 import "@/common/styles/Common.css"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import PageHeader from "@/common/components/PageHeader";
+import { UserIcon } from "lucide-react";
 
 
 export default function EmployeeDetailComponent() {
@@ -84,34 +86,34 @@ export default function EmployeeDetailComponent() {
 
     return (
         <div className="detail-page">
-            <div className="page-header">
-                <h1>직원 상세</h1>
-                <p>{data.name} | {data.employeeNumber}</p>
-                <nav aria-label="직원 상세 메뉴" className="flex gap-1 -mb-[calc(1rem+1px)]">
+                <PageHeader title="직원 정보 조회" description={`${data.employeeNumber} | ${data.name}`} icon={UserIcon}/>
+                <nav 
+                    aria-label="직원 상세 메뉴" 
+                    className="flex gap-1 -mt-[calc(1rem+1px)] relative z-10 border-b border-transparent"
+                >
                     <button
-                        aria-selected={activeTab === "info"}
-                        onClick={() => setActiveTab("info")}
-                        className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
-                            activeTab === "info"
-                                ? "text-foreground border-primary"
-                                : "text-muted-foreground border-transparent"
-                        }`}
+                    aria-selected={activeTab === "info"}
+                    onClick={() => setActiveTab("info")}
+                    className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
+                        activeTab === "info"
+                        ? "text-[var(--foreground)] border-[var(--primary)]"
+                        : "text-[var(--muted-foreground)] border-transparent"
+                    }`}
                     >
-                        기본 정보
+                    기본 정보
                     </button>
                     <button
-                        aria-selected={activeTab === "health"}
-                        onClick={() => setActiveTab("health")}
-                        className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
-                            activeTab === "health"
-                                ? "text-foreground border-primary"
-                                : "text-muted-foreground border-transparent"
-                        }`}
+                    aria-selected={activeTab === "health"}
+                    onClick={() => setActiveTab("health")}
+                    className={`px-4 py-[0.625rem] text-sm font-medium bg-transparent cursor-pointer border-b-2 transition-colors ${
+                        activeTab === "health"
+                        ? "text-[var(--foreground)] border-[var(--primary)]"
+                        : "text-[var(--muted-foreground)] border-transparent"
+                    }`}
                     >
-                        건강 데이터
+                    건강 데이터
                     </button>
                 </nav>
-            </div>
 
 
 
