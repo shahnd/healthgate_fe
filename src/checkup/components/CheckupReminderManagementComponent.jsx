@@ -1,4 +1,6 @@
+import PageHeader from '@/common/components/PageHeader'
 import axios from 'axios'
+import { Stethoscope } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 const CHECKUP_API_URL =
@@ -184,17 +186,7 @@ export default function CheckupReminderManagementComponent() {
       )}
 
       {/* 자동 알림 설정 */}
-      <section className="rounded-xl bg-white p-6 shadow-sm">
-        <div className="mb-6">
-          <h2 className="text-lg font-bold text-slate-800">
-            자동 알림 설정
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-500">
-            건강검진 자동 알림의 메시지와 실행 일정을
-            관리합니다.
-          </p>
-        </div>
+        <PageHeader title="자동 알림 설정" description="건강검진 자동 알림의 메시지와 실행 일정을 관리합니다." icon={Stethoscope}/>
 
         <form
           onSubmit={saveReminderSetting}

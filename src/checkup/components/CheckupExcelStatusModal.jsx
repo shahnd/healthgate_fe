@@ -1,4 +1,6 @@
+import PageHeader from '@/common/components/PageHeader'
 import axios from 'axios'
+import { Stethoscope } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 const CHECKUP_API_URL =
@@ -237,16 +239,7 @@ export default function CheckupExcelStatusModal({
             px-6 py-5
           "
         >
-          <div>
-            <h2 className="text-xl font-bold text-slate-800">
-              건강검진 대상자 수검 현황
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Excel 업로드 결과가 반영된 건강검진
-              대상자 목록입니다.
-            </p>
-          </div>
+          <PageHeader title="건강검진 대상자 수검 현황" description="Excel 업로드 결과가 반영된 건강검진 대상자 목록입니다." icon={Stethoscope}/>
 
           <button
             type="button"

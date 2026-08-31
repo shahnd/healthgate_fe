@@ -24,6 +24,8 @@ import {
 import "@/common/styles/ActionButton.css";
 import "@/common/styles/ListComponent.css";
 import "@/common/styles/Common.css";
+import PageHeader from "@/common/components/PageHeader";
+import { Stethoscope } from "lucide-react";
 
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
@@ -173,16 +175,7 @@ export default function CheckupReminderHistoryComponent() {
   return (
     <div className="list-page">
       {/* 페이지 제목 */}
-      <div className="page-header">
-        <h1>
-          알림 발송 이력
-        </h1>
-
-        <p>
-          건강검진 대상자에게 발송한 알림 내역을
-          확인합니다.
-        </p>
-      </div>
+      <PageHeader title="알림 발송 이력" description="건강검진 대상자에게 발송한 알림 내역을 확인합니다." icon={Stethoscope}/>
 
       {/* 필터 및 새로고침 */}
       <div className="list-toolbar">

@@ -6,6 +6,8 @@ import CheckupReminderManagementComponent
 
 import CheckupExcelStatusModal
   from './CheckupExcelStatusModal'
+import PageHeader from '@/common/components/PageHeader'
+import { Stethoscope } from 'lucide-react'
 
 const CHECKUP_API_URL =
   'http://localhost:8006/healthgate/checkups'
@@ -315,15 +317,7 @@ export default function CheckupManagementComponent() {
   return (
     <div className="min-h-screen p-8">
       {/* 페이지 제목 */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800">
-          건강검진 관리
-        </h1>
-
-        <p className="mt-2 text-slate-500">
-          건강검진 완료율과 대상자 및 알림을 관리합니다.
-        </p>
-      </div>
+      <PageHeader title="건강검진 관리" description="건강검진 완료율과 대상자 및 알림을 관리합니다." icon={Stethoscope}/>
 
       {/* 연도 선택 */}
       <section
