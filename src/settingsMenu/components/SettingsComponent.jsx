@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Pagination } from "@/components/ui/pagination";
+import PageHeader from "@/common/components/PageHeader";
 
 export default function SettingsComponent() {
 
@@ -75,6 +77,7 @@ export default function SettingsComponent() {
             <h1>설정</h1>
             <p>시스템 설정</p>
         </div>
+        <PageHeader title="설정" description="시스템 설정"/>
 
         <Card className="settings-card">
             <CardHeader>

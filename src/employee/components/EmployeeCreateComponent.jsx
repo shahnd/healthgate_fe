@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeFormComponent from "./EmployeeFormComponent";
+import PageHeader from "@/common/components/PageHeader";
+import { UserIcon } from "lucide-react";
 
 
 export default function EmployeeCreateComponent() {
@@ -82,10 +84,7 @@ export default function EmployeeCreateComponent() {
 
     return(
         <div className="detail-page">
-            <div className="page-header">
-                <h1>직원 등록</h1>
-                <p>직원을 정보를 등록합니다.</p>
-            </div>
+            <PageHeader title="직원 등록" description="직원 정보를 등록합니다." icon={UserIcon}/>
 
 
             <EmployeeFormComponent
