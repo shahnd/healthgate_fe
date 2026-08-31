@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Megaphone } from "lucide-react";
+import PageHeader from '@/common/components/PageHeader';
 
 import "@/common/styles/FormComponent.css";
 import "@/common/styles/Common.css"
@@ -87,9 +89,10 @@ export default function NoticeCreateComponent() {
     };
     return (
         <div className="detail-page">
-            <div className="page-header">
-                 <h1>공지사항 등록</h1>
-            </div>
+            <PageHeader 
+            title="공지사항 등록" 
+            description="공지사항을 등록 합니다." 
+            icon={Megaphone}/>
 
             <Card className="detail-info-card">
                 <CardHeader>

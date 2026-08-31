@@ -9,8 +9,9 @@ import NoticeItemComponent from "./NoticeItemComponent";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Megaphone } from "lucide-react";
 import Pagination from "@/common/components/Pagination";
+import PageHeader from '@/common/components/PageHeader';
 
 import "@/common/styles/ListComponent.css";
 import "@/common/styles/ActionButton.css";
@@ -192,9 +193,10 @@ export default function NoticeListComponent() {
 
     return(
         <div className="list-page">
-            <div className="page-header">
-                <h1>공지사항 목록</h1>
-            </div>
+            <PageHeader 
+            title="공지사항 목록" 
+            description="공지사항 정보 입니다." 
+            icon={Megaphone}/>
            
            {/* 검색창 */}
             <form className="list-toolber">

@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import "@/common/styles/DetailComponent.css";
 import "@/common/styles/Common.css"
+import { Megaphone } from "lucide-react";
+import PageHeader from '@/common/components/PageHeader';
 
 export default function NoticeDetailComponent() {
 
@@ -98,10 +100,10 @@ export default function NoticeDetailComponent() {
 
     return (
         <div className="detail-page">
-            <div className="page-header">
-                <h1>공지사항 상세</h1>
-                <p>{notice.title}</p>
-            </div>
+            <PageHeader 
+            title="공지사항 상세" 
+            description="공지사항 정보를 상세조회 합니다." 
+            icon={Megaphone}/>
         
             <div className="detail-page">
                 <section data-detail-section="info">

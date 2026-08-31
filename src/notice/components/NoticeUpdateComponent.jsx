@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Megaphone } from "lucide-react";
+import PageHeader from '@/common/components/PageHeader';
 
 import "@/common/styles/FormComponent.css";
 import "@/common/styles/Common.css"
@@ -152,9 +154,10 @@ export default function NoticeUpdateComponent() {
 
     return (
         <div className="detail-page">
-           <div className="page-header">
-                <h2>공지사항 수정</h2>
-           </div>
+           <PageHeader 
+            title="공지사항 수정" 
+            description="공지사항 정보를 수정 합니다." 
+            icon={Megaphone}/>
             
             <Card className="detail-info-card">
 
@@ -188,7 +191,7 @@ export default function NoticeUpdateComponent() {
                             </div>
                             <div></div>
                             <div>
-                                <Label>첨부파일</Label>
+                                <Label>기존첨부파일</Label>
                                 <span>
                                     {
                                         ( noticeFile && noticeFile.originName ? 
@@ -199,10 +202,17 @@ export default function NoticeUpdateComponent() {
                                         )
                                     }
                                 </span>
-
+                            </div>
+                            <div></div>
+                            <div>
+                                <Label>수정할첨부파일</Label>
                                 {/* 수정할 첨부파일을 입력받는 용도 */}
-                                <Input type="file" name="reupfile" ref={ reupfileRef } /> 
-                               
+                                <Input
+                                    id="file" 
+                                    type="file" 
+                                    name="reupfile" 
+                                    ref={ reupfileRef } 
+                                    /> 
                             </div>
                         </dl>
                     </CardContent>
