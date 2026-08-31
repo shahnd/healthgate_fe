@@ -59,10 +59,6 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "검진 완료율 통계",
-          url: "/checkup/statistics",
-        },
-        {
           title: "검진 대상자 목록",
           url: "/checkup/targets",
         },
