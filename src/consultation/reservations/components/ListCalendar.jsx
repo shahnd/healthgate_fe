@@ -5,6 +5,8 @@ import startOfWeek from 'date-fns/startOfWeek'
 import getDay from 'date-fns/getDay'
 import ko from 'date-fns/locale/ko'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const locales = { 'ko': ko }
 
@@ -31,27 +33,32 @@ const CustomToolbar = (toolbar) => {
 
   // 레이아웃
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center', // 중앙 정렬
-      alignItems: 'center',
-      marginBottom: '10px',
-      padding: '5px',
-      gap: '15px' // 버튼과 라벨 사이 간격
-    }}>
-      <button onClick={goToBack} style={{ padding: '5px 10px', cursor: 'pointer' }}>
-        &lt; 이전
-      </button>
+    <div className="flex items-center justify-center gap-4 p-1 mb-2">
+      <Button
+        variant="outline" 
+        size="sm" 
+        onClick={goToBack}
+        className="h-8 w-8 p-0"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        <span className="sr-only">이전</span>
+      </Button>
 
-      <span style={{ fontWeight: 'bold', fontSize: '1.1rem', minWidth: '100px', textAlign: 'center' }}>
+      <span className="min-w-[100px] text-center font-semibold text-sm sm:text-base">
         {koreanLabel}
       </span>
 
-      <button onClick={goToNext} style={{ padding: '5px 10px', cursor: 'pointer' }}>
-        다음 &gt;
-      </button>
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={goToNext}
+        className="h-8 w-8 p-0"
+      >
+        <ChevronRight className="h-4 w-4" />
+        <span className="sr-only">다음</span>
+      </Button>
 
-      {/* <button onClick={goToToday}>오늘</button> */}
+      {/* <Button variant="ghost" size="sm" onClick={goToToday}>오늘</Button> */}
     </div>
   );
 };
@@ -60,7 +67,7 @@ const CustomToolbar = (toolbar) => {
 function ListCalendar({ dataList, onSelectEvent}) {
 
   return (
-    <div style={{ height : 800, width : 1000, padding : "20px" }}>
+    <div className="w-full max-w-[1000px] h-[800px] p-6 bg-background text-foreground">
       
       <Calendar
         localizer={localizer}

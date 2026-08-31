@@ -3,6 +3,10 @@ import ListCalendar from "./ListCalendar";
 import { useEffect, useState } from "react";
 import {selectAllReservationApi} from "../api/reservationApi";
 import { useAuthStore } from "@/store/useAuthStore";
+import PageHeader from "@/common/components/PageHeader";
+import { MessageCircle } from "lucide-react";
+import "@/common/styles/DetailComponent.css";
+
 
 export default function ReservationListComponent() {
 
@@ -76,8 +80,8 @@ export default function ReservationListComponent() {
   };
 
   return (
-    <div>
-      <h2>보건 상담 예약 현황</h2>
+    <div className="detail-page">
+      <PageHeader title="보건 상담 예약 현황" description="보건 상담 예약 현황을 조회합니다." icon={MessageCircle}/>
 
       <ListCalendar dataList={ dataList }
                     onSelectEvent={ handleSelectEvent }

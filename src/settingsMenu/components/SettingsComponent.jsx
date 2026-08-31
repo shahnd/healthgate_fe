@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import PageHeader from "@/common/components/PageHeader";
+import { Settings } from "lucide-react";
 
 export default function SettingsComponent() {
 
@@ -73,11 +74,7 @@ export default function SettingsComponent() {
 
     return (
         <div className="list-page">
-        <div className="page-header">
-            <h1>설정</h1>
-            <p>시스템 설정</p>
-        </div>
-        <PageHeader title="설정" description="시스템 설정"/>
+        <PageHeader title="설정" description="시스템 설정" icon={Settings}/>
 
         <Card className="settings-card">
             <CardHeader>
