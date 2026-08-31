@@ -8,9 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Building2 } from "lucide-react";
 
 import "@/common/styles/FormComponent.css";
 import "@/common/styles/Common.css"
+import PageHeader from "@/common/components/PageHeader";
 
 export default function HospitalCreateComponent() {
 
@@ -105,10 +107,10 @@ export default function HospitalCreateComponent() {
 
     return(
         <div className="detail-page">
-            <div className="page-header">
-                <h1>검진 가능 병원 등록</h1>
-                <p>병원 정보를 입력해 주세요.</p>
-            </div>
+            <PageHeader 
+            title="병원 정보 등록" 
+            description="병원정보를 등록합니다." 
+            icon={Building2}/>
 
             <Card className="detail-info-card">
                 <CardHeader>
