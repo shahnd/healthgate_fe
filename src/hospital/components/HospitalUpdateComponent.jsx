@@ -263,7 +263,7 @@ export default function HospitalUpdateComponent() {
 
                     <CardFooter>
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="button"
                             variant="outline"
                             onClick={handleReset}
@@ -272,7 +272,7 @@ export default function HospitalUpdateComponent() {
                         </Button>
 
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="submit"
                         >
                             수정

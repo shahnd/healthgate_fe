@@ -162,10 +162,10 @@ export default function EmployeeDetailComponent() {
                                 </dl>
                             </CardContent>
                             <CardFooter>
-                                <Button className="primary-button" onClick={() => navigate(`/employees/${id}/edit`)}>
+                                <Button size="lg" className="cursor-pointer" onClick={() => navigate(`/employees/${id}/edit`)}>
                                     편집
                                 </Button>
-                                <Button className="primary-button" onClick={handleDelete}>
+                                <Button size="lg" variant="secondary" className="cursor-pointer" onClick={handleDelete}>
                                     삭제
                                 </Button>
                             </CardFooter>

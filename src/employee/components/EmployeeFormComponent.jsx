@@ -188,10 +188,10 @@ export default function EmployeeFormComponent({
                 </CardContent>
 
                 <CardFooter>
-                    <Button className="primary-button" type="button" variant="outline" onClick={onCancel}>
+                    <Button size="lg" className="cursor-pointer" type="button" variant="outline" onClick={onCancel}>
                         취소
                     </Button>
-                    <Button className="primary-button" type="submit">{isCreate ? "등록" : "수정"}</Button>
+                    <Button size="lg" className="cursor-pointer" type="submit">{isCreate ? "등록" : "수정"}</Button>
                 </CardFooter>
             </form>
         </Card>

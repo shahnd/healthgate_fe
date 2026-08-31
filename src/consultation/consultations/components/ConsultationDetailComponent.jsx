@@ -196,7 +196,7 @@ export default function ConsultationDetailComponent () {
                 <CardFooter>
                     {role === "HEALTH_ADMIN" && (
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="button"
                             onClick={() => {
                                 navigate(`/consultation/${id}`);
@@ -209,7 +209,7 @@ export default function ConsultationDetailComponent () {
                     )}
 
                     <Button
-                        className="primary-button"
+                        size="lg" className="cursor-pointer"
                         type="button"
                         variant="outline"
                         onClick={() => {

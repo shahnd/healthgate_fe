@@ -383,7 +383,7 @@ export default function HospitalListComponent() {
                     </Button>
                 </div>
 
-                <Button className="primary-button" type="button" size="sm" onClick={() => navigate("/hospitals/new")}>
+                <Button size="lg" className="cursor-pointer" type="button" onClick={() => navigate("/hospitals/new")}>
                     + 병원등록
                 </Button>
             </form>

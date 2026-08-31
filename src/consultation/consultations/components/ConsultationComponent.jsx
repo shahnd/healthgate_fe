@@ -199,7 +199,7 @@ export default function ConsultationComponent () {
 
                     <CardFooter>
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="submit"
                             onClick={saveConsultation}
                         >
@@ -207,7 +207,7 @@ export default function ConsultationComponent () {
                         </Button>
 
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="button"
                             variant="outline"
                             onClick={() => {

@@ -239,7 +239,7 @@ export default function HospitalCreateComponent() {
 
                     <CardFooter>
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="button"
                             variant="outline"
                             onClick={() => {
@@ -261,7 +261,7 @@ export default function HospitalCreateComponent() {
                         </Button>
 
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="submit"
                         >
                             등록
