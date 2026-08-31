@@ -6,6 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import "@/common/styles/ActionButton.css";
 import "@/common/styles/Common.css";
 import "@/common/styles/ListComponent.css";
+import PageHeader from "@/common/components/PageHeader";
+import { Stethoscope } from "lucide-react";
 
 const CHECKUP_API_URL = "http://localhost:8006/healthgate/checkups";
 const INITIAL_SETTING_FORM = {
@@ -113,10 +115,7 @@ export default function CheckupReminderSettingComponent() {
 
   return (
     <div className="list-page">
-      <div className="page-header">
-        <h1>자동 알림 설정</h1>
-        <p>건강검진 자동 알림의 발송 조건과 일정을 관리합니다.</p>
-      </div>
+      <PageHeader title="자동 알림 설정" description="건강검진 자동 알림의 발송 조건과 일정을 관리합니다." icon={Stethoscope}/>
 
       {errorMessage && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">{errorMessage}</div>

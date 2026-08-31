@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select";
 import "@/common/styles/ListComponent.css";
 import "@/common/styles/Common.css";
+import PageHeader from "@/common/components/PageHeader";
+import { Stethoscope } from "lucide-react";
 
 const CHECKUP_API_URL =
   "http://localhost:8006/healthgate/checkups";
@@ -94,14 +96,8 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
     return (
       <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-5">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">
-              건강검진 완료율
-            </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              연도별 건강검진 진행 현황입니다.
-            </p>
-          </div>
+          <PageHeader title="건강검진 완료율" description="연도별 건강검진 진행 현황입니다." icon={Stethoscope}/>
+
 
           <Select
             value={String(year)}
