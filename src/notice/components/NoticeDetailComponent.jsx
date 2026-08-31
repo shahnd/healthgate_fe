@@ -156,17 +156,17 @@ export default function NoticeDetailComponent() {
                         </CardContent>
 
                         <CardFooter>
-                            <Button className="primary-button "
+                            <Button size="lg" className="cursor-pointer"
                                     onClick={ () => { navigate("/notices/list"); } }>
                                 목록으로
                             </Button>
                             
-                            <Button className="primary-button"
+                            <Button size="lg" className="cursor-pointer"
                                     onClick={ () => { navigate(`/notices/${noticeId}/edit`, {state : {noticeId}}); } }>
                                 편집
                             </Button>
                             
-                            <Button className="secondary-button"
+                            <Button size="lg" className="cursor-pointer"
                                     onClick={ deleteNotice }>
                                 삭제
                             </Button>

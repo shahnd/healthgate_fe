@@ -201,14 +201,14 @@ export default function HospitalDetailComponent() {
 
                         <CardFooter>
                             <Button
-                                className="primary-button"
+                                size="lg" className="cursor-pointer" 
                                 onClick={() => navigate("/hospitals/list")}
                             >
                                 목록으로
                             </Button>
 
                             <Button
-                                className="primary-button"
+                                size="lg" className="cursor-pointer" variant="secondary"
                                 onClick={() =>
                                     navigate(`/hospitals/${hospitalId}/edit`, {
                                         state: { hospitalId }
@@ -219,7 +219,7 @@ export default function HospitalDetailComponent() {
                             </Button>
 
                             <Button
-                                className="secondary-button"
+                                size="lg" className="cursor-pointer" variant="secondary"
                                 onClick={deleteHospital}
                             >
                                 삭제

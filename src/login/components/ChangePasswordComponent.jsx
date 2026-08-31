@@ -130,8 +130,8 @@ export default function ChangePasswordComponent() {
                         </CardContent>
 
                         <CardFooter>
-                            <Button className="primary-button" type="button" variant="outline">취소</Button>
-                            <Button className="primary-button" type="submit">변경하기</Button>
+                            <Button size="lg" className="cursor-pointer" type="button" variant="outline">취소</Button>
+                            <Button size="lg" className="cursor-pointer" type="submit">변경하기</Button>
                         </CardFooter>
                     </form>
                 </Card>

@@ -15,13 +15,14 @@
     /* 대시보드에서 가로로 넓게 배치돼도 카드 자체가 무한정 늘어나지 않게 제한 */
     max-width: 48rem;
     margin: 0 auto; /* 카드 자체를 부모 영역 안에서 가운데 정렬 */
+    box-shadow: var(--shadow-sm);
 }
 
 /* CardHeader/CardTitle 사용 전제 (bare h2를 Card 바로 아래 두지 않기).
-   CheckupReminder의 섹션 헤더(border-b border-slate-200)와 톤 통일 */
+   CheckupReminder의 섹션 헤더(border-b)와 톤 통일 */
 .detail-info-card > div:first-child {
     padding: 1.25rem 1.5rem 1.75rem; /* 하단 여백을 더 줘서 부제목 아래 숨 쉴 공간 확보 */
-    border-bottom: 1px solid #e2e8f0; /* slate-200 */
+    border-bottom: 1px solid var(--border); /* 하드코딩 색상 제거 -> shadcn 보더 변수 적용 */
 }
 
 .detail-info-card [data-slot="card-content"],
@@ -33,13 +34,13 @@
 .detail-info-card .card-title {
     font-size: 1.125rem; /* text-lg */
     font-weight: 700; /* font-bold */
-    color: #1e293b; /* slate-800, 다른 섹션 h2와 동일 톤 */
+    color: var(--card-foreground); /* 하드코딩 색상 제거 -> 카드 전용 텍스트 변수 적용 */
 }
 
 .detail-info-card [data-slot="card-description"],
 .detail-info-card .card-description {
     font-size: 0.875rem; /* text-sm */
-    color: #64748b; /* slate-500, 다른 섹션 부제목과 동일 톤 */
+    color: var(--muted-foreground); /* 하드코딩 색상 제거 -> 뮤트된 서브 텍스트 변수 적용 */
 }
 
 /* CardFooter 사용 전제 (버튼을 Card 바로 아래 두지 않기).
@@ -48,7 +49,7 @@
 .detail-info-card [data-slot="card-footer"],
 .detail-info-card-footer {
     padding: 1.25rem 1.5rem; /* 헤더와 동일한 리듬 */
-    border-top: 1px solid #e2e8f0; /* slate-200 */
+    border-top: 1px solid var(--border); /* 하드코딩 색상 제거 -> shadcn 보더 변수 적용 */
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
@@ -67,11 +68,9 @@
     display: flex;
     align-items: flex-start;
     padding: 1rem 1.25rem 1rem 0; /* CheckupReminder의 px-5 py-4 리듬과 맞춤 */
-    border-bottom: 1px solid #f1f5f9; /* slate-100 */
+    border-bottom: 1px solid var(--border); /* 하드코딩 색상 제거 -> 내부 구분선도 테마 보더 공유 (또는 투명도 조절을 원할 시 border-border/40 적용 가능) */
     transition: background-color 0.15s;
 }
-
-
 
 .detail-info-card dl > div.full-row {
     grid-column: 1 / -1; /* 몇 열 레이아웃이든 상관없이 한 줄 전체 차지 */
@@ -84,13 +83,6 @@
 
 /*
  * "진짜 마지막 행"만 정확히 골라내는 공식 (2열 고정 기준).
- * :nth-child(2n+1) 은 각 행의 "첫 칸"(홀수 번째)만 의미하고,
- * :nth-last-child(-n+2) 은 뒤에서 2개(=마지막 행이 가질 수 있는 최대 칸 수)를 의미한다.
- * 이 둘의 교집합은 총 개수가 짝수든 홀수든 상관없이
- * 항상 "마지막 행의 첫 번째 칸" 딱 하나만 정확히 찾아낸다.
- * 그 뒤로 ~ 로 형제를 이으면 마지막 행 전체가 잡힌다.
- * (7개 예시: 홀수번째 1,3,5,7 / 뒤에서 2개 6,7 → 교집합 7 → 7만 해당, 마지막 행이 1개라 맞음)
- * (8개 예시: 홀수번째 1,3,5,7 / 뒤에서 2개 7,8 → 교집합 7 → 7~8, 마지막 행 2개 다 맞음)
  */
 .detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2),
 .detail-info-card dl > div:nth-child(2n+1):nth-last-child(-n+2) ~ div {
@@ -101,13 +93,13 @@
     flex: 0 0 6.5rem;
     font-size: 0.875rem;
     font-weight: 600; /* CheckupReminder의 label과 동일한 font-semibold */
-    color: #334155; /* slate-700 */
+    color: var(--foreground); /* 하드코딩 색상 제거 -> 기본 텍스트 변수 적용 */
 }
 
 .detail-info-card dd {
     flex: 1;
     font-size: 0.875rem;
-    color: #475569; /* slate-600, 테이블 tr 텍스트 톤과 통일 */
+    color: var(--foreground); /* 하드코딩 색상 제거 -> dt와 일관성 확보 혹은 가독성을 위해 테마 변수 매핑 */
     word-break: break-word;
 }
 
@@ -123,19 +115,19 @@
     flex: 0 0 6.5rem;
     font-size: 0.875rem;
     font-weight: 600; /* dt와 동일한 semibold 톤 */
-    color: #334155; /* slate-700 */
+    color: var(--foreground); /* 하드코딩 색상 제거 -> 기본 텍스트 변수 적용 */
 }
 
 .detail-info-card dl input,
 .detail-info-card dl button[role="combobox"] {
     flex: 1;
     font-size: 0.875rem;
-    color: #475569; /* slate-600, dd와 동일 톤 */
+    color: var(--foreground); /* 하드코딩 색상 제거 -> 기본 텍스트 변수 적용 */
 }
 
 /* readOnly 필드(예: 수정 화면의 사번)는 수정 불가임을 시각적으로 구분 */
 .detail-info-card dl input[readonly] {
-    background-color: #f8fafc; /* slate-50 */
-    color: #94a3b8; /* slate-400 */
+    background-color: var(--muted); /* 하드코딩 색상 제거 -> shadcn 뮤트 영역 배경 변수 적용 */
+    color: var(--muted-foreground); /* 하드코딩 색상 제거 -> 비활성화용 텍스트 변수 적용 */
     cursor: not-allowed;
 }

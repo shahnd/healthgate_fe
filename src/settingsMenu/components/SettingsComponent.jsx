@@ -109,7 +109,7 @@ export default function SettingsComponent() {
             </CardContent>
 
             <CardFooter>
-                <Button className="primary-button" onClick={handleSubmit}>
+                <Button size="lg" className="cursor-pointer" onClick={handleSubmit}>
                     적용
                 </Button>
             </CardFooter>

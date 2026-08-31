@@ -422,7 +422,7 @@ export default function ReservationComponent() {
 
                     <CardFooter>
                         <Button
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             type="submit"
                             onClick={saveReservation}
                         >

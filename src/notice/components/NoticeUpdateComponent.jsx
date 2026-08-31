@@ -220,7 +220,7 @@ export default function NoticeUpdateComponent() {
                     <CardFooter>
                         <Button 
                             type="submit" 
-                            className="primary-button"
+                            size="lg" className="cursor-pointer"
                             variant="outline"
                             onClick={ updateNotice }>
                             수정하기

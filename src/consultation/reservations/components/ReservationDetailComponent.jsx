@@ -183,7 +183,7 @@ export default function ReservationDetailComponent() {
 
                 <CardFooter>
                     <Button
-                        className="primary-button"
+                        size="lg" className="cursor-pointer"
                         type="button"
                         onClick={() => {
                             navigate(`/consultation/reservation/${id}`);
@@ -193,7 +193,7 @@ export default function ReservationDetailComponent() {
                     </Button>
 
                     <Button
-                        className="primary-button"
+                        size="lg" className="cursor-pointer"
                         type="button"
                         variant="outline"
                         onClick={cancelReservation}

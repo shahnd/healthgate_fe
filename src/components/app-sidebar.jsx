@@ -12,15 +12,17 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useUserInfo } from "@/store/useAuthStore"
-import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon } from "lucide-react"
-import { ModeToggle } from "./mode-toggle"
+import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon, LayoutDashboardIcon, ChartAreaIcon, MessageCircle, Stethoscope } from "lucide-react"
 
 
 const data = {
   navMain: [
     {
-      title: "대시보드",
+      title: "메인",
       isActive: true,
+      icon: (
+        <LayoutDashboardIcon />
+      ),
       items: [
         {
           title: "대시보드",
@@ -39,6 +41,9 @@ const data = {
     {
       title: "보건 상담 관리",
       isActive: true,
+      icon: (
+        <MessageCircle/>
+      ),
       items: [
         {
           title: "상담 예약 조회",
@@ -57,6 +62,9 @@ const data = {
     {
       title: "건강검진 관리",
       isActive: true,
+      icon: (
+        <Stethoscope/>
+      ),
       items: [
         {
           title: "검진 대상자 목록",
@@ -72,29 +80,44 @@ const data = {
         },
       ],
     },
+    {
+      title: "제휴 병원",
+      icon: (
+        <Building2Icon/>
+      ),
+      items: [
+        {
+          title: "병원 관리",
+          url: "/hospitals/list",
+        },
+      ],
+    },
+    {
+      title: "공지사항",
+      icon: (
+        <MegaphoneIcon/>
+      ),
+      items: [
+        {
+          title: "공지사항 관리",
+          url: "/notices/list",
+        },
+      ],
+    },
+    {
+      title: "직원",
+      icon: (
+        <UsersIcon/>
+      ),
+      items: [
+        {
+          title: "직원 관리",
+          url: "/employees",
+        },
+      ],
+    },
   ],
   navSecondary: [
-    {
-      title: "병원 관리",
-      url: "/hospitals/list",
-      icon: (
-        <Building2Icon />
-      ),
-    },
-    {
-      title: "공지사항 관리",
-      url: "/notices/list",
-      icon: (
-        <MegaphoneIcon />
-      ),
-    },
-    {
-      title: "직원 관리",
-      url: "/employees",
-      icon: (
-        <UsersIcon />
-      ),
-    },
     {
       title: "시스템 설정",
       url: "/settings",
@@ -118,9 +141,15 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="/" />}>
-              <CommandIcon className="size-5!" />
-              <span className="text-base font-semibold">HealthGate</span>
+              render={<a href="/dashboard" />}>
+              <img 
+                src="/public/healthgate_logo.png" 
+                alt="logo" 
+                className="size-10! object-contain" 
+              />
+              <span className="text-base font-semibold">
+                <span className="text-primary">Health</span>Gate
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

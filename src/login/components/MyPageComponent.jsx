@@ -92,7 +92,7 @@ export default function MyPageComponent() {
                     </dl>
                 </CardContent>
                 <CardFooter>
-                    <Button className="primary-button" onClick={() => navigate('/mypage/password')}>비밀번호 변경</Button>
+                    <Button size="lg" className="cursor-pointer" onClick={() => navigate('/mypage/password')}>비밀번호 변경</Button>
                 </CardFooter>
             </Card>
         </div>
