@@ -14,6 +14,7 @@ import { RequestErrorAlert } from "@/common/components/RequestErrorAlert";
 import { useRequest } from "@/common/hooks/useRequest";
 import { getTodaySafetyBriefing } from "@/safety/api/safetyBriefingApi";
 import PageHeader from "@/common/components/PageHeader";
+import "@/common/styles/DetailComponent.css";
 
 export default function TodaySafetyBriefingPage() {
   const {
@@ -24,7 +25,7 @@ export default function TodaySafetyBriefingPage() {
   } = useRequest(getTodaySafetyBriefing);
 
   return (
-    <main className="flex flex-col gap-6 w-full pt-6 pb-8 px-8">
+    <main className="detail-page">
       <PageHeader
         title="오늘의 안전 브리핑"
         description="업무시간 기상예보를 바탕으로 생성된 작업 안전 안내입니다."
