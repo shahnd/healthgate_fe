@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RequestErrorAlert } from "@/common/components/RequestErrorAlert";
 import { useRequest } from "@/common/hooks/useRequest";
 import { getTodaySafetyBriefing } from "@/safety/api/safetyBriefingApi";
+import PageHeader from "@/common/components/PageHeader";
 
 export default function TodaySafetyBriefingPage() {
   const {
@@ -23,18 +24,12 @@ export default function TodaySafetyBriefingPage() {
   } = useRequest(getTodaySafetyBriefing);
 
   return (
-    <main className="flex flex-1 flex-col gap-6 p-6 md:p-8">
-      <header className="space-y-1">
-        <div className="flex items-center gap-2">
-          <ShieldCheckIcon className="size-7 text-primary" />
-          <h1 className="text-2xl font-semibold tracking-tight">
-            오늘의 안전 브리핑
-          </h1>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          업무시간 기상예보를 바탕으로 생성된 작업 안전 안내입니다.
-        </p>
-      </header>
+    <main className="flex flex-col gap-6 w-full pt-6 pb-8 px-8">
+      <PageHeader
+        title="오늘의 안전 브리핑"
+        description="업무시간 기상예보를 바탕으로 생성된 작업 안전 안내입니다."
+        icon={ShieldCheckIcon}
+      />
 
       <RequestErrorAlert
         error={error}
