@@ -2,6 +2,12 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { saveConsultationApi, selectConsultationApi } from "../api/consultationApi";
 import { useAuthStore } from "../../../store/useAuthStore";
+import PageHeader from "@/common/components/PageHeader";
+import { MessageCircle } from "lucide-react";
+import "@/common/styles/DetailComponent.css";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 
 export default function ConsultationComponent () {
     // ============================ 객체 및 보조 함수
@@ -117,63 +123,102 @@ export default function ConsultationComponent () {
     }
 
     return(
-        <div>
-            <h2>상담일지</h2>
-            <form className="consultation-form">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th width="130">신청자</th>
-                            <td width="300">{ consultation.employee?.name } </td>
-                            <th width="130">부서명</th>
-                            <td width="300">{ consultation.employee?.departments?.name }</td>
-                        </tr>
-                        <tr>
-                            <th>예약번호</th>
-                            <td>{ id }</td>
-                            <th>직급</th>
-                            <td>{ consultation.employee?.positions?.name }</td>
-                        </tr>
-                        <tr>
-                            <th>상담일</th>
-                            <td>{ consultation.scheduledDate }</td>
-                            <th>시간</th>
-                            <td>{ formatScheduledTurn(consultation.scheduledTurn) }</td>
-                        </tr>
-                        <tr>
-                            <th>상담사</th>
-                            <td>{ user?.name || '' }</td>
-                            <th>상담상태</th>
-                            <td>
-                                <select name="status"
-                                        value={ consultation.status }
-                                        onChange={ handleChange }>
-                                    <option value="RESERVED">미완료</option>
-                                    <option value="FINISHED">완료</option>
-                                    <option value="EXPIRED">취소</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>상담내용</th>
-                            <td colSpan={ 3 }>
-                                <textarea name="content"
-                                          onChange={ handleChange }
-                                          value={ consultation.content } />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>
-            <div>
-                <button type="submit"
-                        onClick={ saveConsultation }>
-                            { isEditMode ? "수정하기" : "작성하기" }
-                        </button>
-                &nbsp;&nbsp;
-                <button type="button"
-                        onClick={ () => { navigate(-1); } }>뒤로가기</button>
-            </div>
+        <div className="detail-page">
+            <PageHeader title="상담일지 작성" description="상담일지를 작성합니다." icon={MessageCircle}/>
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>상담 일지</CardTitle>
+                    <CardDescription>상담 내용을 작성하고 상담 상태를 변경해 주세요.</CardDescription>
+                </CardHeader>
+
+                <form className="consultation-form">
+                    <CardContent>
+                        <dl>
+                            <div>
+                                <dt>신청자</dt>
+                                <dd>{consultation.employee?.name}</dd>
+                            </div>
+
+                            <div>
+                                <dt>부서명</dt>
+                                <dd>{consultation.employee?.departments?.name}</dd>
+                            </div>
+
+                            <div>
+                                <dt>예약번호</dt>
+                                <dd>{id}</dd>
+                            </div>
+
+                            <div>
+                                <dt>직급</dt>
+                                <dd>{consultation.employee?.positions?.name}</dd>
+                            </div>
+
+                            <div>
+                                <dt>상담일</dt>
+                                <dd>{consultation.scheduledDate}</dd>
+                            </div>
+
+                            <div>
+                                <dt>시간</dt>
+                                <dd>{formatScheduledTurn(consultation.scheduledTurn)}</dd>
+                            </div>
+
+                            <div>
+                                <dt>상담사</dt>
+                                <dd>{user?.name || ''}</dd>
+                            </div>
+
+                            <div>
+                                <dt>상담상태</dt>
+                                <dd>
+                                    <select
+                                        name="status"
+                                        value={consultation.status}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="RESERVED">미완료</option>
+                                        <option value="FINISHED">완료</option>
+                                        <option value="EXPIRED">취소</option>
+                                    </select>
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt>상담내용</dt>
+                                <dd>
+                                    <textarea
+                                        name="content"
+                                        onChange={handleChange}
+                                        value={consultation.content}
+                                    />
+                                </dd>
+                            </div>
+                        </dl>
+                    </CardContent>
+
+                    <CardFooter>
+                        <Button
+                            className="primary-button"
+                            type="submit"
+                            onClick={saveConsultation}
+                        >
+                            {isEditMode ? "수정하기" : "작성하기"}
+                        </Button>
+
+                        <Button
+                            className="primary-button"
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                navigate(-1);
+                            }}
+                        >
+                            뒤로가기
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Card>
         </div>
     )
 }

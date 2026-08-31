@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { selectReservationApi, cancelReservationApi } from "../api/reservationApi";
 import { useAuthStore } from "@/store/useAuthStore";
+import PageHeader from "@/common/components/PageHeader";
+import { MessageCircle } from "lucide-react";
+import "@/common/styles/DetailComponent.css";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 
 export default function ReservationDetailComponent() {
 
@@ -128,45 +134,74 @@ export default function ReservationDetailComponent() {
     }
 
     return(
-        <div>
-            <h2>상담 예약 상세 조회</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <th width="130">신청자</th>
-                        <td>{ reservation.employee?.name }</td>
-                    </tr>
-                    <tr>
-                        <th>부서명</th>
-                        <td>{ reservation.employee?.departments?.name || "-" }</td>
-                    </tr>
-                    <tr>
-                        <th>직급</th>
-                        <td>{ reservation.employee?.positions?.name || "-" }</td>
-                    </tr>
-                    <tr>
-                        <th>연락처</th>
-                        <td>{ reservation.employee?.phone || "-" }</td>
-                    </tr>
-                    <tr>
-                        <th>상담일</th>
-                        <td>{ reservation.scheduledDate }</td>
-                    </tr>
-                    <tr>
-                        <th>시간</th>
-                        <td>{ formatScheduledTurn(reservation.scheduledTurn) }</td>
-                    </tr>
-                    <tr>
-                        <th>신청사유</th>
-                        <td>{ reservation.reason }</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div align="center">
-                <button onClick={() => { navigate(`/consultation/reservation/${id}`); }}>예약 수정</button>
-                &nbsp;&nbsp;
-                <button onClick={ cancelReservation }>예약 취소</button>
-            </div>
+        <div className="detail-page">
+            <PageHeader title="상담 예약 상세 조회" description="예약된 상담을 조회합니다." icon={MessageCircle}/>
+            <Card className="detail-info-card">
+                <CardHeader>
+                    <CardTitle>상담 예약 정보</CardTitle>
+                    <CardDescription>상담 예약 정보를 확인해 주세요.</CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <dl>
+                        <div>
+                            <dt>신청자</dt>
+                            <dd>{reservation.employee?.name}</dd>
+                        </div>
+
+                        <div>
+                            <dt>부서명</dt>
+                            <dd>{reservation.employee?.departments?.name || "-"}</dd>
+                        </div>
+
+                        <div>
+                            <dt>직급</dt>
+                            <dd>{reservation.employee?.positions?.name || "-"}</dd>
+                        </div>
+
+                        <div>
+                            <dt>연락처</dt>
+                            <dd>{reservation.employee?.phone || "-"}</dd>
+                        </div>
+
+                        <div>
+                            <dt>상담일</dt>
+                            <dd>{reservation.scheduledDate}</dd>
+                        </div>
+
+                        <div>
+                            <dt>시간</dt>
+                            <dd>{formatScheduledTurn(reservation.scheduledTurn)}</dd>
+                        </div>
+
+                        <div>
+                            <dt>신청사유</dt>
+                            <dd>{reservation.reason}</dd>
+                        </div>
+                    </dl>
+                </CardContent>
+
+                <CardFooter>
+                    <Button
+                        className="primary-button"
+                        type="button"
+                        onClick={() => {
+                            navigate(`/consultation/reservation/${id}`);
+                        }}
+                    >
+                        예약 수정
+                    </Button>
+
+                    <Button
+                        className="primary-button"
+                        type="button"
+                        variant="outline"
+                        onClick={cancelReservation}
+                    >
+                        예약 취소
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
     );
 };
