@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from 'react'
 import CheckupReminderManagementComponent
   from './CheckupReminderManagementComponent'
 
-import CheckupExcelStatusModal
-  from './CheckupExcelStatusModal'
 import PageHeader from '@/common/components/PageHeader'
 import { Stethoscope } from 'lucide-react'
 
@@ -34,7 +32,7 @@ export default function CheckupManagementComponent() {
     useState(null)
 
   const [reminderChannel, setReminderChannel] =
-    useState('SMS')
+    useState('EMAIL')
 
   const [reminderContent, setReminderContent] =
     useState('')
@@ -53,16 +51,6 @@ export default function CheckupManagementComponent() {
     useState(false)
 
   const [excelUploadResult, setExcelUploadResult] =
-    useState(null)
-
-  // Excel 업로드 후 수검 현황 모달 관련 State
-  const [excelStatusModalOpen, setExcelStatusModalOpen] =
-    useState(false)
-
-  const [uploadedTargetList, setUploadedTargetList] =
-    useState([])
-
-  const [completedUploadResult, setCompletedUploadResult] =
     useState(null)
 
   /**
@@ -196,21 +184,11 @@ export default function CheckupManagementComponent() {
       setExcelUploadResult(uploadResult)
 
       // 변경된 통계와 대상자 목록을 다시 조회한다.
-      const refreshedTargetList =
-        await loadCheckupData()
+      await loadCheckupData()
 
-      /*
-       * 업로드된 데이터 중 정상 처리된 행이 있으면
-       * 파일 업로드 모달을 닫고 수검 현황 모달을 연다.
-       */
       if (uploadResult.successCount > 0) {
-        setUploadedTargetList(refreshedTargetList)
-        setCompletedUploadResult(uploadResult)
-
         setExcelModalOpen(false)
         setExcelFile(null)
-
-        setExcelStatusModalOpen(true)
       }
     } catch (error) {
       console.error(
@@ -237,15 +215,6 @@ export default function CheckupManagementComponent() {
   }
 
   /**
-   * Excel 업로드 결과 수검 현황 모달 닫기
-   */
-  const closeExcelStatusModal = () => {
-    setExcelStatusModalOpen(false)
-    setUploadedTargetList([])
-    setCompletedUploadResult(null)
-  }
-
-  /**
    * 수동 알림 발송 창 열기
    */
   const openReminderModal = (target) => {
@@ -258,7 +227,7 @@ export default function CheckupManagementComponent() {
     }
 
     setSelectedTarget(target)
-    setReminderChannel('SMS')
+    setReminderChannel('EMAIL')
     setReminderContent(
       `${target.employeeName}님, 건강검진을 완료해 주세요.`
     )
@@ -273,7 +242,7 @@ export default function CheckupManagementComponent() {
     }
 
     setSelectedTarget(null)
-    setReminderChannel('SMS')
+    setReminderChannel('EMAIL')
     setReminderContent('')
   }
 
@@ -842,7 +811,7 @@ export default function CheckupManagementComponent() {
                   focus:border-blue-500
                 "
               >
-                <option value="SMS">SMS</option>
+                <option value="SMS" disabled>SMS (준비 중)</option>
                 <option value="EMAIL">이메일</option>
               </select>
             </div>
@@ -918,15 +887,6 @@ export default function CheckupManagementComponent() {
         </div>
       )}
 
-      {/* Excel 업로드 후 수검 현황 모달 */}
-      {excelStatusModalOpen && (
-        <CheckupExcelStatusModal
-          year={year}
-          targetList={uploadedTargetList}
-          uploadResult={completedUploadResult}
-          onClose={closeExcelStatusModal}
-        />
-      )}
     </div>
   )
 }

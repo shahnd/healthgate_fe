@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { FilesetResolver, FaceLandmarker } from "@mediapipe/tasks-vision";
 import { useUserInfo } from "../../store/useAuthStore";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 // 렌더 함수 바깥의 순수 로직 — performance.now() 등 impure 호출을 컴포넌트 스코프에서 분리
 function processFrame({
@@ -341,21 +342,9 @@ export default function BioInputComponent() {
           bpm
         </div>
 
-        <button
-          type="submit"
-          style={{
-            padding: "10px 30px",
-            background: "#52c41a",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            fontSize: "16px",
-            cursor: "pointer",
-            width: "100%",
-          }}
-        >
-          서버에 저장하기
-        </button>
+        <Button type="submit" size="lg" className="cursor-pointer">
+          입력하기
+        </Button>
       </form>
     </div>
   );
