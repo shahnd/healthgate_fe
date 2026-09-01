@@ -7,6 +7,7 @@ import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/DetailComponent.css";
 
+import "../styles/calendar.css";
 
 export default function ReservationListComponent() {
 

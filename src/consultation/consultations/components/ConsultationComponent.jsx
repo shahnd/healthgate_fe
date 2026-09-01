@@ -8,6 +8,7 @@ import "@/common/styles/DetailComponent.css";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+import { Textarea } from "@/components/ui/textarea"
 
 export default function ConsultationComponent () {
     // ============================ 객체 및 보조 함수
@@ -184,11 +185,12 @@ export default function ConsultationComponent () {
                                 </dd>
                             </div>
 
-                            <div>
+                            <div style={{ gridColumn: "1 / -1" }}>
                                 <dt>상담내용</dt>
                                 <dd>
-                                    <textarea
+                                    <Textarea
                                         name="content"
+                                        style={{ resize : "none", height : "150px"}}
                                         onChange={handleChange}
                                         value={consultation.content}
                                     />

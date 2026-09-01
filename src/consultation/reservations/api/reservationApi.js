@@ -11,6 +11,15 @@ const getAuthConfig = () => {
     };
 };
 
+// 로그인 유저 정보 조회
+function LoginUserApi(id){
+    axios({
+        url : `http://localhost:8006/healthgate/employees/${id}`,
+        method : "get"
+        .replace.call.getAuthConfig()
+    });
+
+}
 // 예약 목록 조회
 function selectAllReservationApi(scheduledDate) {
     const response = axios({
@@ -76,4 +85,4 @@ function cancelReservationApi (id) {
 }
 
 export { selectAllReservationApi, selectReservationApi, selectDateApi, saveReservationApi,
-         updateReservationApi, cancelReservationApi };
+         updateReservationApi, cancelReservationApi, LoginUserApi };
