@@ -179,22 +179,22 @@ export default function HospitalDetailComponent() {
 
                                 <div>
                                     <dt>병원 홈페이지</dt>
-                                    <dd>{hospital.url || "-"}</dd>
+                                    <dd><a href={hospital.url.startsWith('http') ? hospital.url : `https://${hospital.url}`}
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           className="text-blue-600 hover:underline"
+                                            >
+                                            {hospital.url || "-"}</a></dd>
                                 </div>
-
+                                <div></div>
                                 <div>
                                     <dt>병원 안내</dt>
                                     <dd>{hospital.description || "-"}</dd>
                                 </div>
-
+                                <div></div>
                                 <div>
                                     <dt>등록일</dt>
                                     <dd>{hospital.createdAt?.substring(0, 10)}</dd>
-                                </div>
-
-                                <div>
-                                    <dt>수정일</dt>
-                                    <dd>{hospital.updatedAt?.substring(0, 10) || "-"}</dd>
                                 </div>
                             </dl>
                         </CardContent>
