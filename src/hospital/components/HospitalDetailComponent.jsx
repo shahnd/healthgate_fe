@@ -41,9 +41,7 @@ export default function HospitalDetailComponent() {
             try {
 
                 const response = await selectHospitalApi(hospitalId);
-
-                 console.log(response.data);
-
+                
                 if(response.data != "") {
                     // > 조회된 내용이 있다면
 

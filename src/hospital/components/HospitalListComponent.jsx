@@ -80,10 +80,10 @@ export default function HospitalListComponent() {
 
             };
             const response = await searchHospitalListApi(params);
-            console.log(response.data);
+            
             handleResponse(response);
 
-            // console.log(response.data);
+            
         } catch(error) {
             
             console.log("검진가능 병원 목록 조회용 ajax 통신 실패!");

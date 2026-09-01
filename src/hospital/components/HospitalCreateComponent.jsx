@@ -82,8 +82,6 @@ export default function HospitalCreateComponent() {
       try {
             const response = await insertHospitalApi(params);
 
-             console.log(response.data);
-
             if(response.status === 200) {
                 // > 병원 등록 성공일 경우
 
