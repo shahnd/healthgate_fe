@@ -537,8 +537,6 @@ export default function CheckupReminderManagementComponent() {
             </tbody>
           </table>
         </div>
-      </section>
-
       {/* 알림 발송 이력 */}
       <section
         className="
