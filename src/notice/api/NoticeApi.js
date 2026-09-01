@@ -48,7 +48,6 @@ const insertNoticeApi = (formData) => {
 
     const token = localStorage.getItem("access_token");
 
-    // console.log("=== 보내는 JWT 토큰 값 ===", token);
     const response = axios({
          url :`${ BASE_URL }/new`, 
          method : "post",
@@ -128,5 +127,24 @@ const updateNoticeApi = (noticeId, formData) => {
     return response;
 }
 
+// 공지사항 첨부파일 다운로드
+const downloadNoticeFileApi = (savedName,noticeFileId) => {
+
+     const token = localStorage.getItem("access_token");
+
+     const response = axios({
+        url: `${ BASE_URL }/download/${savedName}/${noticeFileId}`,
+        method : "get",
+        headers : {
+            'Authorization': token ? `Bearer ${token}` : '',
+        },
+         responseType: 'blob'
+
+     });
+
+     return response;
+}
+
 export { selectNoticeListApi, searchNoticeListApi, insertNoticeApi, 
-         selectNoticeApi, deleteNoticeApi, updateNoticeApi, selectNoticeFormApi, BASE_URL};
+         selectNoticeApi, deleteNoticeApi, updateNoticeApi, 
+         selectNoticeFormApi, downloadNoticeFileApi, BASE_URL};
