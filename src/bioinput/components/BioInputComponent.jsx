@@ -3,6 +3,11 @@ import { FilesetResolver, FaceLandmarker } from "@mediapipe/tasks-vision";
 import { useUserInfo } from "../../store/useAuthStore";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { Camera, HeartPulse, RotateCcw } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 // 렌더 함수 바깥의 순수 로직 — performance.now() 등 impure 호출을 컴포넌트 스코프에서 분리
 function processFrame({
@@ -237,115 +242,119 @@ export default function BioInputComponent() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", textAlign: "center" }}>
-      <h2>🧑‍⚕️ 스마트 생체 측정 및 입력</h2>
+      <div className="mx-auto max-w-xl space-y-6 p-5">
+      <h2 className="flex items-center justify-center gap-2 text-xl font-bold">
+        <HeartPulse className="h-5 w-5 text-rose-500" />
+        스마트 생체 측정 및 입력
+      </h2>
 
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: "400px",
-          margin: "0 auto",
-          background: "#000",
-          borderRadius: "10px",
-          overflow: "hidden",
-        }}
-      >
-        <video ref={videoRef} autoPlay playsInline muted style={{ display: "none" }} />
-        <canvas
-          ref={canvasRef}
-          style={{ width: "100%", height: "auto", display: isMeasuring ? "block" : "none" }}
-        />
+      <Card className="overflow-hidden bg-black">
+        <CardContent className="p-0">
+          <video ref={videoRef} autoPlay playsInline muted className="hidden" />
+          <canvas
+            ref={canvasRef}
+            className={`w-full h-auto ${isMeasuring ? "block" : "hidden"}`}
+          />
 
-        {!isMeasuring && progress === 0 && (
-          <div style={{ padding: "60px 20px", color: "#aaa" }}>
-            아래 버튼을 눌러 카메라 측정을 시작하세요.
-          </div>
-        )}
-      </div>
+          {!isMeasuring && progress === 0 && (
+            <div className="px-5 py-16 text-center text-sm text-muted-foreground">
+              아래 버튼을 눌러 카메라 측정을 시작하세요.
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {isMeasuring && (
-        <div style={{ margin: "15px 0" }}>
-          <div style={{ fontSize: "18px", fontWeight: "bold", color: "#ff4d4f" }}>
-            ❤️ 실시간 분석 중: {currentBpm} BPM
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5 text-lg font-bold text-rose-500">
+            <HeartPulse className="h-5 w-5" />
+            실시간 분석 중: {currentBpm} BPM
           </div>
-          <div style={{ width: "100%", background: "#eee", borderRadius: "5px", marginTop: "5px" }}>
-            <div
-              style={{
-                width: `${progress}%`,
-                height: "10px",
-                background: "#52c41a",
-                borderRadius: "5px",
-                transition: "width 0.1s",
-              }}
-            />
-          </div>
-          <small>얼굴을 정면으로 유지하고 잠시만 기다려주세요 ({progress}%)</small>
+          <Progress value={progress} className="h-2.5" />
+          <p className="text-sm text-muted-foreground">
+            얼굴을 정면으로 유지하고 잠시만 기다려주세요 ({progress}%)
+          </p>
         </div>
       )}
 
-      <div style={{ marginTop: "15px" }}>
-        <button
-          onClick={startMeasurement}
-          disabled={isMeasuring}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            background: "#1890ff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          {progress > 0 ? "🔄 다시 측정하기" : "📷 카메라로 측정하기"}
-        </button>
+      <div className="flex justify-center">
+        <Button onClick={startMeasurement} disabled={isMeasuring} size="lg" className="cursor-pointer">
+          {progress > 0 ? (
+            <>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              다시 측정하기
+            </>
+          ) : (
+            <>
+              <Camera className="mr-2 h-4 w-4" />
+              카메라로 측정하기
+            </>
+          )}
+        </Button>
       </div>
 
-      <hr style={{ margin: "30px 0", borderColor: "#eee" }} />
+      <hr className="border-t" />
 
-      <form onSubmit={handleSubmit} style={{ textAlign: "left", display: "inline-block" }}>
-        <div style={{ marginBottom: "10px" }}>
-          <label style={{ display: "block", fontWeight: "bold" }}>수축기 혈압 (최고)</label>
-          <input
-            type="number"
-            name="systolicBp"
-            value={inputData.systolicBp}
-            onChange={handleInputChange}
-            placeholder="자동 입력됨"
-            style={{ width: "200px", padding: "8px", marginTop: "5px" }}
-          />{" "}
-          mmHg
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label style={{ display: "block", fontWeight: "bold" }}>이완기 혈압 (최저)</label>
-          <input
-            type="number"
-            name="diastolicBp"
-            value={inputData.diastolicBp}
-            onChange={handleInputChange}
-            placeholder="자동 입력됨"
-            style={{ width: "200px", padding: "8px", marginTop: "5px" }}
-          />{" "}
-          mmHg
-        </div>
-        <div style={{ marginBottom: "20px" }}>
-          <label style={{ display: "block", fontWeight: "bold" }}>심박수 (Heart Rate)</label>
-          <input
-            type="number"
-            name="heartRate"
-            value={inputData.heartRate}
-            onChange={handleInputChange}
-            placeholder="자동 입력됨"
-            style={{ width: "200px", padding: "8px", marginTop: "5px" }}
-          />{" "}
-          bpm
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>측정 결과 입력</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="systolicBp">수축기 혈압 (최고)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="systolicBp"
+                  type="number"
+                  name="systolicBp"
+                  value={inputData.systolicBp}
+                  onChange={handleInputChange}
+                  placeholder="자동 입력됨"
+                  className="w-[200px]"
+                />
+                <span className="text-sm text-muted-foreground">mmHg</span>
+              </div>
+            </div>
 
-        <Button type="submit" size="lg" className="cursor-pointer">
-          입력하기
-        </Button>
-      </form>
+            <div className="space-y-1.5">
+              <Label htmlFor="diastolicBp">이완기 혈압 (최저)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="diastolicBp"
+                  type="number"
+                  name="diastolicBp"
+                  value={inputData.diastolicBp}
+                  onChange={handleInputChange}
+                  placeholder="자동 입력됨"
+                  className="w-[200px]"
+                />
+                <span className="text-sm text-muted-foreground">mmHg</span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="heartRate">심박수 (Heart Rate)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="heartRate"
+                  type="number"
+                  name="heartRate"
+                  value={inputData.heartRate}
+                  onChange={handleInputChange}
+                  placeholder="자동 입력됨"
+                  className="w-[200px]"
+                />
+                <span className="text-sm text-muted-foreground">bpm</span>
+              </div>
+            </div>
+
+            <Button type="submit" size="lg" className="w-full cursor-pointer">
+              입력하기
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
