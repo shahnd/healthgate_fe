@@ -1,0 +1,28 @@
+/* 공용 스타일 */
+.rbc-btn-group:nth-child(3) {
+    display: none;
+}
+
+.reservation-form>div {
+    display: inline-block;
+}
+
+/* 일요일 빨간색*/
+.rbc-header:last-child {
+    color : cornflowerblue;
+    cursor: pointer;
+}
+.rbc-month-row .rbc-date-cell:last-child .rbc-button-link {
+    color : cornflowerblue;
+    cursor: pointer;
+}
+
+/* 토요일 파란색 */
+.rbc-header:first-child {
+    color : crimson;
+    cursor: pointer;
+}
+.rbc-month-row .rbc-date-cell:first-child .rbc-button-link {
+    color : crimson;
+    cursor: pointer;
+}

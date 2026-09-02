@@ -65,7 +65,8 @@ export default function SettingsComponent() {
 
     const METRICNAME_MAP = {
         SYSTOLIC_BP: "최고 혈압",
-        DIASTOLIC_BP: "최저 혈압"
+        DIASTOLIC_BP: "최저 혈압",
+        HEART_RATE: "심박수"
     }
     const RISK_VARIANT_MAP = {
         HIGH: "destructive",

@@ -19,6 +19,22 @@ export default function HospitalDetailComponent() {
 
     let navigate = useNavigate();
 
+    // 권한 체크
+    const authStorage = localStorage.getItem("auth-storage");
+    let user = null;
+
+    if (authStorage) {
+        try {
+            const parsed = JSON.parse(authStorage);
+            user = parsed?.state?.user; // { id: 1, number: "admin1", name: "...", role: "..." }
+        } catch (e) {
+            console.error("auth-storage 파싱 에러:", e);
+        }
+    }
+
+    const userRole = user.role || "";
+    const canUpdateDeleteHospital = ["HR_ADMIN", "HEALTH_ADMIN"].includes(userRole);
+
     // State 형 변수
     const [hospital, setHospital] = useState({hospitalId : "",
                                             name : "",
@@ -41,8 +57,6 @@ export default function HospitalDetailComponent() {
             try {
 
                 const response = await selectHospitalApi(hospitalId);
-
-                 console.log(response.data);
 
                 if(response.data != "") {
                     // > 조회된 내용이 있다면
@@ -118,16 +132,16 @@ export default function HospitalDetailComponent() {
                                 </div>
 
                                 <div>
-                                    <dt>주소</dt>
-                                    <dd>{hospital.address}</dd>
-                                </div>
-
-                                <div>
                                     <dt>전화번호</dt>
                                     <dd>{hospital.phone}</dd>
                                 </div>
 
-                                <div>
+                                <div className="full-row">
+                                    <dt>주소</dt>
+                                    <dd>{hospital.address}</dd>
+                                </div>
+
+                                <div className="full-row">
                                     <dt>검진가능 항목</dt>
                                     <dd>
                                         <label>
@@ -177,24 +191,24 @@ export default function HospitalDetailComponent() {
                                     </dd>
                                 </div>
 
-                                <div>
+                                <div className="full-row">
                                     <dt>병원 홈페이지</dt>
-                                    <dd>{hospital.url || "-"}</dd>
+                                    <dd><a href={hospital.url.startsWith('http') ? hospital.url : `https://${hospital.url}`}
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           className="text-blue-600 hover:underline"
+                                            >
+                                            {hospital.url || "-"}</a></dd>
                                 </div>
-
-                                <div>
+                                
+                                <div className="full-row">
                                     <dt>병원 안내</dt>
                                     <dd>{hospital.description || "-"}</dd>
                                 </div>
-
-                                <div>
+                                
+                                <div className="full-row">
                                     <dt>등록일</dt>
                                     <dd>{hospital.createdAt?.substring(0, 10)}</dd>
-                                </div>
-
-                                <div>
-                                    <dt>수정일</dt>
-                                    <dd>{hospital.updatedAt?.substring(0, 10) || "-"}</dd>
                                 </div>
                             </dl>
                         </CardContent>
@@ -206,7 +220,8 @@ export default function HospitalDetailComponent() {
                             >
                                 목록으로
                             </Button>
-
+                         {canUpdateDeleteHospital && (
+                            <>
                             <Button
                                 size="lg" className="cursor-pointer" variant="secondary"
                                 onClick={() =>
@@ -224,6 +239,9 @@ export default function HospitalDetailComponent() {
                             >
                                 삭제
                             </Button>
+                            
+                             </>)}
+                           
                         </CardFooter>
                     </Card>
                 </section>

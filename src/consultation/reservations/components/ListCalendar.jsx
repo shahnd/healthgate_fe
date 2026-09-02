@@ -1,19 +1,17 @@
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
-import startOfWeek from 'date-fns/startOfWeek'
-import getDay from 'date-fns/getDay'
-import ko from 'date-fns/locale/ko'
+import { format, parse, startOfWeek, getDay } from 'date-fns'
+import { ko } from 'date-fns/locale'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import '../styles/calendar.css';
 
 const locales = { 'ko': ko }
 
 const localizer = dateFnsLocalizer({
   format,
   parse,
-  startOfWeek: () => startOfWeek(new Date(), { locale: ko }),
+  startOfWeek: (date) => startOfWeek(date, { locale: ko }),
   getDay,
   locales,
 })
@@ -64,7 +62,7 @@ const CustomToolbar = (toolbar) => {
 };
 
 
-function ListCalendar({ dataList, onSelectEvent}) {
+function ListCalendar({ dataList, onSelectEvent }) {
 
   return (
     <div className="w-full max-w-[1000px] h-[800px] p-6 bg-background text-foreground">
@@ -77,7 +75,7 @@ function ListCalendar({ dataList, onSelectEvent}) {
         views={['month']}   // 보여줄 뷰
         defaultView="month"
         formats={{
-          weekdayFormat : (date, culture, localizer) => {
+          weekdayFormat : (date) => {
             const days = ["일", "월", "화", "수", "목", "금", "토"];
             return days[date.getDay()];
           }
@@ -85,6 +83,31 @@ function ListCalendar({ dataList, onSelectEvent}) {
         components={{ toolbar: CustomToolbar, }}
         onSelectEvent={onSelectEvent}  // prop 된 이벤트 클릭 핸들러
         selectable  // 슬롯 선택 가능하게
+        eventPropGetter={event => {
+          let backgroundColor = "cornflowerblue";
+          let color = "white";
+          let border = "none";
+
+          if(event.status === "FINISHED") backgroundColor = "#27ae60"; // 상담완료
+          if(event.status === "EXPIRED") backgroundColor = "#e74c3c"; // 상담 취소
+
+          // 공휴일
+          if (event.status === "HOLIDAY") {
+              backgroundColor = "transparent";
+              border = "none";
+              color = "#e74c3c";
+          }
+
+          return {
+            style : {
+              backgroundColor,
+              borderRadius : "4px",
+              border,
+              color,
+              fontWeight : event.status === "HOLIDAY" ? "bold" : "normal"
+            }
+          }
+        }} // 이벤트별 색상
         style={{ height: '100%' }}
         messages={{
             next: '다음',

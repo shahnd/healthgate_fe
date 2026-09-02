@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 
-import { selectNoticeApi, deleteNoticeApi, BASE_URL } from "../api/NoticeApi";
+import { selectNoticeApi, deleteNoticeApi, downloadNoticeFileApi, BASE_URL } from "../api/NoticeApi";
 
 import { useUserInfo } from "../../store/useAuthStore";
 
@@ -117,6 +117,26 @@ export default function NoticeDetailComponent() {
         }
     };
 
+    // 첨부파일 클릭시 다운로드실행할 이벤트 핸들러 함수
+    const handleDownload = async (savedName, noticeFileId) => {
+
+            try {
+                const response = await downloadNoticeFileApi(savedName, noticeFileId);
+
+                const blob = new Blob([response.data]);
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = noticeFile.originName;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+            } catch (error) {
+                console.error('다운로드 실패:', error);
+            }
+    };
+
     return (
         <div className="detail-page w-full">
             <PageHeader 
@@ -161,14 +181,14 @@ export default function NoticeDetailComponent() {
                                 <div className="full-row">
                                     <dt>첨부파일</dt>
                                     <dd>
-                                        {
-                                            (noticeFile && noticeFile.originName ? 
-                                            (<a href={`${ BASE_URL }/download/${noticeFile.savedName}/${ noticeFile.originName }`}>
-                                            {noticeFile.originName}
-                                            </a> ) : 
+                                        {noticeFile && noticeFile.originName ? (
+                                            <span
+                                                onClick={ () => handleDownload(noticeFile.savedName, noticeFile.noticeFileId)}
+                                            >  {noticeFile.originName}
+                                            </span>
+                                            ) : (
                                             "첨부파일이 없습니다."
-                                            )
-                                        }
+                                            )}
                                     </dd>
                                 </div>
                             </dl>
