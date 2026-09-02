@@ -81,11 +81,10 @@ function App() {
             <Route path="/notices/new" element={<NoticeCreateComponent />} />
             <Route path="/notices/:noticeId" element={<NoticeDetailComponent />} />
             <Route path="/notices/:noticeId/edit" element={<NoticeUpdateComponent />} />
+              
             {/* 병원 관리 */}
             <Route path="/hospitals/list" element={<HospitalListComponent />} />
-            <Route path="/hospitals/new" element={<HospitalCreateComponent />} />
             <Route path="/hospitals/:hospitalId" element={<HospitalDetailComponent />} />
-            <Route path="/hospitals/:hospitalId/edit" element={<HospitalUpdateComponent />} />
 
             {/* 보건 상담 */}
             <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
@@ -119,6 +118,12 @@ function App() {
             <Route path="/employees/:id" element={<EmployeeDetailComponent />} />
             <Route path="/employees/:id/edit" element={<EmployeeUpdateComponent />} />
             <Route path="/employees/new" element={<EmployeeCreateComponent />} />
+
+            {/* 병원 관리 */}
+            <Route path="/hospitals/list" element={<HospitalListComponent />} />
+            <Route path="/hospitals/new" element={<HospitalCreateComponent />} />
+            <Route path="/hospitals/:hospitalId" element={<HospitalDetailComponent />} />
+            <Route path="/hospitals/:hospitalId/edit" element={<HospitalUpdateComponent />} />
 
             
             <Route path="/settings" element={<SettingsComponent />} />

@@ -53,7 +53,6 @@ export default function HospitalListComponent() {
 
     const searchIsLungCancer = searchParams.get("isLungCancer") === "true";
 
-
     // 페이징바 쿼리스트링 처리
     const cpage = parseInt(searchParams.get("cpage")) || 1;
     const [totalPages, setTotalPages] = useState(1);
@@ -63,6 +62,22 @@ export default function HospitalListComponent() {
 
     // 페이징바 배열에 담아둘 변수 셋팅
     const [pageList, setPageList] = useState([]);
+    
+    // 권한 체크
+    const authStorage = localStorage.getItem("auth-storage");
+    let user = null;
+
+    if (authStorage) {
+        try {
+            const parsed = JSON.parse(authStorage);
+            user = parsed?.state?.user; // { id: 1, number: "admin1", name: "...", role: "..." }
+        } catch (e) {
+            console.error("auth-storage 파싱 에러:", e);
+        }
+    }
+
+    const userRole = user.role || "";
+    const canCreateHospital = ["HR_ADMIN", "HEALTH_ADMIN"].includes(userRole);
 
     // 검진가능 병원 목록,검색 조회 함수
     const selectSearchHospitalList = async () => {
@@ -80,10 +95,10 @@ export default function HospitalListComponent() {
 
             };
             const response = await searchHospitalListApi(params);
-            console.log(response.data);
+            
             handleResponse(response);
 
-            // console.log(response.data);
+            
         } catch(error) {
             
             console.log("검진가능 병원 목록 조회용 ajax 통신 실패!");
@@ -382,10 +397,15 @@ export default function HospitalListComponent() {
                         검색
                     </Button>
                 </div>
-
-                <Button size="lg" className="cursor-pointer" type="button" onClick={() => navigate("/hospitals/new")}>
-                    + 병원등록
-                </Button>
+               {canCreateHospital && (
+                    <Button 
+                        size="lg" 
+                        className="cursor-pointer" 
+                        type="button" 
+                        onClick={() => navigate("/hospitals/new")}>
+                        + 병원등록
+                    </Button>)}
+                
             </form>
 
             <div className="list-table-wrapper">
