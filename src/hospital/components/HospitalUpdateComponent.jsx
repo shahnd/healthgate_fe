@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Building2 } from "lucide-react";
 
 import "@/common/styles/FormComponent.css";
@@ -195,7 +196,7 @@ export default function HospitalUpdateComponent() {
 
                             <div>
                                 <Label htmlFor="description">병원 안내</Label>
-                                <Input
+                                <Textarea
                                     id="description"
                                     name="description"
                                     value={hospital.description || ""}
