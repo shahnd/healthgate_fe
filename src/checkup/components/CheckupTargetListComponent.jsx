@@ -36,8 +36,6 @@ const STATUS_FILTER_LABELS = {
   INCOMPLETE: "검진 미완료",
 };
 
-const UPLOADED_YEARS_KEY = "healthgate.checkup.uploadedYears";
-
 /**
  * 수동 알림 재발송 제한 시간
  * 3시간 = 3 × 60 × 60 × 1000ms
@@ -50,11 +48,6 @@ export default function CheckupTargetListComponent() {
 
   const [year, setYear] = useState(currentYear);
   const [targetList, setTargetList] = useState([]);
-
-  // 현재 화면에서 Excel 업로드가 완료됐는지 여부
-  const [hasUploadedExcel, setHasUploadedExcel] = useState(
-    () => hasUploadedYear(currentYear)
-  );
 
   /**
    * 대상자 상태 필터
@@ -72,7 +65,7 @@ export default function CheckupTargetListComponent() {
   /**
    * 카운트다운 계산에 사용하는 현재 시각
    */
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
 
   // Excel 업로드 결과 안내
   const [uploadNotice, setUploadNotice] =
@@ -94,6 +87,9 @@ export default function CheckupTargetListComponent() {
   // 수동 알림 모달
   const [selectedTarget, setSelectedTarget] =
     useState(null);
+
+  const [selectedTargetIds, setSelectedTargetIds] =
+    useState([]);
 
   const [reminderChannel, setReminderChannel] =
     useState("EMAIL");
@@ -172,23 +168,11 @@ export default function CheckupTargetListComponent() {
       }
     }, []);
 
-  /**
-   * 최초 화면에서는 알림 이력만 조회한다.
-   * 대상자 목록은 Excel 업로드 성공 후 조회한다.
-   */
+  /** DB에 저장된 대상자와 알림 이력을 화면 진입 시 조회한다. */
   useEffect(() => {
+    loadTargetList();
     loadReminderHistory();
-  }, [loadReminderHistory]);
-
-  /**
-   * Excel 업로드 직후 브라우저를 새로고침한 경우에만
-   * 저장된 대상자 목록을 다시 조회한다.
-   */
-  useEffect(() => {
-    if (hasUploadedExcel && targetList.length === 0) {
-      loadTargetList();
-    }
-  }, [hasUploadedExcel, loadTargetList, targetList.length]);
+  }, [loadReminderHistory, loadTargetList]);
 
   /**
    * 카운트다운 표시를 위해 1초마다 현재 시각 갱신
@@ -352,9 +336,6 @@ export default function CheckupTargetListComponent() {
 
       // 업로드 결과를 반영하기 위해 목록 재조회
       await loadTargetList();
-      setHasUploadedExcel(true);
-      rememberUploadedYear(year);
-
       setUploadNotice({
         message:
           uploadResult.message ||
@@ -398,21 +379,6 @@ export default function CheckupTargetListComponent() {
   };
 
   /**
-   * 현재 연도의 Excel 업로드 표시 상태를 삭제한다.
-   */
-  const clearUploadedTargets = () => {
-    if (!window.confirm(`${year}년 업로드 목록을 삭제하시겠습니까?`)) {
-      return;
-    }
-
-    forgetUploadedYear(year);
-    setTargetList([]);
-    setHasUploadedExcel(false);
-    setUploadNotice(null);
-    setStatusFilter("ALL");
-  };
-
-  /**
    * 수동 알림 모달 열기
    */
   const openReminderModal = (target) => {
@@ -441,7 +407,7 @@ export default function CheckupTargetListComponent() {
       return;
     }
 
-    setSelectedTarget(target);
+    setSelectedTarget([target]);
     setReminderChannel("EMAIL");
 
     setReminderContent(
@@ -479,16 +445,13 @@ export default function CheckupTargetListComponent() {
      * 모달을 열어둔 동안 다른 요청으로 발송됐을
      * 가능성을 고려하여 발송 직전에도 확인한다.
      */
-    const remainingCooldown =
-      getRemainingCooldown(
-        selectedTarget.checkupId
-      );
+    const unavailableTarget = selectedTarget.find(
+      (target) => getRemainingCooldown(target.checkupId) > 0
+    );
 
-    if (remainingCooldown > 0) {
+    if (unavailableTarget) {
       alert(
-        `알림 재발송 제한 시간이 남아 있습니다.\n남은 시간: ${formatRemainingTime(
-          remainingCooldown
-        )}`
+        `${unavailableTarget.employeeName}님의 알림 재발송 제한 시간이 남아 있습니다.`
       );
 
       setSelectedTarget(null);
@@ -499,19 +462,14 @@ export default function CheckupTargetListComponent() {
     setSendingReminder(true);
 
     try {
-      await axios.post(
+      await Promise.all(selectedTarget.map((target) => axios.post(
         `${CHECKUP_API_URL}/reminders/manual`,
         {
-          checkupId:
-            selectedTarget.checkupId,
-
-          channel:
-            reminderChannel,
-
-          content:
-            reminderContent.trim(),
+          checkupId: target.checkupId,
+          channel: reminderChannel,
+          content: reminderContent.trim(),
         }
-      );
+      )));
 
       /*
        * 저장된 발송 이력을 다시 조회한다.
@@ -522,10 +480,11 @@ export default function CheckupTargetListComponent() {
       setNow(Date.now());
 
       alert(
-        "알림 발송 이력이 저장되었습니다.\n3시간 후 다시 발송할 수 있습니다."
+        `${selectedTarget.length}명에게 알림을 발송했습니다.\n3시간 후 다시 발송할 수 있습니다.`
       );
 
       setSelectedTarget(null);
+      setSelectedTargetIds([]);
       setReminderChannel("EMAIL");
       setReminderContent("");
     } catch (error) {
@@ -568,6 +527,37 @@ export default function CheckupTargetListComponent() {
     }
   );
 
+  const selectableTargets = filteredTargetList.filter((target) =>
+    !target.completed && getRemainingCooldown(target.checkupId) === 0
+  );
+
+  const allSelectableTargetsSelected =
+    selectableTargets.length > 0 &&
+    selectableTargets.every((target) => selectedTargetIds.includes(target.checkupId));
+
+  const toggleAllTargets = () => {
+    const visibleIds = selectableTargets.map((target) => target.checkupId);
+    setSelectedTargetIds((previous) => allSelectableTargetsSelected
+      ? previous.filter((id) => !visibleIds.includes(id))
+      : [...new Set([...previous, ...visibleIds])]
+    );
+  };
+
+  const toggleTarget = (checkupId) => {
+    setSelectedTargetIds((previous) => previous.includes(checkupId)
+      ? previous.filter((id) => id !== checkupId)
+      : [...previous, checkupId]
+    );
+  };
+
+  const openBulkReminderModal = () => {
+    const targets = targetList.filter((target) => selectedTargetIds.includes(target.checkupId));
+    if (targets.length === 0) return;
+    setSelectedTarget(targets);
+    setReminderChannel("EMAIL");
+    setReminderContent("건강검진을 완료해 주세요.");
+  };
+
   return (
     <div className="list-page">
       {/* 페이지 제목 */}
@@ -586,7 +576,7 @@ export default function CheckupTargetListComponent() {
               setStatusFilter("ALL");
               setUploadNotice(null);
               setTargetList([]);
-              setHasUploadedExcel(hasUploadedYear(selectedYear));
+              setSelectedTargetIds([]);
             }}
           >
             <SelectTrigger className="w-[140px]" size="sm">
@@ -624,10 +614,7 @@ export default function CheckupTargetListComponent() {
           <Button
             type="button"
             onClick={async () => {
-              if (hasUploadedExcel) {
-                await loadTargetList();
-              }
-
+              await loadTargetList();
               await loadReminderHistory();
 
               setNow(Date.now());
@@ -647,16 +634,6 @@ export default function CheckupTargetListComponent() {
             엑셀 업로드
           </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={clearUploadedTargets}
-            disabled={!hasUploadedExcel}
-            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-          >
-            삭제
-          </Button>
         </div>
       </div>
 
@@ -747,9 +724,33 @@ export default function CheckupTargetListComponent() {
 
       {/* 검진 대상자 목록 */}
       <div className="list-table-wrapper">
+          <div className="flex items-center justify-between border-b bg-slate-50 px-4 py-3">
+            <span className="text-sm font-semibold text-slate-700">
+              {selectedTargetIds.length}명 선택
+            </span>
+            <Button
+              type="button"
+              size="sm"
+              className="primary-button"
+              disabled={selectedTargetIds.length === 0}
+              onClick={openBulkReminderModal}
+            >
+              선택 알림 발송
+            </Button>
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[56px] text-center">
+                  <input
+                    type="checkbox"
+                    aria-label="알림 발송 대상 전체 선택"
+                    checked={allSelectableTargetsSelected}
+                    onChange={toggleAllTargets}
+                    disabled={selectableTargets.length === 0}
+                    className="h-4 w-4 accent-emerald-700"
+                  />
+                </TableHead>
                 <TableHead className="w-[100px]">
                   사번
                 </TableHead>
@@ -784,7 +785,7 @@ export default function CheckupTargetListComponent() {
               {loading ? (
                 <TableRow>
                   <TableCell
-                    colSpan="7"
+                    colSpan="8"
                     className="px-6 py-14 text-center text-slate-500"
                   >
                     건강검진 대상자를 불러오는 중입니다.
@@ -794,13 +795,11 @@ export default function CheckupTargetListComponent() {
                 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan="7"
+                    colSpan="8"
                     className="px-6 py-14 text-center text-slate-500"
                   >
-                    {!hasUploadedExcel
-                      ? "Excel 파일을 업로드하면 검진 대상자 목록이 표시됩니다."
-                      : targetList.length === 0
-                        ? "업로드한 파일에 해당 연도의 검진 대상자가 없습니다."
+                    {targetList.length === 0
+                        ? "DB에 해당 연도의 검진 대상자가 없습니다."
                         : "선택한 상태에 해당하는 대상자가 없습니다."}
                   </TableCell>
                 </TableRow>
@@ -821,12 +820,23 @@ export default function CheckupTargetListComponent() {
                   return (
                     <TableRow
                       key={target.checkupId}
-                      className="
+                      className={`
                         border-t border-slate-100
                         text-sm text-slate-700
                         hover:bg-slate-50
-                      "
+                        ${selectedTargetIds.includes(target.checkupId) ? "bg-emerald-50" : ""}
+                      `}
                     >
+                      <TableCell className="text-center">
+                        <input
+                          type="checkbox"
+                          aria-label={`${target.employeeName} 알림 발송 대상 선택`}
+                          checked={selectedTargetIds.includes(target.checkupId)}
+                          onChange={() => toggleTarget(target.checkupId)}
+                          disabled={buttonDisabled}
+                          className="h-4 w-4 accent-emerald-700 disabled:cursor-not-allowed"
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">
                         {target.employeeNo}
                       </TableCell>
@@ -1107,10 +1117,9 @@ export default function CheckupTargetListComponent() {
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              {selectedTarget.employeeName}
-              {" ("}
-              {selectedTarget.employeeNo}
-              {")"}
+              {selectedTarget.length === 1
+                ? `${selectedTarget[0].employeeName} (${selectedTarget[0].employeeNo})`
+                : `${selectedTarget.length}명의 검진 대상자`}
             </p>
 
             <div className="mt-6">
@@ -1253,40 +1262,6 @@ function formatRemainingTime(
     String(minutes).padStart(2, "0"),
     String(seconds).padStart(2, "0"),
   ].join(":");
-}
-
-/**
- * 완료율 통계 화면에서 사용할 수 있도록
- * Excel 업로드가 완료된 연도를 세션에 기록한다.
- */
-function rememberUploadedYear(year) {
-  const uploadedYears = getUploadedYears();
-
-  sessionStorage.setItem(
-    UPLOADED_YEARS_KEY,
-    JSON.stringify([...new Set([...uploadedYears, year])])
-  );
-}
-
-function forgetUploadedYear(year) {
-  const uploadedYears = getUploadedYears().filter(
-    (uploadedYear) => uploadedYear !== year
-  );
-
-  sessionStorage.setItem(
-    UPLOADED_YEARS_KEY,
-    JSON.stringify(uploadedYears)
-  );
-}
-
-function hasUploadedYear(year) {
-  return getUploadedYears().includes(year);
-}
-
-function getUploadedYears() {
-  return JSON.parse(
-    sessionStorage.getItem(UPLOADED_YEARS_KEY) ?? "[]"
-  );
 }
 
 /**
