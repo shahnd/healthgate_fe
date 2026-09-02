@@ -19,6 +19,22 @@ export default function HospitalDetailComponent() {
 
     let navigate = useNavigate();
 
+    // 권한 체크
+    const authStorage = localStorage.getItem("auth-storage");
+    let user = null;
+
+    if (authStorage) {
+        try {
+            const parsed = JSON.parse(authStorage);
+            user = parsed?.state?.user; // { id: 1, number: "admin1", name: "...", role: "..." }
+        } catch (e) {
+            console.error("auth-storage 파싱 에러:", e);
+        }
+    }
+
+    const userRole = user.role || "";
+    const canUpdateDeleteHospital = ["HR_ADMIN", "HEALTH_ADMIN"].includes(userRole);
+
     // State 형 변수
     const [hospital, setHospital] = useState({hospitalId : "",
                                             name : "",
@@ -204,7 +220,8 @@ export default function HospitalDetailComponent() {
                             >
                                 목록으로
                             </Button>
-
+                         {canUpdateDeleteHospital && (
+                            <>
                             <Button
                                 size="lg" className="cursor-pointer" variant="secondary"
                                 onClick={() =>
@@ -222,6 +239,9 @@ export default function HospitalDetailComponent() {
                             >
                                 삭제
                             </Button>
+                            
+                             </>)}
+                           
                         </CardFooter>
                     </Card>
                 </section>
