@@ -67,9 +67,9 @@ export default function ConsultationDetailComponent () {
 
     // 상태별 색상 매핑
     const statusColorMap = {
-        "RESERVED": "#919191", // 미완료/예약 (주황빛 등)
-        "FINISHED": "#27ae60", // 완료 (초록빛)
-        "EXPIRED": "#e74c3c",  // 취소 (붉은빛)
+        "RESERVED": "#919191",
+        "FINISHED": "#27ae60",
+        "EXPIRED": "#e74c3c",
     };
 
     // 상태값 -> 한글 변환
