@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = `http://localhost:8006/healthgate/consultation/consultations`;
+const BASE_URL = `/healthgate/consultation/consultations`;
 
 // 인가 체크
 const getAuthConfig = () => {

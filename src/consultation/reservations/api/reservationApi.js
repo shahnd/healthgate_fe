@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8006/healthgate/consultation/reservations";
+const BASE_URL = "/healthgate/consultation/reservations";
 
 // 인가 체크
 const getAuthConfig = () => {
@@ -14,7 +14,7 @@ const getAuthConfig = () => {
 // 로그인 유저 정보 조회
 function LoginUserApi(id){
     const response = axios({
-        url : `http://localhost:8006/healthgate/employees/${id}`,
+        url : `/healthgate/employees/${id}`,
         method : "get",
         ...getAuthConfig()
     });

@@ -17,7 +17,7 @@ import { Stethoscope } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const CHECKUP_API_URL =
-  "http://localhost:8006/healthgate/checkups";
+  "/healthgate/checkups";
 
 const UPLOADED_YEARS_KEY = "healthgate.checkup.uploadedYears";
 

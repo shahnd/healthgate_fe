@@ -8,7 +8,7 @@ import PageHeader from '@/common/components/PageHeader'
 import { Stethoscope } from 'lucide-react'
 
 const CHECKUP_API_URL =
-  'http://localhost:8006/healthgate/checkups'
+  '/healthgate/checkups'
 
 export default function CheckupManagementComponent() {
   const currentYear = new Date().getFullYear()

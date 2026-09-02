@@ -26,7 +26,7 @@ export default function ChangePasswordComponent() {
         const getEmployee = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:8006/healthgate/employees/${user.id}`
+                    `/healthgate/employees/${user.id}`
                 );
                 setData(response.data.data);
             } catch {
@@ -56,7 +56,7 @@ export default function ChangePasswordComponent() {
 
         try {
             // 기존 API 주소 규칙에 맞춰 패치 요청을 보냅니다 (엔드포인트는 환경에 맞게 수정)
-            await axios.put(`http://localhost:8006/healthgate/employees/me/password`, {
+            await axios.put(`/healthgate/employees/me/password`, {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword,
             });

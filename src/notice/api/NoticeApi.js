@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8006/healthgate/notices";
+const BASE_URL = "/healthgate/notices";
 
 // 공지사항 목록 조회
 const selectNoticeListApi = cpage => {

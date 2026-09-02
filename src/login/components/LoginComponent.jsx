@@ -17,7 +17,7 @@ export default function LoginComponent() {
 
         try {
             const response = await axios.post(
-                "http://localhost:8006/healthgate/auth/login",
+                "/healthgate/auth/login",
                 loginData,
                 {
                     withCredentials: true,

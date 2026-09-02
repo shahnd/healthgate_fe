@@ -20,10 +20,10 @@ export default function EmployeeUpdateComponent() {
             try {
                 const [employeeResponse, initResponse] = await Promise.all([
                     axios.get(
-                        `http://localhost:8006/healthgate/employees/${id}`
+                        `/healthgate/employees/${id}`
                     ),
                     axios.get(
-                        "http://localhost:8006/healthgate/employees/init"
+                        "/healthgate/employees/init"
                     ),
                 ]);
 
@@ -87,7 +87,7 @@ export default function EmployeeUpdateComponent() {
 
         try {
             await axios.put(
-                `http://localhost:8006/healthgate/employees/${id}`,
+                `/healthgate/employees/${id}`,
                 sendData
             );
 

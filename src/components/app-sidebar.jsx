@@ -127,10 +127,10 @@ export function AppSidebar({
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<a href="/bioinput" />}>
-              <img 
-                src="/public/healthgate_logo.png" 
-                alt="logo" 
-                className="size-10! object-contain" 
+              <img
+                src="/healthgate_logo.png"
+                alt="logo"
+                className="size-10! object-contain"
               />
               <span className="text-base font-semibold">
                 <span className="text-primary">Health</span>Gate

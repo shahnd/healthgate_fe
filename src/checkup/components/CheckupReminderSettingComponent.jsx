@@ -9,7 +9,7 @@ import "@/common/styles/ListComponent.css";
 import PageHeader from "@/common/components/PageHeader";
 import { Stethoscope } from "lucide-react";
 
-const CHECKUP_API_URL = "http://localhost:8006/healthgate/checkups";
+const CHECKUP_API_URL = "/healthgate/checkups";
 const INITIAL_SETTING_FORM = {
   settingType: "MISSING_CHECKUP",
   messageTemplate: "건강검진을 완료해 주세요.",

@@ -80,7 +80,7 @@ export default function DashboardComponent() {
 
         const fetchAttendanceCount = async () => {
             try {
-                const response = await axios.get("http://localhost:8006/healthgate/dattendances")
+                const response = await axios.get("/healthgate/dattendances")
 
                 console.log(response.data);
 

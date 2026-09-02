@@ -52,10 +52,10 @@ export default function EmployeeListComponent() {
         const getEmployees = async () => {
             try {
                 const [listRes, initRes] = await Promise.all([
-                    axios.get("http://localhost:8006/healthgate/employees", {
+                    axios.get("/healthgate/employees", {
                         params: { page, size, ...condition },
                     }),
-                    axios.get("http://localhost:8006/healthgate/employees/init"),
+                    axios.get("/healthgate/employees/init"),
                 ]);
 
                 setEmployees(listRes.data.data.content);

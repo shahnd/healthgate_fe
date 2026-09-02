@@ -16,7 +16,7 @@ export default function MyPageComponent() {
         const getEmployee = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:8006/healthgate/employees/${user.id}`
+                    `/healthgate/employees/${user.id}`
                 );
 
                 setData(response.data.data);
