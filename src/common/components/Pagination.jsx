@@ -28,7 +28,7 @@ export default function CustomPagination({ page, totalPages, onPageChange, pageL
           <PaginationItem>
             <PaginationPrevious
               href="#"
-              onClick={(e) => handleClick(e, endPage - 1)}
+              onClick={(e) => handleClick(e, startPage - 1)}
             />
           </PaginationItem>
         )}

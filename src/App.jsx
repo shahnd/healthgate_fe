@@ -90,6 +90,8 @@ function App() {
 
           {/* 인사관리자만 접근 가능한 페이지 */}
           <Route element={<PrivateRoute allowedRoles={['HR_ADMIN']}/>}>
+            <Route path="/employees/:id/edit" element={<EmployeeUpdateComponent />} />
+            <Route path="/employees/new" element={<EmployeeCreateComponent />} />
           </Route>
 
           {/* 보건관리자만 접근 가능한 페이지 */}
@@ -116,8 +118,6 @@ function App() {
             {/* 직원 관리 */}
             <Route path="/employees" element={<EmployeeListComponent />} />
             <Route path="/employees/:id" element={<EmployeeDetailComponent />} />
-            <Route path="/employees/:id/edit" element={<EmployeeUpdateComponent />} />
-            <Route path="/employees/new" element={<EmployeeCreateComponent />} />
 
             
             <Route path="/settings" element={<SettingsComponent />} />
