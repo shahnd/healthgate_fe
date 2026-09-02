@@ -45,6 +45,14 @@ export default function HospitalCreateComponent() {
         }));
     };
 
+    // 엔터키 누를때 자동 제출 막음
+    const handleKeyDown = (e) => {
+        // input 태그 등에서 Enter키 입력 시 submit 방지 (Textarea에서의 Enter는 줄바꿈이므로 제외)
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
+    };
+
     const insertHospital = async e => {
 
         e.preventDefault();
@@ -118,7 +126,7 @@ export default function HospitalCreateComponent() {
                     </CardDescription>
                 </CardHeader>
 
-                <form onSubmit={insertHospital}>
+                <form onSubmit={insertHospital} onKeyDown={handleKeyDown}>
                     <CardContent>
                         <dl>
                             <div>
@@ -128,18 +136,6 @@ export default function HospitalCreateComponent() {
                                     type="text"
                                     name="name"
                                     value={hospital.name || ""}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="address">주소</Label>
-                                <Input
-                                    id="address"
-                                    type="text"
-                                    name="address"
-                                    value={hospital.address || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -156,7 +152,19 @@ export default function HospitalCreateComponent() {
                                 />
                             </div>
 
-                            <div>
+                            <div className="full-row">
+                                <Label htmlFor="address">주소</Label>
+                                <Input
+                                    id="address"
+                                    type="text"
+                                    name="address"
+                                    value={hospital.address || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="full-row">
                                 <Label htmlFor="url">병원 홈페이지 URL</Label>
                                 <Input
                                     id="url"
@@ -167,17 +175,26 @@ export default function HospitalCreateComponent() {
                                 />
                             </div>
 
-                            <div>
-                                <Label htmlFor="description">안내문구</Label>
-                                <Textarea
-                                    id="description"
-                                    name="description"
-                                    value={hospital.description || ""}
-                                    onChange={handleInputChange}
-                                />
+                            <div className="full-row w-full">
+                                <Label htmlFor="description">병원 안내</Label>  
+                                <div className="relative w-full">
+                                    <Textarea
+                                        id="description"
+                                        name="description"
+                                        rows={6} // 기본 세로 줄 수 지정 (높이 조절)
+                                        className="w-full min-h-[250px] resize-y pb-6" // 최소 높이 설정 및 세로 리사이즈 허용
+                                        value={hospital.description || ""}
+                                        onChange={handleInputChange}
+                                    />
+                                
+                                    {/* 실시간 글자 수 표시 */}
+                                    <span className="absolute bottom-3 right-3 text-xs text-gray-400 pointer-events-none">
+                                        {(hospital.description || "").length}글자
+                                    </span>
+                                </div>  
                             </div>
 
-                            <div>
+                            <div className="full-row">
                                 <Label>검진가능 항목</Label>
 
                                 <div>
@@ -236,6 +253,13 @@ export default function HospitalCreateComponent() {
                     </CardContent>
 
                     <CardFooter>
+                        <Button
+                            size="lg" className="cursor-pointer" 
+                            onClick={() => navigate("/hospitals/list")}
+                        >
+                            목록으로
+                        </Button>
+
                         <Button
                             size="lg" className="cursor-pointer"
                             type="button"
