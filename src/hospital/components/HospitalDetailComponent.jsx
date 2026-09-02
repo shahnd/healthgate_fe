@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 
+import { useUserInfo } from "../../store/useAuthStore";
+
 import { selectHospitalApi, deleteHospitalApi } from "../api/hospitalApi";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,19 +21,9 @@ export default function HospitalDetailComponent() {
 
     let navigate = useNavigate();
 
+    const user = useUserInfo();
+    
     // 권한 체크
-    const authStorage = localStorage.getItem("auth-storage");
-    let user = null;
-
-    if (authStorage) {
-        try {
-            const parsed = JSON.parse(authStorage);
-            user = parsed?.state?.user; // { id: 1, number: "admin1", name: "...", role: "..." }
-        } catch (e) {
-            console.error("auth-storage 파싱 에러:", e);
-        }
-    }
-
     const userRole = user.role || "";
     const canUpdateDeleteHospital = ["HR_ADMIN", "HEALTH_ADMIN"].includes(userRole);
 
