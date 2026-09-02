@@ -59,7 +59,7 @@ const CustomToolbar = (toolbar) => {
 };
 
 
-function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNavigate }) {
+function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNavigate, holidays = [] }) {
   
   // 오늘 날짜를 담을 변수
   const today = new Date();
@@ -70,8 +70,29 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
   // 3개월 이내만 예약 가능하게
   // 3개월 뒤 말일 계산 (오늘 기준 + 3개월)
   const maxDate = new Date(today);
-  maxDate.setMonth(maxDate.getMonth() + 4);
+  maxDate.setMonth(maxDate.getMonth() + 3);
   maxDate.setHours(0, 0, 0, 0)
+
+  // 날짜 포맷팅
+  const formatDate = (targetDate) => {
+      // 날짜 객체에서 연월 추출 - 'YYYY-MM-DD'
+      const year = targetDate.getFullYear();
+      const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+      const day = String(targetDate.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+  }
+
+  
+  // 주말 판별
+  const isWeekend = date => {
+  const day = date.getDay();
+  return day === 0 || day === 6; // 일, 토
+  }
+
+  // 공휴일 판별
+  const isHoliday = date => holidays.includes(formatDate(date));
+  const isUnavailableDay = date => isWeekend(date) || isHoliday(date);
 
   // 이번달 이전으로 이동 불가
   const handleNavigate = newDate => {
@@ -95,7 +116,10 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
     selectedSlotDate.setHours(0, 0, 0, 0);
 
     // 예약 가능 기간 외 선택 불가
-    if ((selectedSlotDate <= today)|| (selectedSlotDate > maxDate)) {
+    if ((selectedSlotDate <= today) ||
+        (selectedSlotDate > maxDate) ||
+        (isUnavailableDay(selectedSlotDate))) {
+
       alert("예약 불가능한 날짜입니다.")
       return;
     }
@@ -105,11 +129,10 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
       onSelectSlot(slotInfo);
     }
 
-    
   }
   return (
     <div style={{ height : 300, width : 350, padding : "10px" }}>
-      
+
       <Calendar
         localizer={localizer}
         startAccessor="start"
@@ -118,7 +141,7 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
         defaultView="month"
         date={ currentDate }
         formats={{
-          weekdayFormat : (date, culture, localizer) => {
+          weekdayFormat : (date) => {
             const days = ["일", "월", "화", "수", "목", "금", "토"];
             return days[date.getDay()];
           }
@@ -141,10 +164,12 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
         dayPropGetter={(date) => {
 
           const targetDate = new Date(date);
-
           targetDate.setHours(0, 0, 0, 0);
+
           // 예약 가능 기간 외 스타일 지정
-          if (targetDate <= today || targetDate > maxDate) {
+          if (targetDate <= today ||
+              targetDate > maxDate ||
+              isUnavailableDay(targetDate)) {
 
             return { style : { 
                 backgroundColor: '#f1f1f1',
@@ -155,7 +180,7 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
 
           // 선택한 날짜 스타일 지정
           if(selectedDate && date.toDateString() === selectedDate.toDateString()) {
-            return { style : { backgroundColor : "#FFAAAA" } }
+            return { style : { backgroundColor : "#FFCCCC" } }
           }
         }}
         messages={{

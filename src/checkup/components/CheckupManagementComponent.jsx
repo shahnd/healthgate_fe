@@ -32,7 +32,7 @@ export default function CheckupManagementComponent() {
     useState(null)
 
   const [reminderChannel, setReminderChannel] =
-    useState('SMS')
+    useState('EMAIL')
 
   const [reminderContent, setReminderContent] =
     useState('')
@@ -227,7 +227,7 @@ export default function CheckupManagementComponent() {
     }
 
     setSelectedTarget(target)
-    setReminderChannel('SMS')
+    setReminderChannel('EMAIL')
     setReminderContent(
       `${target.employeeName}님, 건강검진을 완료해 주세요.`
     )
@@ -242,7 +242,7 @@ export default function CheckupManagementComponent() {
     }
 
     setSelectedTarget(null)
-    setReminderChannel('SMS')
+    setReminderChannel('EMAIL')
     setReminderContent('')
   }
 
@@ -811,7 +811,7 @@ export default function CheckupManagementComponent() {
                   focus:border-blue-500
                 "
               >
-                <option value="SMS">SMS</option>
+                <option value="SMS" disabled>SMS (준비 중)</option>
                 <option value="EMAIL">이메일</option>
               </select>
             </div>

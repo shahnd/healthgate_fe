@@ -7,6 +7,9 @@ import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/DetailComponent.css";
 
+import "../styles/calendar.css";
+import { useHolidays } from "../api/useHolidays";
+
 
 export default function ReservationListComponent() {
 
@@ -21,7 +24,14 @@ export default function ReservationListComponent() {
   const user = authStore?.user;
   const role = user?.role;
   const loginUserId = user?.id;
-  
+
+
+  // 공휴일 이벤트
+  const { holidayEvents } = useHolidays();
+
+  // 예약데이터 + 공휴일 이벤트 합치기
+  const combinedEvents = [...dataList, ...holidayEvents];
+
   // 연월이 바뀔 때마다 조회 후 목록 띄우기
   useEffect(() => {
     const selectAllReservation = async () => {
@@ -40,10 +50,10 @@ export default function ReservationListComponent() {
 
         // 권한 체크
         if(role !== "HEALTH_ADMIN") {
-          items = items.filter((item) => item.employee?.id === loginUserId);
+          items = items.filter( item => item.employee?.id === loginUserId);
         }
 
-        const formattedData = items.map((item, index) => {
+        const formattedData = items.map( item => {
 
           // 조회된 데이터 양식 지정 - T1 홍길동 -> 1차 홍길동
           const turnNumber = item.scheduledTurn ? item.scheduledTurn.replace("T", "") : "";
@@ -75,6 +85,8 @@ export default function ReservationListComponent() {
 
   // 조회된 요소 클릭 시 실행할 이벤트 핸들러
   const handleSelectEvent = e => {
+    // 공휴일 클릭 시 이동 방지
+    if (e.status === "HOLIDAY") return;
     // 예약 내용 상세 조회로 이동
     navigate(`/consultation/reservation/detail/${e.id}`)
   };
@@ -83,7 +95,7 @@ export default function ReservationListComponent() {
     <div className="detail-page">
       <PageHeader title="보건 상담 예약 현황" description="보건 상담 예약 현황을 조회합니다." icon={MessageCircle}/>
 
-      <ListCalendar dataList={ dataList }
+      <ListCalendar dataList={ combinedEvents }
                     onSelectEvent={ handleSelectEvent }
                     onNavigate={ handleNavigate } />
       <div align="right">

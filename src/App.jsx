@@ -81,9 +81,18 @@ function App() {
             <Route path="/notices/new" element={<NoticeCreateComponent />} />
             <Route path="/notices/:noticeId" element={<NoticeDetailComponent />} />
             <Route path="/notices/:noticeId/edit" element={<NoticeUpdateComponent />} />
+              
             {/* 병원 관리 */}
             <Route path="/hospitals/list" element={<HospitalListComponent />} />
             <Route path="/hospitals/:hospitalId" element={<HospitalDetailComponent />} />
+
+            {/* 보건 상담 */}
+            <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
+            <Route path="/consultation/reservation/:id?" element={<ReservationComponent />} />
+            <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
+            <Route path="/consultation/list" element={<ConsultationListComponent />} />
+            <Route path="/consultation/detail/:id" element={<ConsultationDetailComponent />} />
+            <Route path="/consultation/:id" element={<ConsultationComponent />} />
           </Route>
 
           {/* 인사관리자만 접근 가능한 페이지 */}
@@ -92,13 +101,6 @@ function App() {
 
           {/* 보건관리자만 접근 가능한 페이지 */}
           <Route element={<PrivateRoute allowedRoles={['HEALTH_ADMIN']}/>}>
-            {/* 보건 상담 */}
-            <Route path="/consultation/reservation/list" element={<ReservationListComponent />} />
-            <Route path="/consultation/reservation/:id?" element={<ReservationComponent />} />
-            <Route path="/consultation/reservation/detail/:id" element={<ReservationDetailComponent />} />
-            <Route path="/consultation/list" element={<ConsultationListComponent />} />
-            <Route path="/consultation/detail/:id" element={<ConsultationDetailComponent />} />
-            <Route path="/consultation/:id" element={<ConsultationComponent />} />
 
             {/* 건강검진 관리 */}
             <Route path="/checkup/statistics" element={<CheckupStatisticsComponent />} />
