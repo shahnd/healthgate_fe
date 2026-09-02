@@ -130,7 +130,7 @@ export default function ChangePasswordComponent() {
                         </CardContent>
 
                         <CardFooter>
-                            <Button size="lg" className="cursor-pointer" type="button" variant="outline">취소</Button>
+                            <Button size="lg" className="cursor-pointer" type="button" variant="outline" onClick={() => {navigate("/mypage")}}>취소</Button>
                             <Button size="lg" className="cursor-pointer" type="submit">변경하기</Button>
                         </CardFooter>
                     </form>

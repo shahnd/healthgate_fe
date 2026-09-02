@@ -22,13 +22,15 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild
-                isActive={location.pathname === item.url}>
-                <Link to={item.url} className="flex w-full items-center gap-2">
-                  {item.icon}
-                  <span className="truncate">{item.title}</span> {/* 글자가 길어질 때를 대비해 truncate 추가 */}
-                </Link>
-              </SidebarMenuButton>
+              <SidebarMenuButton
+                isActive={location.pathname === item.url}
+                render={
+                  <Link to={item.url} className="flex w-full items-center gap-2">
+                    {item.icon}
+                    <span className="truncate">{item.title}</span>
+                  </Link>
+                }
+              />
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { RotateCcw, UserCheck } from "lucide-react";
 import PageHeader from "@/common/components/PageHeader";
+import { Badge } from "@/components/ui/badge";
 
 const getToday = () => {
     const today = new Date();
@@ -53,6 +54,8 @@ export default function AttendanceListComponent() {
                     axios.get("http://localhost:8006/healthgate/employees/init"),
                 ]);
 
+                console.log(listRes.data.data.content);
+
                 setEmployees(listRes.data.data.content);
                 setTotalPages(listRes.data.data.totalPages);
                 setDlist(initRes.data.data.departmentList);
@@ -71,6 +74,30 @@ export default function AttendanceListComponent() {
         const { name, value } = event.target;
         handleImmediateChange(name, value);
     };
+
+    const ATTENDANCE_MAP = {
+        ATTENDANCE: (
+            <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-none">
+            출근 (건강 양호)
+            </Badge>
+        ),
+        WARNING: (
+            <Badge variant="warning" className="bg-amber-500 hover:bg-amber-600 text-white border-none">
+            출근 (건강 주의)
+            </Badge>
+        ),
+        DENY: (
+            <Badge variant="destructive">
+            미출근 (근무 불가)
+            </Badge>
+        )
+    }
+
+    const ATTENDANCE_LIST_MAP = {
+        ATTENDANCE: "출근(정상)",
+        WARNING: "출근(주의)",
+        DENY: "미출근(근무 불가)",
+    }
 
  
     return (
@@ -98,7 +125,9 @@ export default function AttendanceListComponent() {
                         onValueChange={(value) => handleImmediateChange("positionId", value)}
                     >
                         <SelectTrigger className="w-[140px]" size="sm">
-                            <SelectValue placeholder="직급 전체" />
+                            <SelectValue placeholder="직급 전체">
+                                {plist.find((p) => String(p.id) === String(condition.positionId))?.name}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -117,7 +146,9 @@ export default function AttendanceListComponent() {
                         onValueChange={(value) => handleImmediateChange("departmentId", value)}
                     >
                         <SelectTrigger className="w-[140px]" size="sm">
-                            <SelectValue placeholder="부서 전체" />
+                            <SelectValue placeholder="부서 전체">
+                                {dlist.find((d) => String(d.id) === String(condition.departmentId))?.name}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -143,14 +174,16 @@ export default function AttendanceListComponent() {
                         onValueChange={(value) => handleImmediateChange("status", value)}
                     >
                         <SelectTrigger className="w-[140px]" size="sm">
-                            <SelectValue placeholder="출근 상태 전체" />
+                            <SelectValue placeholder="출근 상태 전체">
+                                {ATTENDANCE_LIST_MAP[condition.status]}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 <SelectItem value="">전체 상태</SelectItem>
-                                <SelectItem value="ATTENDANCE">출근</SelectItem>
+                                <SelectItem value="ATTENDANCE">출근(정상)</SelectItem>
                                 <SelectItem value="WARNING">출근(주의)</SelectItem>
-                                <SelectItem value="DENY">출근거부</SelectItem>
+                                <SelectItem value="DENY">미출근(근무 불가)</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -165,26 +198,27 @@ export default function AttendanceListComponent() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>사번</TableHead>
-                            <TableHead>이름</TableHead>
-                            <TableHead>부서</TableHead>
-                            <TableHead>직급</TableHead>
-                            <TableHead>이메일</TableHead>
-                            <TableHead>출근시간</TableHead>
-                            <TableHead>출근상태</TableHead>
+                            <TableHead className="w-[180px]">사번</TableHead>
+                            <TableHead className="w-[190px]">이름</TableHead>
+                            <TableHead className="w-[200px]">부서</TableHead>
+                            <TableHead className="w-[200px]">직급</TableHead>
+                            <TableHead className="w-[350px]">이메일</TableHead>
+                            <TableHead className="w-[220px]">출근시간</TableHead>
+                            {/* 마지막 항목은 대시보드 너비에 따라 유연하게 늘어나도록 w-auto를 주거나 비워둡니다 */}
+                            <TableHead className="w-auto min-w-[160px]">출근/건강 상태</TableHead>
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
-                        {employees.map((employee) => (
+                        {employees.reverse().map((employee) => (
                             <TableRow key={employee.id} onClick={() => navigate(`/employees/${employee.id}`)}>
                                 <TableCell className="font-medium">{employee.employeeNumber}</TableCell>
                                 <TableCell>{employee.name}</TableCell>
                                 <TableCell>{employee.departmentName || "부서 미지정"}</TableCell>
                                 <TableCell>{employee.positionName || "직급 미지정"}</TableCell>
                                 <TableCell>{employee.email || "-"}</TableCell>
-                                <TableCell>{employee.clockInAt || "-"}</TableCell>
-                                <TableCell>{employee.attendanceStatus || "-"}</TableCell>
+                                <TableCell>{employee.clockInAt?.replace('T', ' ') || "-"}</TableCell>
+                                <TableCell>{ATTENDANCE_MAP[employee.attendanceStatus] || "-"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

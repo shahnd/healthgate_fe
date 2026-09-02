@@ -28,6 +28,12 @@ export default function EmployeeFormComponent({
 }) {
     const isCreate = mode === "create";
 
+    const ROLE_MAP = {
+        EMPLOYEE: "직원",
+        HR_ADMIN: "인사관리자",
+        HEALTH_ADMIN: "보건관리자"
+    }
+
     return (
         <Card className="detail-info-card">
             <CardHeader>
@@ -49,6 +55,8 @@ export default function EmployeeFormComponent({
                                 onChange={onChange}
                                 required
                                 readOnly={!isCreate}
+                                maxLength={20}
+                                placeholder="사번을 입력하세요"
                             />
                         </div>
 
@@ -60,6 +68,8 @@ export default function EmployeeFormComponent({
                                 value={formData.name || ""}
                                 onChange={onChange}
                                 required
+                                maxLength={20}
+                                placeholder="이름을 입력하세요"
                             />
                         </div>
 
@@ -74,6 +84,8 @@ export default function EmployeeFormComponent({
                                         value={formData.password || ""}
                                         onChange={onChange}
                                         required
+                                        maxLength={20}
+                                        placeholder="비밀번호 입력"
                                     />
                                 </div>
 
@@ -85,6 +97,8 @@ export default function EmployeeFormComponent({
                                         value={confirmPassword}
                                         onChange={onConfirmPasswordChange}
                                         required
+                                        maxLength={20}
+                                        placeholder="비밀번호 입력"
                                     />
                                 </div>
                             </>
@@ -98,6 +112,7 @@ export default function EmployeeFormComponent({
                                 name="email"
                                 value={formData.email || ""}
                                 onChange={onChange}
+                                placeholder="example@healthgate.com"
                             />
                         </div>
 
@@ -109,6 +124,9 @@ export default function EmployeeFormComponent({
                                 name="phone"
                                 value={formData.phone || ""}
                                 onChange={onChange}
+                                maxLength={13}
+                                placeholder="010-0000-0000 (- 포함)"
+                                pattern="010-\d{3,4}-\d{4}" 
                             />
                         </div>
 
@@ -131,7 +149,9 @@ export default function EmployeeFormComponent({
                                 onValueChange={(value) => onSelectChange("role", value)}
                             >
                                 <SelectTrigger id="role">
-                                    <SelectValue placeholder="권한을 선택하세요" />
+                                    <SelectValue placeholder="권한을 선택하세요">
+                                        {ROLE_MAP[formData.role] || "권한을 선택하세요"}
+                                    </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -150,7 +170,9 @@ export default function EmployeeFormComponent({
                                 onValueChange={(value) => onSelectChange("departmentId", value)}
                             >
                                 <SelectTrigger id="departmentId">
-                                    <SelectValue placeholder="부서를 선택하세요" />
+                                    <SelectValue placeholder="부서를 선택하세요">
+                                        {departmentList.find(d => String(d.id) === String(formData.departmentId))?.name}
+                                    </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -171,7 +193,9 @@ export default function EmployeeFormComponent({
                                 onValueChange={(value) => onSelectChange("positionId", value)}
                             >
                                 <SelectTrigger id="positionId">
-                                    <SelectValue placeholder="직급을 선택하세요" />
+                                    <SelectValue placeholder="직급을 선택하세요">
+                                        {positionList.find(p => String(p.id) === String(formData.positionId))?.name}
+                                    </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
