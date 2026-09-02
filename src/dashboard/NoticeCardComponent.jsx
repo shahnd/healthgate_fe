@@ -17,7 +17,7 @@ export default function NoticeCardComponent({ notices = [] }) {
         {notices.map((notice) => (
           <Link
             key={notice.id}
-            href={`/notices/${notice.id}`}
+            to={`/notices/${notice.id}`}
             className="flex items-center justify-between py-2 border-b last:border-0 hover:bg-muted/50 rounded-md px-2 -mx-2 transition-colors"
           >
             <span className="text-sm truncate">{notice.title}</span>

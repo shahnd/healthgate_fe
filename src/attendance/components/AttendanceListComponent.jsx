@@ -210,7 +210,7 @@ export default function AttendanceListComponent() {
                     </TableHeader>
 
                     <TableBody>
-                        {employees.reverse().map((employee) => (
+                        {employees.map((employee) => (
                             <TableRow key={employee.id} onClick={() => navigate(`/employees/${employee.id}`)}>
                                 <TableCell className="font-medium">{employee.employeeNumber}</TableCell>
                                 <TableCell>{employee.name}</TableCell>
