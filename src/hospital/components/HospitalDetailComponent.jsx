@@ -41,7 +41,7 @@ export default function HospitalDetailComponent() {
             try {
 
                 const response = await selectHospitalApi(hospitalId);
-                
+
                 if(response.data != "") {
                     // > 조회된 내용이 있다면
 
@@ -116,16 +116,16 @@ export default function HospitalDetailComponent() {
                                 </div>
 
                                 <div>
-                                    <dt>주소</dt>
-                                    <dd>{hospital.address}</dd>
-                                </div>
-
-                                <div>
                                     <dt>전화번호</dt>
                                     <dd>{hospital.phone}</dd>
                                 </div>
 
-                                <div>
+                                <div className="full-row">
+                                    <dt>주소</dt>
+                                    <dd>{hospital.address}</dd>
+                                </div>
+
+                                <div className="full-row">
                                     <dt>검진가능 항목</dt>
                                     <dd>
                                         <label>
@@ -175,7 +175,7 @@ export default function HospitalDetailComponent() {
                                     </dd>
                                 </div>
 
-                                <div>
+                                <div className="full-row">
                                     <dt>병원 홈페이지</dt>
                                     <dd><a href={hospital.url.startsWith('http') ? hospital.url : `https://${hospital.url}`}
                                            target="_blank"
@@ -184,13 +184,13 @@ export default function HospitalDetailComponent() {
                                             >
                                             {hospital.url || "-"}</a></dd>
                                 </div>
-                                <div></div>
-                                <div>
+                                
+                                <div className="full-row">
                                     <dt>병원 안내</dt>
                                     <dd>{hospital.description || "-"}</dd>
                                 </div>
-                                <div></div>
-                                <div>
+                                
+                                <div className="full-row">
                                     <dt>등록일</dt>
                                     <dd>{hospital.createdAt?.substring(0, 10)}</dd>
                                 </div>
