@@ -24,7 +24,7 @@ export function useHolidays() {
 
                 const response = await Promise.all(
                     years.map( year =>
-                        fetch(`http://localhost:8006/consultation/holidays?solYear=${year}`)
+                        fetch(`/consultation/holidays?solYear=${year}`)
                             .then(res => res.json())
                     )
                 );

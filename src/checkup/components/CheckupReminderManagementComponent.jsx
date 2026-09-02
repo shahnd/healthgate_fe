@@ -4,7 +4,7 @@ import { Stethoscope } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 const CHECKUP_API_URL =
-  'http://localhost:8006/healthgate/checkups'
+  '/healthgate/checkups'
 
 const INITIAL_SETTING_FORM = {
   settingType: 'INCOMPLETE',

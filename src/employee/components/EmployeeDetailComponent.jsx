@@ -27,14 +27,14 @@ export default function EmployeeDetailComponent() {
 
             try {
                 const response = await axios.get(
-                    `http://localhost:8006/healthgate/employees/${id}`
+                    `/healthgate/employees/${id}`
                 );
                 console.log(response.data.data);
 
                 setData(response.data.data);
 
                 const response2 = await axios.get(
-                    `http://localhost:8006/healthgate/biometrics/${id}`
+                    `/healthgate/biometrics/${id}`
                 );
 
                 const formatted = response2.data.data.map((d) => {
@@ -72,7 +72,7 @@ export default function EmployeeDetailComponent() {
         try {
 
             await axios.delete(
-                `http://localhost:8006/healthgate/employees/${id}`
+                `/healthgate/employees/${id}`
             );
 
             alert("삭제 성공");

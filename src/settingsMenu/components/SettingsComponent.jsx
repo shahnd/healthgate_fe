@@ -46,7 +46,7 @@ export default function SettingsComponent() {
 
         const getSettings = async () => {
             try {
-                const response = await axios.get("http://localhost:8006/healthgate/risks");
+                const response = await axios.get("/healthgate/risks");
 
                 setData(response.data.data);
 
@@ -81,7 +81,7 @@ export default function SettingsComponent() {
     const handleSubmit = async () => {
 
         try {
-            const response = await axios.put("http://localhost:8006/healthgate/risks", data);
+            const response = await axios.put("/healthgate/risks", data);
 
             if (response.data.success) {
                 alert("설정이 적용되었습니다.")

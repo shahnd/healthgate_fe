@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8006/healthgate/hospitals";
+const BASE_URL = "/healthgate/hospitals";
 
 // 검진가능 병원 검색용+ 조회용 
 const searchHospitalListApi = params => {

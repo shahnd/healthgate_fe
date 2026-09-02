@@ -30,7 +30,7 @@ export default function EmployeeCreateComponent() {
 
         const getInitInfo = async () => {
             try {
-                const response = await axios.get('http://localhost:8006/healthgate/employees/init')
+                const response = await axios.get('/healthgate/employees/init')
 
                 setDlist(response.data.data.departmentList);
                 setPlist(response.data.data.positionList);
@@ -72,7 +72,7 @@ export default function EmployeeCreateComponent() {
         }
 
         try {
-            const response = await axios.post('http://localhost:8006/healthgate/employees', sendData);
+            const response = await axios.post('/healthgate/employees', sendData);
 
             alert("직원 등록에 성공했습니다.")
             navigate('/employees')

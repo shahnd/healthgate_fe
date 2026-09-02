@@ -232,7 +232,7 @@ export default function BioInputComponent() {
     }
 
     try {
-      await axios.post('http://localhost:8006/healthgate/biometrics', finalData);
+      await axios.post('/healthgate/biometrics', finalData);
     } catch(error) {
       console.log("데이터 전송 통신 실패");
     }
