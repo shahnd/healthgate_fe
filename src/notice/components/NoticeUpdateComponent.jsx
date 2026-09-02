@@ -9,6 +9,7 @@ import { useUserInfo } from "../../store/useAuthStore";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Megaphone } from "lucide-react";
 import PageHeader from '@/common/components/PageHeader';
@@ -20,9 +21,12 @@ export default function NoticeUpdateComponent() {
 
      // 실행할 구문
     // 우선 글번호 먼저 뽑기
-    const noticeId = useLocation().state.noticeId;
+    const noticeId = useLocation().state?.noticeId;
 
     let navigate = useNavigate();
+
+    // 조회후 초기화를 위한 백업용
+    const [initialNotice, setInitialNotice] = useState(null);
 
     const user = useUserInfo();
 
@@ -55,6 +59,7 @@ export default function NoticeUpdateComponent() {
                 const response = await selectNoticeFormApi(noticeId);
 
                 setNotice(response.data.notice);
+                setInitialNotice(response.data.notice); // 원본 백업
                 setNoticeFile(response.data.noticeFile || {
                                                 noticeFileId: "",
                                                 originName: "",
@@ -81,6 +86,21 @@ export default function NoticeUpdateComponent() {
         newNotice[e.target.name] = e.target.value;
 
         setNotice(newNotice);
+    };
+
+    const handleReset = () => {
+        if (initialNotice) {
+            setNotice(initialNotice);
+            
+        }
+    };
+
+    // 엔터키 누를때 자동 제출 막음
+    const handleKeyDown = (e) => {
+        // input 태그 등에서 Enter키 입력 시 submit 방지 (Textarea에서의 Enter는 줄바꿈이므로 제외)
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
     };
 
     // 수정하기 버튼 클릭 시 실행할 이벤트 핸들러 함수
@@ -121,7 +141,6 @@ export default function NoticeUpdateComponent() {
             formData.append("count", notice.count);
             formData.append("status", notice.status);
             formData.append("authorId", user.Id);
-            // > 작성자의 id 만 넘기고 싶으면 "객체명.필드명" 키값으로 넘기면 됨!!
 
             // 새로운 첨부파일 정보도 넘기기
             if(reupfile.files.length == 1) {
@@ -153,13 +172,13 @@ export default function NoticeUpdateComponent() {
     };
 
     return (
-        <div className="detail-page">
+        <div className="detail-page w-full">
            <PageHeader 
             title="공지사항 수정" 
             description="공지사항 정보를 수정 합니다." 
             icon={Megaphone}/>
-            
-            <Card className="detail-info-card">
+    
+            <Card className="detail-info-card w-full">
 
                 <CardHeader>
                     <CardTitle>공지사항 정보 수정</CardTitle>
@@ -168,43 +187,53 @@ export default function NoticeUpdateComponent() {
                     </CardDescription>
                 </CardHeader>
 
-                <form>
+                <form onSubmit={updateNotice} onKeyDown={handleKeyDown}>
                     <CardContent>
                        <dl>
-                            <div>
+                            <div className="full-row">
                                 <Label htmlFor="title">제목</Label>
                                 <Input 
                                     id="title"  
                                     type="text" 
                                     name="title" 
-                                    value={ notice.title }
+                                    value={ notice.title || ""}
                                     onChange={ handleChange } required/>
                             </div>
-                            <div></div>
-                            <div>
+                            
+                            <div className="full-row w-full">
                                 <Label htmlFor="content">내용</Label>
-                                <Input 
+                                
+                                <div className="relative w-full">
+                                    <Textarea
                                         id="content"
-                                        name="content" 
-                                        value={ notice.content }
-                                        onChange={ handleChange } required/>
+                                        name="content"
+                                        rows={6} // 기본 세로 줄 수 지정 (높이 조절)
+                                        className="w-full min-h-[250px] resize-y pb-6" // 최소 높이 설정 및 세로 리사이즈 허용
+                                        value={notice.content || ""}
+                                        onChange={handleChange}
+                                        required/>
+                                
+                                    {/* 실시간 글자 수 표시 */}
+                                    <span className="absolute bottom-3 right-3 text-xs text-gray-400 pointer-events-none">
+                                        {(notice.content || "").length}글자
+                                    </span> 
+                                </div>     
                             </div>
-                            <div></div>
-                            <div>
+                            
+                            <div className="full-row">
                                 <Label>기존첨부파일</Label>
                                 <span>
                                     {
                                         ( noticeFile && noticeFile.originName ? 
-                                        (<a href={ `${ BASE_URL }/download/${ noticeFile.savedName }/${ noticeFile.originName }` }>
-                                            { noticeFile.originName }
-                                        </a>) : 
+                                        (<p>{ noticeFile.originName }</p>
+                                        ) : 
                                         "첨부파일이 없습니다."
                                         )
                                     }
                                 </span>
                             </div>
-                            <div></div>
-                            <div>
+                            
+                            <div className="full-row">
                                 <Label>수정할첨부파일</Label>
                                 {/* 수정할 첨부파일을 입력받는 용도 */}
                                 <Input
@@ -221,10 +250,14 @@ export default function NoticeUpdateComponent() {
                         <Button 
                             type="submit" 
                             size="lg" className="cursor-pointer"
-                            variant="outline"
-                            onClick={ updateNotice }>
+                            variant="outline">
                             수정하기
                         </Button>
+                        <Button
+                            size="lg" className="cursor-pointer"
+                            type="button"
+                            variant="outline"
+                            onClick={handleReset}>초기화</Button>
                         <Button 
                         className="secondary-button" 
                         type="button" 
