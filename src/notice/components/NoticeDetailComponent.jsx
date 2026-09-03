@@ -99,10 +99,10 @@ export default function NoticeDetailComponent() {
     };
 
     // 첨부파일 클릭시 다운로드실행할 이벤트 핸들러 함수
-    const handleDownload = async (savedName, noticeFileId) => {
+    const handleDownload = async (noticeFileId) => {
 
             try {
-                const response = await downloadNoticeFileApi(savedName, noticeFileId);
+                const response = await downloadNoticeFileApi(noticeFileId);
 
                 const blob = new Blob([response.data]);
                 const downloadUrl = window.URL.createObjectURL(blob);
@@ -164,7 +164,7 @@ export default function NoticeDetailComponent() {
                                     <dd>
                                         {noticeFile && noticeFile.originName ? (
                                             <span
-                                                onClick={ () => handleDownload(noticeFile.savedName, noticeFile.noticeFileId)}
+                                                onClick={ () => handleDownload(noticeFile.noticeFileId)}
                                             >  {noticeFile.originName}
                                             </span>
                                             ) : (

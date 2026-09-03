@@ -195,7 +195,7 @@ export default function NoticeUpdateComponent() {
                                 <span>
                                     {
                                         ( noticeFile && noticeFile.originName ? 
-                                        (<a href={ `${ BASE_URL }/download/${ noticeFile.savedName }/${ noticeFile.originName }` }>
+                                        (<a href={ `${ BASE_URL }/download/${ noticeFile.originName }` }>
                                             { noticeFile.originName }
                                         </a>) : 
                                         "첨부파일이 없습니다."
