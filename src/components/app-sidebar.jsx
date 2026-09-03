@@ -128,7 +128,7 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<a href="/bioinput" />}>
               <img
-                src="/healthgate_logo.png"
+                src="/logo.png"
                 alt="logo"
                 className="size-10! object-contain"
               />
