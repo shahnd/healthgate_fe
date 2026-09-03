@@ -27,13 +27,14 @@ export default function EmployeeDetailComponent() {
 
             try {
                 const response = await axios.get(
-                    `http://localhost:8006/healthgate/employees/${id}`
+                    `/healthgate/employees/${id}`
                 );
+                console.log(response.data.data);
 
                 setData(response.data.data);
 
                 const response2 = await axios.get(
-                    `http://localhost:8006/healthgate/biometrics/${id}`
+                    `/healthgate/biometrics/${id}`
                 );
 
                 const formatted = response2.data.data.map((d) => {
@@ -71,7 +72,7 @@ export default function EmployeeDetailComponent() {
         try {
 
             await axios.delete(
-                `http://localhost:8006/healthgate/employees/${id}`
+                `/healthgate/employees/${id}`
             );
 
             alert("삭제 성공");
@@ -82,6 +83,12 @@ export default function EmployeeDetailComponent() {
             console.log("직원정보 삭제 통신 실패");
         }
     };
+
+    const ROLE_MAP = {
+        EMPLOYEE: "직원",
+        HR_ADMIN: "인사관리자",
+        HEALTH_ADMIN: "보건관리자"
+    }
 
 
     return (
@@ -144,6 +151,10 @@ export default function EmployeeDetailComponent() {
                                     <dd>{data.positions?.name || "직급 미지정"}</dd>
                                 </div>
                                 <div>
+                                    <dt>권한</dt>
+                                    <dd>{ROLE_MAP[data.role] || "권한 미지정"}</dd>
+                                </div>
+                                <div>
                                     <dt>이메일</dt>
                                     <dd>{data.email || "-"}</dd>
                                 </div>
@@ -175,41 +186,43 @@ export default function EmployeeDetailComponent() {
 
                 {activeTab === "health" && (
                     <section data-detail-section="health">
-                        {/* 기존 MetricLineChart 3개 */}
-                        <MetricLineChart
-                            data={bioData}
-                            title="심박수"
-                            unit="bpm"
-                            yDomain={[40, 160]}
-                            lines={[
-                                {
-                                    dataKey: "heartRate",
-                                    name: "심박수",
-                                    color: "#ef4444",
-                                },
-                            ]}
-                        />
+                        <div className="grid grid-cols-2 gap-8">
+                            <MetricLineChart
+                                data={bioData}
+                                title="심박수"
+                                unit="bpm"
+                                yDomain={[40, 160]}
+                                lines={[
+                                    {
+                                        dataKey: "heartRate",
+                                        name: "심박수",
+                                        color: "#ef4444",
+                                    },
+                                ]}
+                            />
 
-                        <MetricLineChart
-                            data={bioData}
-                            title="혈압"
-                            unit="mmHg"
-                            yDomain={[40, 160]}
-                            lines={[
-                                {
-                                    dataKey: "systolicBp",
-                                    name: "최고혈압",
-                                    color: "#3b82f6",
-                                },
-                                {
-                                    dataKey: "diastolicBp",
-                                    name: "최저혈압",
-                                    color: "#60a5fa",
-                                },
-                            ]}
-                        />
+                            <MetricLineChart
+                                data={bioData}
+                                title="혈압"
+                                unit="mmHg"
+                                yDomain={[40, 160]}
+                                lines={[
+                                    {
+                                        dataKey: "systolicBp",
+                                        name: "최고혈압",
+                                        color: "#3b82f6",
+                                    },
+                                    {
+                                        dataKey: "diastolicBp",
+                                        name: "최저혈압",
+                                        color: "#60a5fa",
+                                    },
+                                ]}
+                            />
 
-                        <MetricLineChart
+                        </div>
+
+                        {/* <MetricLineChart
                             data={bioData}
                             title="체온"
                             unit="℃"
@@ -221,7 +234,7 @@ export default function EmployeeDetailComponent() {
                                     color: "#3b82f6",
                                 },
                             ]}
-                        />
+                        /> */}
                     </section>
                 )}
             </div>

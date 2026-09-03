@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8006/healthgate/consultation/reservations";
+const BASE_URL = "/healthgate/consultation/reservations";
 
 // 인가 체크
 const getAuthConfig = () => {
@@ -11,6 +11,16 @@ const getAuthConfig = () => {
     };
 };
 
+// 로그인 유저 정보 조회
+function LoginUserApi(id){
+    const response = axios({
+        url : `/healthgate/employees/${id}`,
+        method : "get",
+        ...getAuthConfig()
+    });
+
+    return response;
+}
 // 예약 목록 조회
 function selectAllReservationApi(scheduledDate) {
     const response = axios({
@@ -76,4 +86,4 @@ function cancelReservationApi (id) {
 }
 
 export { selectAllReservationApi, selectReservationApi, selectDateApi, saveReservationApi,
-         updateReservationApi, cancelReservationApi };
+         updateReservationApi, cancelReservationApi, LoginUserApi };

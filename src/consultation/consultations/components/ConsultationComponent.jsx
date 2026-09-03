@@ -8,6 +8,7 @@ import "@/common/styles/DetailComponent.css";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+import { Textarea } from "@/components/ui/textarea"
 
 export default function ConsultationComponent () {
     // ============================ 객체 및 보조 함수
@@ -38,6 +39,9 @@ export default function ConsultationComponent () {
         createdAt : "",
         consultatedAt : ""
     });
+
+    // content 변경 판별용
+    const [isModified, setIsModified] = useState("");
 
     // 수정모드 판별용 변수
     const isEditMode = consultation.content && consultation.content.trim() != "";
@@ -79,6 +83,7 @@ export default function ConsultationComponent () {
                 const response = await selectConsultationApi(id);
                 console.log(response.data);
                 setConsultation(response.data);
+                setIsModified(response.data.content || "");
             } catch (error) {
                 console.log("상담일지 조회용 통신 실패" + error);
             }
@@ -89,6 +94,18 @@ export default function ConsultationComponent () {
     // 작성/수정하기 버튼 클릭 시
     const saveConsultation = async e => {
         e.preventDefault();
+
+        // 상담 내용 입력 검증
+        if(!consultation.content || !consultation.content.trim()) {
+            alert("상담 내용을 입력해주세요.");
+            return;
+        }
+
+        // 미완료 상태 저장 방지
+        if(consultation.status === "RESERVED") {
+            alert("상담 상태를 완료 또는 취소로 변경해주세요.");
+            return;
+        }
 
         try {
             const saveData = {
@@ -105,12 +122,13 @@ export default function ConsultationComponent () {
 
                 const msg = isEditMode ? "일지를 수정했습니다." : "일지를 등록했습니다.";
                 alert(msg);
-                navigate("/consultation/list")
+                navigate(`/consultation/detail/${id}`)
             } else {
 
-                alert("일지 작성에 실패했습니다. 다시 시도해주세요.");
+                alert("일지 작성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
             }
         } catch (error) {
+            alert("일지 작성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
             console.log("일지 등록/수정 통신 실패" + error);
         }
     }
@@ -184,11 +202,12 @@ export default function ConsultationComponent () {
                                 </dd>
                             </div>
 
-                            <div>
+                            <div style={{ gridColumn: "1 / -1" }}>
                                 <dt>상담내용</dt>
                                 <dd>
-                                    <textarea
+                                    <Textarea
                                         name="content"
+                                        style={{ resize : "none", height : "150px"}}
                                         onChange={handleChange}
                                         value={consultation.content}
                                     />
@@ -211,6 +230,11 @@ export default function ConsultationComponent () {
                             type="button"
                             variant="outline"
                             onClick={() => {
+                                // 저장 안 됨 안내창 추가
+                                const isDirty = consultation !== isModified;
+                                if(isDirty && !confirm("작성중인 내용이 저장되지 않습니다. 정말 나가시겠습니까?")) {
+                                    return;
+                                }
                                 navigate(-1);
                             }}
                         >

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Building2 } from "lucide-react";
 
 import "@/common/styles/FormComponent.css";
@@ -17,6 +18,9 @@ export default function HospitalUpdateComponent() {
 
     // 실행할 구문
     const hospitalId = useLocation().state.hospitalId;
+
+    // 조회후 초기화를 위한 백업용
+    const [initialHospital, setInitialHospital] = useState(null);
 
     let navigate = useNavigate();
 
@@ -43,6 +47,7 @@ export default function HospitalUpdateComponent() {
                 const response = await selectHospitalApi(hospitalId);
 
                 setHospital(response.data);
+                setInitialHospital(response.data); // 원본 백업
 
             } catch(error) {
 
@@ -65,10 +70,20 @@ export default function HospitalUpdateComponent() {
         }));
     };
 
+    // 초기화 버튼 누르면 이전값 불러옴
     const  handleReset = () => {
-            
+           if (initialHospital) {
+              setHospital(initialHospital);
+           }
     };
 
+    // 엔터키 누를때 자동 제출 막음
+    const handleKeyDown = (e) => {
+        // input 태그 등에서 Enter키 입력 시 submit 방지 (Textarea에서의 Enter는 줄바꿈이므로 제외)
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
+    };
 
     // 수정 버튼 클릭 시 실행할 함수
     const updateHospital = async e => {
@@ -98,13 +113,13 @@ export default function HospitalUpdateComponent() {
                 { base: "LungCancerExamAvailable", key1: "lungCancerExamAvailable", key2: "isLungCancerExamAvailable" }
             ];
 
-  exams.forEach(item => {
-    const val = isChecked(item.key1, item.key2);
-    // is가 안 붙은 형태
-    params.append(item.key1, val);
-    // is가 붙은 형태
-    params.append(item.key2, val);
-  });
+            exams.forEach(item => {
+            const val = isChecked(item.key1, item.key2);
+            // is가 안 붙은 형태
+            params.append(item.key1, val);
+            // is가 붙은 형태
+            params.append(item.key2, val);
+            });
 
         try {
             const response = await updateHospitalApi(hospitalId, params);
@@ -144,7 +159,7 @@ export default function HospitalUpdateComponent() {
                     </CardDescription>
                 </CardHeader>
 
-                <form onSubmit={updateHospital}>
+                <form onSubmit={updateHospital} onKeyDown={handleKeyDown}>
                     <CardContent>
                         <dl>
                             <div>
@@ -154,18 +169,6 @@ export default function HospitalUpdateComponent() {
                                     type="text"
                                     name="name"
                                     value={hospital.name || ""}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="address">주소</Label>
-                                <Input
-                                    id="address"
-                                    type="text"
-                                    name="address"
-                                    value={hospital.address || ""}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -182,7 +185,19 @@ export default function HospitalUpdateComponent() {
                                 />
                             </div>
 
-                            <div>
+                            <div className="full-row">
+                                <Label htmlFor="address">주소</Label>
+                                <Input
+                                    id="address"
+                                    type="text"
+                                    name="address"
+                                    value={hospital.address || ""}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="full-row">
                                 <Label htmlFor="url">병원 홈페이지</Label>
                                 <Input
                                     id="url"
@@ -193,17 +208,26 @@ export default function HospitalUpdateComponent() {
                                 />
                             </div>
 
-                            <div>
-                                <Label htmlFor="description">병원 안내</Label>
-                                <Input
-                                    id="description"
-                                    name="description"
-                                    value={hospital.description || ""}
-                                    onChange={handleInputChange}
-                                />
+                            <div className="full-row w-full">
+                                <Label htmlFor="description">병원 안내</Label>  
+                                <div className="relative w-full">
+                                    <Textarea
+                                        id="description"
+                                        name="description"
+                                        rows={6} // 기본 세로 줄 수 지정 (높이 조절)
+                                        className="w-full min-h-[250px] resize-y pb-6" // 최소 높이 설정 및 세로 리사이즈 허용
+                                        value={hospital.description || ""}
+                                        onChange={handleInputChange}
+                                    />
+                                
+                                    {/* 실시간 글자 수 표시 */}
+                                    <span className="absolute bottom-3 right-3 text-xs text-gray-400 pointer-events-none">
+                                        {(hospital.description || "").length}글자
+                                    </span>
+                                </div>  
                             </div>
 
-                            <div>
+                            <div className="full-row">
                                 <Label>검진가능 항목</Label>
 
                                 <div>
@@ -262,6 +286,13 @@ export default function HospitalUpdateComponent() {
                     </CardContent>
 
                     <CardFooter>
+                        <Button
+                            size="lg" className="cursor-pointer" 
+                            onClick={() => navigate(`/hospitals/${hospitalId}`)}
+                        >
+                            이전으로
+                        </Button>
+
                         <Button
                             size="lg" className="cursor-pointer"
                             type="button"

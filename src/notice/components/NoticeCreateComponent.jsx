@@ -43,6 +43,14 @@ export default function NoticeCreateComponent() {
         setNotice(newNotice);
     };
 
+    // 엔터키 누를때 자동 제출 막음
+    const handleKeyDown = (e) => {
+        // input 태그 등에서 Enter키 입력 시 submit 방지 (Textarea에서의 Enter는 줄바꿈이므로 제외)
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
+    };
+
     // 작성하기 버튼 클릭 시 실행할 이벤트 핸들러 함수
     const insertNotice = async e => {
 
@@ -88,13 +96,13 @@ export default function NoticeCreateComponent() {
         }
     };
     return (
-        <div className="detail-page">
+        <div className="detail-page w-full">
             <PageHeader 
             title="공지사항 등록" 
             description="공지사항을 등록 합니다." 
             icon={Megaphone}/>
 
-            <Card className="detail-info-card">
+            <Card className="detail-info-card w-full">
                 <CardHeader>
                     <CardTitle>공지사항 등록</CardTitle>
                     <CardDescription>
@@ -102,10 +110,10 @@ export default function NoticeCreateComponent() {
                     </CardDescription>
                 </CardHeader>
 
-                <form>  
+                <form onSubmit={insertNotice} onKeyDown={handleKeyDown}>  
                     <CardContent>
                         <dl>
-                            <div>
+                            <div className="full-row">
                                 <Label htmlFor="title">제목</Label>
                                 <Input 
                                     id="title"
@@ -115,18 +123,28 @@ export default function NoticeCreateComponent() {
                                     onChange={ handleChange } 
                                     required/> 
                             </div>
-                            <div></div>
-                            <div>
+                            
+                            <div className="full-row w-full">
                                 <Label htmlFor="content">내용</Label>
-                                <Textarea
-                                    id="content" 
-                                    name="content" 
-                                    value={ notice.content }
-                                    onChange={ handleChange } 
-                                    required ></Textarea>
+                                
+                                <div className="relative w-full">
+                                    <Textarea
+                                        id="content"
+                                        name="content"
+                                        rows={6} // 기본 세로 줄 수 지정 (높이 조절)
+                                        className="w-full min-h-[250px] resize-y pb-6" // 최소 높이 설정 및 세로 리사이즈 허용
+                                        value={notice.content || ""}
+                                        onChange={handleChange}
+                                        required/>
+                                
+                                    {/* 실시간 글자 수 표시 */}
+                                    <span className="absolute bottom-3 right-3 text-xs text-gray-400 pointer-events-none">
+                                        {(notice.content || "").length}글자
+                                    </span> 
+                                </div>     
                             </div>
-                            <div></div>
-                            <div>
+                            
+                            <div className="full-row">
                                 <Label>첨부파일</Label>
                                 <Input 
                                     id="file"
@@ -147,10 +165,13 @@ export default function NoticeCreateComponent() {
                                             } }>
                             초기화
                         </Button>
-                        <Button size="lg" className="cursor-pointer" type="button"
+                        <Button size="lg" 
+                                className="cursor-pointer" 
+                                type="button"
                                 onClick={() => { navigate("/notices/list");} }>취소</Button> 
-                        <Button size="lg" className="cursor-pointer" type="submit" 
-                                onClick={ insertNotice }>등록</Button>
+                        <Button size="lg" 
+                                className="cursor-pointer" 
+                                type="submit" >등록</Button>
                     </CardFooter>
                 </form>  
             </Card>

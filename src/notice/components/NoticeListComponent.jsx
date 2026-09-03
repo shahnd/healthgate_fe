@@ -4,6 +4,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { selectNoticeListApi, searchNoticeListApi } from "../api/NoticeApi";
 
+import { useUserInfo } from "../../store/useAuthStore";
+
 import NoticeItemComponent from "./NoticeItemComponent";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -34,6 +36,12 @@ export default function NoticeListComponent() {
     const [dataList, setDataList] = useState([]);
 
     const [pageList, setPageList] = useState([]);
+
+    const user = useUserInfo();
+
+    // 권한 확인
+    const userRole = user?.role  || "";
+    const canCreateNotice = ["HR_ADMIN", "HEALTH_ADMIN"].includes(userRole);
 
     useEffect(() => {
 
@@ -120,6 +128,7 @@ export default function NoticeListComponent() {
         setDataList(trArr);
 
         const pageInfo = response.data.pi;
+        setTotalPages(pageInfo.maxPage);
 
         const btnArr = [];
 
@@ -206,13 +215,16 @@ export default function NoticeListComponent() {
                         placeholder="제목을 입력하세요"
                         value={ keyword } 
                         onChange={ handleChange }
-                        className="w-[500px]" />
+                        style={{ flex: "0 0 350px", width: "350px" }} />
                     <Button type="submit" size="sm"
                             onClick={ handleClick }>검색</Button>
                 </div>
-                <Button size="lg" className="cursor-pointer" type="button" onClick={ () => navigate("/notices/new")}>
+                {canCreateNotice && (
+                    <Button size="lg" className="cursor-pointer" type="button" onClick={ () => navigate("/notices/new")}>
                             + 공지사항 등록
-                </Button>
+                    </Button>
+                )}
+                
             </form>
            
            

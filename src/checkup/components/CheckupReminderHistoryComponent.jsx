@@ -28,7 +28,7 @@ import PageHeader from "@/common/components/PageHeader";
 import { Stethoscope } from "lucide-react";
 
 const CHECKUP_API_URL =
-  "http://localhost:8006/healthgate/checkups";
+  "/healthgate/checkups";
 
 const CHANNEL_FILTER_LABELS = {
   ALL: "전체 채널",
@@ -50,10 +50,10 @@ export default function CheckupReminderHistoryComponent() {
 
   // 화면 표시용 필터
   const [channelFilter, setChannelFilter] =
-    useState("전체 채널");
+    useState("ALL");
 
   const [typeFilter, setTypeFilter] =
-    useState("전체 구분");
+    useState("ALL");
 
   /**
    * 알림 발송 이력 조회

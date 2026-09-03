@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import ReservationCalendar from "./ReservationCalendar";
 import { useNavigate, useParams } from "react-router-dom";
-import { saveReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
-import "../styles/reservationCalendar.css";
+import { LoginUserApi, saveReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
+import "../styles/calendar.css";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useHolidays } from "../api/useHolidays";
 import axios from "axios";
 import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
@@ -11,7 +12,7 @@ import "@/common/styles/DetailComponent.css";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ReservationComponent() {
 
@@ -63,14 +64,17 @@ export default function ReservationComponent() {
 
     // 날짜 포맷팅
     const formatDate = (targetDate) => {
-            // 날짜 객체에서 연월 추출 - 'YYYY-MM-DD' 형식으로
-            const year = targetDate.getFullYear();
-            const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-            const day = String(targetDate.getDate()).padStart(2, '0');
+        // 날짜 객체에서 연월 추출 - 'YYYY-MM-DD' 형식으로
+        const year = targetDate.getFullYear();
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const day = String(targetDate.getDate()).padStart(2, '0');
 
-            // 백엔드에 전달할 형식으로 가공
-            return `${year}-${month}-${day}`;
+        // 백엔드에 전달할 형식으로 가공
+        return `${year}-${month}-${day}`;
     }
+
+    // 공휴일
+    const { holidayStr } = useHolidays();
 
     // 날짜 선택 이벤트 핸들러
     const handleSelectDate = async slotInfo => {
@@ -179,10 +183,9 @@ export default function ReservationComponent() {
             if(!isEditMode && loginUserId) {
                 try {
 
-                const response = await axios.get(
-                    `http://localhost:8006/healthgate/employees/${user.id}`
-                );
-                
+                const response = await LoginUserApi(user.id);
+                console.log(response.data.data)
+                console.log(response.data)
                 if(response.data && response.data.data) {
                     const empData = response.data.data;
                     setReservationData(prev => ({
@@ -326,14 +329,22 @@ export default function ReservationComponent() {
             const response = await saveReservationApi(reservationData);
 
             if(response.data != "") {
+
                 alert("상담 신청이 예약되었습니다.")
             } else {
-                alert("상담 신청 예약에 실패했습니다. 다시 시도해주세요.");
+
+                alert("상담 신청 예약에 실패했습니다. 잠시 후 다시 시도해주세요.");
             }
 
             navigate("/consultation/reservation/list");
 
         } catch (error) {
+
+            if(error.response?.status === 409) {
+                alert("이미 예약된 일시입니다. 다시 선택해주세요.")
+            } else {
+                alert("상담 신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+            }
             console.log("상담 신청 통신 실패" + error);
         }
 
@@ -395,6 +406,7 @@ export default function ReservationComponent() {
                                     selectedDate={selectedDate}
                                     currentDate={currentDate}
                                     onNavigate={setCurrentDate}
+                                    holidays={holidayStr}
                                 />
                             </div>
 
@@ -410,9 +422,10 @@ export default function ReservationComponent() {
 
                         <div className="mt-5">
                             <Label htmlFor="consultationContent">신청 사유</Label>
-                            <textarea
+                            <Textarea
                                 id="consultationContent"
                                 name="consultationContent"
+                                style={{ resize : "none"}}
                                 placeholder="신청 사유를 입력하세요."
                                 value={reservationData.reason}
                                 onChange={handleChange}

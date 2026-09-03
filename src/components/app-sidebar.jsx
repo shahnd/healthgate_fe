@@ -12,34 +12,34 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useUserInfo } from "@/store/useAuthStore"
-import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon, LayoutDashboardIcon, ChartAreaIcon, MessageCircle, Stethoscope } from "lucide-react"
+import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon, LayoutDashboardIcon, ChartAreaIcon, MessageCircle, Stethoscope, BriefcaseIcon, ShieldAlertIcon } from "lucide-react"
 
 
 const data = {
   navMain: [
     {
-      title: "메인",
-      isActive: true,
+      title: "대시보드",
       icon: (
         <LayoutDashboardIcon />
       ),
-      items: [
-        {
-          title: "대시보드",
-          url: "/dashboard",
-        },
-        {
-          title: "출근자 건강 정보",
-          url: "/attendance",
-        },
-        {
-          title: "오늘의 안전 브리핑",
-          url: "/safety-briefings/today",
-        },
-      ],
+      url: "/dashboard",
     },
     {
-      title: "보건 상담 관리",
+      title: "출근자 건강 정보",
+      url: "/attendance",
+      icon: (
+        <BriefcaseIcon/>
+      )
+    },
+    {
+      title: "오늘의 안전 브리핑",
+      url: "/safety-briefings/today",
+      icon: (
+        <ShieldAlertIcon/>
+      )
+    },
+    {
+      title: "보건 상담",
       isActive: true,
       icon: (
         <MessageCircle/>
@@ -54,20 +54,20 @@ const data = {
           url: "/consultation/reservation",
         },
         {
-          title: "상담 내역 조회",
+          title: "상담 목록 조회",
           url: "/consultation/list",
         },
       ],
     },
     {
-      title: "건강검진 관리",
+      title: "건강검진",
       isActive: true,
       icon: (
         <Stethoscope/>
       ),
       items: [
         {
-          title: "검진 대상자 목록",
+          title: "검진 대상자 목록 조회",
           url: "/checkup/targets",
         },
         {
@@ -85,36 +85,21 @@ const data = {
       icon: (
         <Building2Icon/>
       ),
-      items: [
-        {
-          title: "병원 관리",
-          url: "/hospitals/list",
-        },
-      ],
+      url: "/hospitals/list",
     },
     {
       title: "공지사항",
       icon: (
         <MegaphoneIcon/>
       ),
-      items: [
-        {
-          title: "공지사항 관리",
-          url: "/notices/list",
-        },
-      ],
+      url: "/notices/list",
     },
     {
       title: "직원",
       icon: (
         <UsersIcon/>
       ),
-      items: [
-        {
-          title: "직원 관리",
-          url: "/employees",
-        },
-      ],
+      url: "/employees",
     },
   ],
   navSecondary: [
@@ -141,11 +126,11 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="/dashboard" />}>
-              <img 
-                src="/public/healthgate_logo.png" 
-                alt="logo" 
-                className="size-10! object-contain" 
+              render={<a href="/bioinput" />}>
+              <img
+                src="/logo.png"
+                alt="logo"
+                className="size-10! object-contain"
               />
               <span className="text-base font-semibold">
                 <span className="text-primary">Health</span>Gate

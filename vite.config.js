@@ -12,8 +12,8 @@ const __dirname = path.dirname(__filename)
 export default defineConfig({
   server: {
     proxy: {
-      "/healthgate": {
-        target: "http://localhost:8006",
+      "/healthgate/": {
+        target: "http://localhost:8006/",
         changeOrigin: true,
       },
     },

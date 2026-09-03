@@ -4,7 +4,7 @@ import { Stethoscope } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 const CHECKUP_API_URL =
-  'http://localhost:8006/healthgate/checkups'
+  '/healthgate/checkups'
 
 const INITIAL_SETTING_FORM = {
   settingType: 'INCOMPLETE',
@@ -537,8 +537,6 @@ export default function CheckupReminderManagementComponent() {
             </tbody>
           </table>
         </div>
-      </section>
-
       {/* 알림 발송 이력 */}
       <section
         className="

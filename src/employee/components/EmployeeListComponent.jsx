@@ -52,10 +52,10 @@ export default function EmployeeListComponent() {
         const getEmployees = async () => {
             try {
                 const [listRes, initRes] = await Promise.all([
-                    axios.get("http://localhost:8006/healthgate/employees", {
+                    axios.get("/healthgate/employees", {
                         params: { page, size, ...condition },
                     }),
-                    axios.get("http://localhost:8006/healthgate/employees/init"),
+                    axios.get("/healthgate/employees/init"),
                 ]);
 
                 setEmployees(listRes.data.data.content);
@@ -120,7 +120,9 @@ export default function EmployeeListComponent() {
                         onValueChange={(value) => handleImmediateChange("positionId", value)}
                     >
                         <SelectTrigger className="w-[140px]" size="sm">
-                            <SelectValue placeholder="직급 전체" />
+                            <SelectValue placeholder="직급 전체">
+                                {plist.find((p) => String(p.id) === String(condition.positionId))?.name}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -139,7 +141,9 @@ export default function EmployeeListComponent() {
                         onValueChange={(value) => handleImmediateChange("departmentId", value)}
                     >
                         <SelectTrigger className="w-[140px]" size="sm">
-                            <SelectValue placeholder="부서 전체" />
+                            <SelectValue placeholder="부서 전체">
+                                {dlist.find((d) => String(d.id) === String(condition.departmentId))?.name}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -159,7 +163,7 @@ export default function EmployeeListComponent() {
                 </div>
 
                 <Button size="sm" onClick={() => navigate("/employees/new")} size="lg" className="cursor-pointer">
-                    직원 등록
+                    + 직원 등록
                 </Button>
             </div>
 
