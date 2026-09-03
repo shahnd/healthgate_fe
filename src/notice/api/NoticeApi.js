@@ -128,12 +128,12 @@ const updateNoticeApi = (noticeId, formData) => {
 }
 
 // 공지사항 첨부파일 다운로드
-const downloadNoticeFileApi = (savedName,noticeFileId) => {
+const downloadNoticeFileApi = (noticeFileId) => {
 
      const token = localStorage.getItem("access_token");
 
      const response = axios({
-        url: `${ BASE_URL }/download/${savedName}/${noticeFileId}`,
+        url: `${ BASE_URL }/download/${noticeFileId}`,
         method : "get",
         headers : {
             'Authorization': token ? `Bearer ${token}` : '',
