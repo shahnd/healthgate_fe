@@ -1,12 +1,15 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, Megaphone } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export default function NoticeCardComponent({ notices = [] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>공지사항</CardTitle>
+        <div className="flex items-center gap-2">
+          <Megaphone className="h-4 w-4 text-muted-foreground"/>
+          <CardTitle>공지사항</CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="space-y-1">
         {notices.length === 0 && (

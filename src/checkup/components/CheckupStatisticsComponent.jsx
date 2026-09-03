@@ -121,24 +121,23 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
             </div>
           ) : (
             <>
-              <div className="flex flex-col items-center gap-8 py-4 sm:flex-row sm:justify-center">
+              <div className="flex flex-col items-center gap-20 sm:flex-row sm:justify-center">
                 <div
-                  className="grid size-36 shrink-0 place-items-center rounded-full"
+                  className="grid size-24 shrink-0 place-items-center rounded-full"
                   style={{
                     background: `conic-gradient(#2563eb ${safeCompletionRate * 3.6}deg, hsl(var(--muted)) 0deg)`,
                   }}
                 >
-                  <div className="grid size-28 place-items-center rounded-full bg-card">
+                  <div className="grid size-20 place-items-center rounded-full bg-card">
                     <strong className="text-3xl font-bold">{safeCompletionRate}%</strong>
                   </div>
                 </div>
 
                 <div className="w-full max-w-sm">
-                  <strong className="text-3xl font-bold">{safeCompletionRate}%</strong>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {statistics.completedCount ?? 0}명 / {statistics.totalCount ?? 0}명
                   </p>
-                  <div className="mt-4 h-3 overflow-hidden rounded-full bg-muted">
+                  <div className="mt-2 h-3 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full rounded-full bg-blue-600 transition-all duration-500"
                       style={{ width: `${safeCompletionRate}%` }}
@@ -147,7 +146,7 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 divide-x rounded-lg border bg-muted/30 mt-2">
+              <div className="grid grid-cols-3 divide-x rounded-lg border bg-muted/30 ">
                 <DashboardCount label="완료" value={statistics.completedCount} color="text-emerald-600" />
                 <DashboardCount label="미완료" value={statistics.incompleteCount} color="text-red-500" />
                 <DashboardCount label="전체" value={statistics.totalCount} color="text-foreground" />
