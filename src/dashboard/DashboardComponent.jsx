@@ -1,14 +1,15 @@
 import PageHeader from "@/common/components/PageHeader";
 import CheckupStatisticsComponent from "../checkup/components/CheckupStatisticsComponent";
 import "@/common/styles/ListComponent.css";
-import { LayoutDashboard } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronRight, LayoutDashboard, UserCheck } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import NoticeCardComponent from "./NoticeCardComponent";
 import TodayConsultationCard from "./TodayConsultationCard";
 import { useEffect, useState } from "react";
 import { selectNoticeListApi } from "@/notice/api/NoticeApi";
 import { selectConsultationListApi } from "@/consultation/consultations/api/consultationApi";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function DashboardComponent() {
     const total = 143;
@@ -101,9 +102,12 @@ export default function DashboardComponent() {
             <PageHeader title="대시보드" description="주요 건강 관리 현황을 확인합니다." icon={LayoutDashboard}/>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                <Card>
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
-                        <CardTitle>출근자 현황</CardTitle>
+                        <div className="flex items-center gap-2">
+                            <UserCheck className="h-4 w-4 text-muted-foreground"/>
+                            <CardTitle>출근자 현황</CardTitle>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         {data.map(({ label, count, color }) => (
@@ -121,14 +125,18 @@ export default function DashboardComponent() {
                         </div>
                         ))}
                     </CardContent>
+                    <CardFooter>
+                        <Link
+                            to="/attendance"
+                            className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground"
+                            >
+                            출근자 현황 전체보기 <ChevronRight className="h-3 w-3" />
+                        </Link>
+                    </CardFooter>
                 </Card>
+            <NoticeCardComponent notices={notices} />
             <CheckupStatisticsComponent dashboard />
-            <NoticeCardComponent
-                    notices={notices}
-                />
-                <TodayConsultationCard
-                    consultations={consultation}
-                />
+            <TodayConsultationCard consultations={consultation} />
 
             </div>
         </div>
