@@ -5,7 +5,7 @@ import { useAuthStore } from "../../../store/useAuthStore";
 import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/DetailComponent.css";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent,CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 import { Textarea } from "@/components/ui/textarea"
@@ -144,11 +144,6 @@ export default function ConsultationComponent () {
         <div className="detail-page">
             <PageHeader title="상담일지 작성" description="상담일지를 작성합니다." icon={MessageCircle}/>
             <Card className="detail-info-card">
-                <CardHeader>
-                    <CardTitle>상담 일지</CardTitle>
-                    <CardDescription>상담 내용을 작성하고 상담 상태를 변경해 주세요.</CardDescription>
-                </CardHeader>
-
                 <form className="consultation-form">
                     <CardContent>
                         <dl>
@@ -207,7 +202,7 @@ export default function ConsultationComponent () {
                                 <dd>
                                     <Textarea
                                         name="content"
-                                        style={{ resize : "none", height : "150px"}}
+                                        style={{ resize : "none", height : "265px"}}
                                         onChange={handleChange}
                                         value={consultation.content}
                                     />

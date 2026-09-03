@@ -131,14 +131,8 @@ export default function ConsultationDetailComponent () {
     return(
         <div className="detail-page">
             <PageHeader title="상담일지 상세조회" description="상담일지의 자세한 내용을 조회합니다." icon={MessageCircle}/>
-
             <Card className="detail-info-card">
-                <CardHeader>
-                    <CardTitle>상담 정보</CardTitle>
-                    <CardDescription>상담 신청 정보</CardDescription>
-                </CardHeader>
-
-                <CardContent>
+                <CardContent style={{ borderBottom : "none" }}>
                     <dl>
                         <div>
                             <dt>신청자</dt>
@@ -184,7 +178,7 @@ export default function ConsultationDetailComponent () {
 
                         <div>
                             <dt>상담내용</dt>
-                            <dd>
+                            <dd style={{ height : "250px" }}>
                                 {(!consultation.content || consultation.content === "")
                                     ? <span style={{ color: "#BBBBBB" }}>일지를 작성해주세요.</span>
                                     : consultation.content}

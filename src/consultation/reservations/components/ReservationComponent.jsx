@@ -4,15 +4,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LoginUserApi, saveReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
 import "../styles/calendar.css";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useHolidays } from "../api/useHolidays";
-import axios from "axios";
 import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/DetailComponent.css";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useHolidays } from "@/consultation/hooks/useHolidays";
+import "../styles/reservations.css";
 
 export default function ReservationComponent() {
 
@@ -96,22 +97,6 @@ export default function ReservationComponent() {
         fetchSchedules(slotInfo.start, isReturningToOriginalDate ? originalTurn : "");
     }
 
-    // 차시 선택 이벤트 핸들러
-    const handleTurnChange = e => {
-        // 날짜 선택 전
-        if(!selectedDate && !reservationData.scheduledDate) {
-            alert("상담 일자를 선택해주세요.");
-            e.target.checked = false;
-            return
-        }
-
-        // 날짜 선택 후
-        setReservationData(prev => ({
-            ...prev,
-            scheduledTurn : e.target.id
-        }));
-    }
-
     // 사유 입력 이벤트 핸들러
     const handleChange = e => {
         setReservationData(prev => ({
@@ -152,21 +137,13 @@ export default function ReservationComponent() {
                         statusText = "(예약 완료)";
                     }
                 }
-                const isChecked = (item.id === reservationData.scheduledTurn);
 
-                return(
-                    <div key={index}>
-                        <input type="radio"
-                               name="scheduledTurn"
-                               id={ item.id }
-                               disabled={ isReserved && !isOriginalTurn }
-                               checked={ isChecked }
-                               onChange={ handleTurnChange } />
-                        <label htmlFor={item.id} style={{ color: (isReserved && !isOriginalTurn) ? "#aaaaaa" : "#444444" }}>
-                            { item.label } { statusText }
-                        </label>
-                    </div>
-                );
+                return {
+                    id : item.id,
+                    label : item.label,
+                    statusText,
+                    disabled : isReserved && isOriginalTurn, 
+                };
             })
 
             setScheduleList(divArr);
@@ -329,22 +306,14 @@ export default function ReservationComponent() {
             const response = await saveReservationApi(reservationData);
 
             if(response.data != "") {
-
                 alert("상담 신청이 예약되었습니다.")
             } else {
-
-                alert("상담 신청 예약에 실패했습니다. 잠시 후 다시 시도해주세요.");
+                alert("상담 신청 예약에 실패했습니다. 다시 시도해주세요.");
             }
 
             navigate("/consultation/reservation/list");
 
         } catch (error) {
-
-            if(error.response?.status === 409) {
-                alert("이미 예약된 일시입니다. 다시 선택해주세요.")
-            } else {
-                alert("상담 신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
-            }
             console.log("상담 신청 통신 실패" + error);
         }
 
@@ -363,15 +332,6 @@ export default function ReservationComponent() {
 
             <PageHeader title="상담 예약" description="보건 상담을 예약합니다." icon={MessageCircle}/>
             <Card className="detail-info-card">
-                <CardHeader>
-                    <CardTitle>{isEditMode ? "상담 예약 수정" : "상담 예약"}</CardTitle>
-                    <CardDescription>
-                        {isEditMode
-                            ? "상담 예약 정보를 수정해 주세요."
-                            : "상담 예약 정보를 입력해 주세요."}
-                    </CardDescription>
-                </CardHeader>
-
                 <CardContent>
                     <dl>
                         <div>
@@ -402,6 +362,7 @@ export default function ReservationComponent() {
                             <div className="reservation-date">
                                 {/* 달력 - 날짜 선택 */}
                                 <ReservationCalendar
+                                    className="reservation-date"
                                     onSelectSlot={handleSelectDate}
                                     selectedDate={selectedDate}
                                     currentDate={currentDate}
@@ -416,7 +377,37 @@ export default function ReservationComponent() {
                                     <p className="text-gray-500">예약 가능한 시간을 선택할 수 있습니다.</p>
                                 </div>
 
-                                {scheduleList}
+                                <ToggleGroup Type="single"
+                                             value={ reservationData.scheduledTurn }
+                                             onValueChange={ value => {
+
+                                                if(!value) return;
+
+                                                if(!selectedDate && reservationData.scheduledDate) {
+                                                    alert("상담 일자를 선택해주세요.");
+                                                    return
+                                                }
+
+                                                setReservationData(prev => {
+                                                    return {
+                                                        ...prev,
+                                                        scheduledTurn : value
+                                                    }
+                                                })
+                                             }}
+                                             className="flex flex-col gap-2 w-full">
+                                                {scheduleList.map((item, index) => {
+                                                    return(
+                                                        <ToggleGroupItem key={ index }
+                                                                         value={ item.id }
+                                                                         disabled={ item.disabled }
+                                                                         className="justify-start w-full border data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+                                                            { item.label } { item.statusText }
+                                                        </ToggleGroupItem>
+                                                    )
+                                                })}
+                                             </ToggleGroup>
+                                
                             </div>
                         </div>
 
