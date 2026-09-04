@@ -27,3 +27,12 @@ export const updateSafetyDocument = async ({ id, title, description, signal }) =
   );
   return response.data;
 };
+
+export const requestSafetyDocumentIndexing = async ({ id, signal }) => {
+  const response = await apiClient.post(
+    `/safety-documents/${id}/index`,
+    null,
+    { signal },
+  );
+  return response.data;
+};

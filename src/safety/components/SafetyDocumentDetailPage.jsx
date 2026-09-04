@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getEmployee } from "@/employee/api/employeeApi";
 import {
   getSafetyDocument,
+  requestSafetyDocumentIndexing,
   updateSafetyDocument,
 } from "@/safety/api/safetyDocumentApi";
 import {
@@ -42,6 +43,20 @@ export default function SafetyDocumentDetailPage() {
     loading,
     setData,
   } = useRequest(getSafetyDocument, { id });
+  const {
+    error: indexingError,
+    loading: requestingIndexing,
+    mutate: requestIndexing,
+  } = useMutation(requestSafetyDocumentIndexing);
+
+  const indexDocument = async () => {
+    try {
+      const updatedDocument = await requestIndexing({ id: document.id });
+      setData(updatedDocument);
+    } catch {
+      // 오류는 useMutation이 보관하고 RequestErrorAlert가 표시합니다.
+    }
+  };
 
   return (
     <main className="flex w-full flex-col gap-6 px-8 py-6">
@@ -65,16 +80,34 @@ export default function SafetyDocumentDetailPage() {
         fallbackDetail="안전문서 정보를 불러오지 못했습니다."
       />
 
+      <RequestErrorAlert
+        error={indexingError}
+        fallbackTitle="안전문서 인덱싱 요청 실패"
+        fallbackDetail="안전문서 인덱싱을 요청하지 못했습니다."
+      />
+
       {loading && !document ? (
         <DetailSkeleton />
       ) : (
-        document && <DocumentDetail document={document} setDocument={setData} />
+        document && (
+          <DocumentDetail
+            document={document}
+            setDocument={setData}
+            onRequestIndexing={indexDocument}
+            requestingIndexing={requestingIndexing}
+          />
+        )
       )}
     </main>
   );
 }
 
-function DocumentDetail({ document, setDocument }) {
+function DocumentDetail({
+  document,
+  setDocument,
+  onRequestIndexing,
+  requestingIndexing,
+}) {
   const user = useUserInfo();
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState("");
@@ -86,6 +119,8 @@ function DocumentDetail({ document, setDocument }) {
     reset,
   } = useMutation(updateSafetyDocument);
   const canEdit = user?.role === "HEALTH_ADMIN";
+  const canRequestIndexing =
+    document.indexStatus == null || document.indexStatus === "FAILED";
 
   const startEditing = () => {
     setTitle(document.title);
@@ -196,6 +231,22 @@ function DocumentDetail({ document, setDocument }) {
           <DetailItem label="인덱싱 상태">
             <VectorIndexStatusBadge status={document.indexStatus} />
           </DetailItem>
+          {canEdit && canRequestIndexing && (
+            <Button
+              type="button"
+              className="w-full"
+              onClick={onRequestIndexing}
+              disabled={
+                requestingIndexing || document.status !== "ACTIVE"
+              }
+            >
+              {requestingIndexing
+                ? "요청 중..."
+                : document.indexStatus === "FAILED"
+                  ? "인덱싱 재시도"
+                  : "인덱싱 요청"}
+            </Button>
+          )}
         </CardContent>
       </Card>
 
