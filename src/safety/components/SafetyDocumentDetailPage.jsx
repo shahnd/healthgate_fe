@@ -78,7 +78,10 @@ export default function SafetyDocumentDetailPage() {
               canEdit={canEdit}
               setDocument={setData}
             />
-            <SafetyDocumentMetadataCard document={document} />
+            <SafetyDocumentMetadataCard
+              document={document}
+              canEdit={canEdit}
+            />
           </div>
         )
       )}

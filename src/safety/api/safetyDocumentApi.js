@@ -50,3 +50,7 @@ export const updateSafetyDocumentActivation = async ({ id, active, signal }) => 
   );
   return response.data;
 };
+
+export const deleteSafetyDocument = async ({ id, signal }) => {
+  await apiClient.delete(`/safety-documents/${id}`, { signal });
+};
