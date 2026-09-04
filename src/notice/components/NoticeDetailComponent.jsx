@@ -39,7 +39,7 @@ export default function NoticeDetailComponent() {
     useEffect(() => {
 
         const selectNotice = async () => {
-        console.log("isFromList 값:", location.state?.isFromList);
+    
             try {
                 
                 const isFromList = location.state?.isFromList;
@@ -49,7 +49,7 @@ export default function NoticeDetailComponent() {
                 if (isFromList) {
                   response = await selectNoticeApi(noticeId);
 
-                  window.history.replaceState({}, document.title);
+                  window.history.replaceState({ isFromList: false }, document.title);
                 } else {
                      // 수정하기, 상세조회에서 들어온 경우 -> 조회수 증가하는 selectNoticeFormApi 호출
                   response = await selectNoticeFormApi(noticeId);
