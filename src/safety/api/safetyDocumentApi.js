@@ -36,3 +36,12 @@ export const requestSafetyDocumentIndexing = async ({ id, signal }) => {
   );
   return response.data;
 };
+
+export const updateSafetyDocumentActivation = async ({ id, active, signal }) => {
+  const response = await apiClient.patch(
+    `/safety-documents/${id}/activation`,
+    { active },
+    { signal },
+  );
+  return response.data;
+};

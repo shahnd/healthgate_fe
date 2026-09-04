@@ -8,6 +8,16 @@ import { useMutation } from "@/common/hooks/useMutation";
 import { useRequest } from "@/common/hooks/useRequest";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Card,
   CardAction,
   CardContent,
@@ -23,6 +33,7 @@ import { getEmployee } from "@/employee/api/employeeApi";
 import {
   getSafetyDocument,
   requestSafetyDocumentIndexing,
+  updateSafetyDocumentActivation,
   updateSafetyDocument,
 } from "@/safety/api/safetyDocumentApi";
 import {
@@ -52,6 +63,11 @@ export default function SafetyDocumentDetailPage() {
     loading: requestingIndexing,
     mutate: requestIndexing,
   } = useMutation(requestSafetyDocumentIndexing);
+  const {
+    error: activationError,
+    loading: updatingActivation,
+    mutate: updateActivation,
+  } = useMutation(updateSafetyDocumentActivation);
 
   useEffect(() => {
     if (
@@ -72,6 +88,20 @@ export default function SafetyDocumentDetailPage() {
       setData(updatedDocument);
     } catch {
       // 오류는 useMutation이 보관하고 RequestErrorAlert가 표시합니다.
+    }
+  };
+
+  const changeActivation = async (active) => {
+    try {
+      const updatedDocument = await updateActivation({
+        id: document.id,
+        active,
+      });
+      setData(updatedDocument);
+      return true;
+    } catch {
+      // 오류는 useMutation이 보관하고 RequestErrorAlert가 표시합니다.
+      return false;
     }
   };
 
@@ -103,6 +133,12 @@ export default function SafetyDocumentDetailPage() {
         fallbackDetail="안전문서 인덱싱을 요청하지 못했습니다."
       />
 
+      <RequestErrorAlert
+        error={activationError}
+        fallbackTitle="안전문서 상태 변경 실패"
+        fallbackDetail="안전문서의 활성 상태를 변경하지 못했습니다."
+      />
+
       {loading && !document ? (
         <DetailSkeleton />
       ) : (
@@ -112,6 +148,8 @@ export default function SafetyDocumentDetailPage() {
             setDocument={setData}
             onRequestIndexing={indexDocument}
             requestingIndexing={requestingIndexing}
+            onChangeActivation={changeActivation}
+            updatingActivation={updatingActivation}
           />
         )
       )}
@@ -124,11 +162,14 @@ function DocumentDetail({
   setDocument,
   onRequestIndexing,
   requestingIndexing,
+  onChangeActivation,
+  updatingActivation,
 }) {
   const user = useUserInfo();
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [deactivationDialogOpen, setDeactivationDialogOpen] = useState(false);
   const {
     error: updateError,
     loading: updating,
@@ -264,8 +305,61 @@ function DocumentDetail({
                   : "인덱싱 요청"}
             </Button>
           )}
+          {canEdit && document.status === "ACTIVE" && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setDeactivationDialogOpen(true)}
+              disabled={updatingActivation}
+            >
+              비활성화
+            </Button>
+          )}
+          {canEdit && document.status === "INACTIVE" && (
+            <Button
+              type="button"
+              className="w-full"
+              onClick={() => onChangeActivation(true)}
+              disabled={updatingActivation}
+            >
+              {updatingActivation ? "변경 중..." : "활성화"}
+            </Button>
+          )}
         </CardContent>
       </Card>
+
+      <AlertDialog
+        open={deactivationDialogOpen}
+        onOpenChange={setDeactivationDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>안전문서를 비활성화할까요?</AlertDialogTitle>
+            <AlertDialogDescription>
+              비활성화하면 이후 안전 브리핑 생성에 이 문서가 사용되지
+              않습니다. 기존 인덱스는 보존됩니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={updatingActivation}>
+              취소
+            </AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={updatingActivation}
+              onClick={async () => {
+                const changed = await onChangeActivation(false);
+                if (changed) {
+                  setDeactivationDialogOpen(false);
+                }
+              }}
+            >
+              {updatingActivation ? "변경 중..." : "비활성화"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Card className="lg:col-span-3">
         <CardHeader>
