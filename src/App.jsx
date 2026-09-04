@@ -44,6 +44,9 @@ import PrivateRoute from "./common/components/PrivateRoute";
 import ChangePasswordComponent from "./login/components/ChangePasswordComponent";
 import SettingsComponent from "./settingsMenu/components/SettingsComponent";
 import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage";
+import SafetyDocumentListPage from "./safety/components/SafetyDocumentListPage";
+import SafetyDocumentCreatePage from "./safety/components/SafetyDocumentCreatePage";
+import SafetyDocumentDetailPage from "./safety/components/SafetyDocumentDetailPage";
 
 function App() {
   const location = useLocation();
@@ -79,6 +82,8 @@ function App() {
             <Route path="/attendance" element={<AttendanceListComponent/>}/>
             <Route path="/bioinput" element={<BioInputComponent/>} />
             <Route path="/safety-briefings/today" element={<TodaySafetyBriefingPage />} />
+            <Route path="/safety-documents" element={<SafetyDocumentListPage />} />
+            <Route path="/safety-documents/:id" element={<SafetyDocumentDetailPage />} />
 
             {/* 공지사항 */}
             <Route path="/notices/list" element={<NoticeListComponent />} />
@@ -105,6 +110,8 @@ function App() {
 
           {/* 보건관리자만 접근 가능한 페이지 */}
           <Route element={<PrivateRoute allowedRoles={['HEALTH_ADMIN']}/>}>
+
+            <Route path="/safety-documents/new" element={<SafetyDocumentCreatePage />} />
 
             {/* 건강검진 관리 */}
             <Route path="/checkup/statistics" element={<CheckupStatisticsComponent />} />
