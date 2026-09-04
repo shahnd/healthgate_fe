@@ -6,10 +6,10 @@ import { useAuthStore } from "@/store/useAuthStore";
 import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/DetailComponent.css";
-
 import "../styles/calendar.css";
-import { useHolidays } from "../api/useHolidays";
-
+import { Card, CardContent,CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useHolidays } from "@/consultation/hooks/useHolidays";
 
 export default function ReservationListComponent() {
 
@@ -66,6 +66,7 @@ export default function ReservationListComponent() {
             start : dateObj,
             end : dateObj,
             allDay : true,
+            status : item.status
           }
         })
 
@@ -95,12 +96,23 @@ export default function ReservationListComponent() {
     <div className="detail-page">
       <PageHeader title="보건 상담 예약 현황" description="보건 상담 예약 현황을 조회합니다." icon={MessageCircle}/>
 
-      <ListCalendar dataList={ combinedEvents }
-                    onSelectEvent={ handleSelectEvent }
-                    onNavigate={ handleNavigate } />
-      <div align="right">
-        <button onClick={ () => {navigate("/consultation/reservation")} }>예약 하러 가기 ⇒</button>
-      </div>
+      <Card className="list-table-wrapper w-full max-w-[1100px] mx-auto flex flex-col items-center justify-center">
+        <CardContent className="w-full flex justify-center">
+          <div className="w-full max-w-[1000px]">
+          <ListCalendar dataList={ combinedEvents }
+                        onSelectEvent={ handleSelectEvent }
+                        onNavigate={ handleNavigate } />
+          </div>
+        </CardContent>
+        <CardFooter className="w-full flex justify-end pr-18">
+            <Button size="lg" className="cursor-pointer"
+                    type="button"
+                    variant="outline"
+                    onClick={ () => {navigate("/consultation/reservation")} }>
+              예약 하러 가기 ⇒
+            </Button>
+          </CardFooter>
+      </Card>
     </div>
   );
 }

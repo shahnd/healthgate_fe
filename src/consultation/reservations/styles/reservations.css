@@ -1,0 +1,12 @@
+.reservation-form>div:first-child {
+    padding-top : 0px;
+}
+
+.detail-info-card>div:first-child {
+    padding-bottom : 10px;
+    padding-top : 10px;
+}
+
+.mt-5>label {
+    padding-bottom: 5px;
+}

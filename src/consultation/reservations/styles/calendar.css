@@ -26,3 +26,20 @@
     color : crimson;
     cursor: pointer;
 }
+
+
+.day-availabe:hover {
+    cursor: pointer;
+}
+
+.day-unavailabe:hover {
+    cursor: not-allowed;
+}
+
+.day-availabe .rbc-day-bg:hover {
+    cursor: pointer;
+}
+
+.day-unavailabe .day-availabe.rbc-day-bg:hover {
+    cursor: not-allowed;
+}

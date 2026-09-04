@@ -2,9 +2,9 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import '../styles/calendar.css';
+import CustomToolbar from '@/consultation/reservations/common/CustomToolbar'
+
 
 const locales = { 'ko': ko }
 
@@ -16,56 +16,11 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-// 커스텀 툴바
-const CustomToolbar = (toolbar) => {
-  // '이전' 버튼 클릭 핸들러
-  const goToBack = () => {
-    toolbar.onNavigate('PREV');
-  };
-  // '다음' 버튼 클릭 핸들러
-  const goToNext = () => {
-    toolbar.onNavigate('NEXT');
-  };
-
-  const koreanLabel = format(toolbar.date, 'M월', { locale: ko });
-
-  // 레이아웃
-  return (
-    <div className="flex items-center justify-center gap-4 p-1 mb-2">
-      <Button
-        variant="outline" 
-        size="sm" 
-        onClick={goToBack}
-        className="h-8 w-8 p-0"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        <span className="sr-only">이전</span>
-      </Button>
-
-      <span className="min-w-[100px] text-center font-semibold text-sm sm:text-base">
-        {koreanLabel}
-      </span>
-
-      <Button 
-        variant="outline" 
-        size="sm" 
-        onClick={goToNext}
-        className="h-8 w-8 p-0"
-      >
-        <ChevronRight className="h-4 w-4" />
-        <span className="sr-only">다음</span>
-      </Button>
-
-      {/* <Button variant="ghost" size="sm" onClick={goToToday}>오늘</Button> */}
-    </div>
-  );
-};
-
 
 function ListCalendar({ dataList, onSelectEvent }) {
 
   return (
-    <div className="w-full max-w-[1000px] h-[800px] p-6 bg-background text-foreground">
+    <div className="w-full max-w-[1000px] h-[800px] p-6 text-foreground">
       
       <Calendar
         localizer={localizer}

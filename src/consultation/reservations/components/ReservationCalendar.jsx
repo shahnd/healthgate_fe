@@ -1,10 +1,11 @@
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
-import startOfWeek from 'date-fns/startOfWeek'
-import getDay from 'date-fns/getDay'
-import ko from 'date-fns/locale/ko'
+import { format, parse, startOfWeek, getDay } from 'date-fns'
+import { ko } from 'date-fns/locale'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
+import '../styles/calendar.css';
+import CustomToolbar from '@/consultation/reservations/common/CustomToolbar'
+
+
 
 const locales = { 'ko': ko }
 
@@ -15,49 +16,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 })
-
-
-// 커스텀 툴바
-const CustomToolbar = (toolbar) => {
-
-  // '이전' 버튼 클릭 핸들러
-  const goToBack = () => {
-    toolbar.onNavigate('PREV');
-  };
-  // '다음' 버튼 클릭 핸들러
-  const goToNext = () => {
-    toolbar.onNavigate('NEXT');
-  };
-
-  const koreanLabel = format(toolbar.date, 'M', { locale: ko });
-
-  // 레이아웃
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center', // 중앙 정렬
-      alignItems: 'center',
-      marginBottom: '10px',
-      padding: '5px',
-      gap: '15px' // 버튼과 라벨 사이 간격
-    }}>
-      <button type="button" onClick={goToBack} style={{ padding: '5px 10px', cursor: 'pointer' }}>
-        &lt;
-      </button>
-
-      <span style={{ fontWeight: 'bold', fontSize: '20px', minWidth: '100px', textAlign: 'center' }}>
-        {koreanLabel}
-      </span>
-
-      <button type="button" onClick={goToNext} style={{ padding: '5px 10px', cursor: 'pointer' }}>
-        &gt;
-      </button>
-
-      {/* <button onClick={goToToday}>오늘</button> */}
-    </div>
-  );
-};
-
 
 function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNavigate, holidays = [] }) {
   
@@ -171,7 +129,9 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
               targetDate > maxDate ||
               isUnavailableDay(targetDate)) {
 
-            return { style : { 
+            return { 
+              className : "day-unavailable",
+              style : { 
                 backgroundColor: '#f1f1f1',
                 color: '#bcbcbc',
                 cursor: 'not-allowed'
@@ -180,7 +140,10 @@ function ReservationCalendar({ onSelectSlot, selectedDate, currentDate, onNaviga
 
           // 선택한 날짜 스타일 지정
           if(selectedDate && date.toDateString() === selectedDate.toDateString()) {
-            return { style : { backgroundColor : "#FFCCCC" } }
+            return {
+              className : "day-available",
+              style : { backgroundColor : "#FFCCCC" }
+            }
           }
         }}
         messages={{
