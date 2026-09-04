@@ -18,3 +18,12 @@ export const createSafetyDocument = async ({ formData, signal }) => {
   const response = await apiClient.post("/safety-documents", formData, { signal });
   return response.data;
 };
+
+export const updateSafetyDocument = async ({ id, title, description, signal }) => {
+  const response = await apiClient.patch(
+    `/safety-documents/${id}`,
+    { title, description },
+    { signal },
+  );
+  return response.data;
+};

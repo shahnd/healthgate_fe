@@ -1,20 +1,29 @@
-import { ArrowLeftIcon, FileTextIcon } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeftIcon, FileTextIcon, PencilIcon } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 import PageHeader from "@/common/components/PageHeader";
 import { RequestErrorAlert } from "@/common/components/RequestErrorAlert";
+import { useMutation } from "@/common/hooks/useMutation";
 import { useRequest } from "@/common/hooks/useRequest";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { getEmployee } from "@/employee/api/employeeApi";
-import { getSafetyDocument } from "@/safety/api/safetyDocumentApi";
+import {
+  getSafetyDocument,
+  updateSafetyDocument,
+} from "@/safety/api/safetyDocumentApi";
 import {
   SafetyDocumentStatusBadge,
   VectorIndexStatusBadge,
@@ -23,6 +32,7 @@ import {
   formatDateTime,
   formatFileSize,
 } from "@/safety/utils/formatSafetyDocument";
+import { useUserInfo } from "@/store/useAuthStore";
 
 export default function SafetyDocumentDetailPage() {
   const { id } = useParams();
@@ -30,6 +40,7 @@ export default function SafetyDocumentDetailPage() {
     data: document,
     error,
     loading,
+    setData,
   } = useRequest(getSafetyDocument, { id });
 
   return (
@@ -57,25 +68,120 @@ export default function SafetyDocumentDetailPage() {
       {loading && !document ? (
         <DetailSkeleton />
       ) : (
-        document && <DocumentDetail document={document} />
+        document && <DocumentDetail document={document} setDocument={setData} />
       )}
     </main>
   );
 }
 
-function DocumentDetail({ document }) {
+function DocumentDetail({ document, setDocument }) {
+  const user = useUserInfo();
+  const [editing, setEditing] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const {
+    error: updateError,
+    loading: updating,
+    mutate,
+    reset,
+  } = useMutation(updateSafetyDocument);
+  const canEdit = user?.role === "HEALTH_ADMIN";
+
+  const startEditing = () => {
+    setTitle(document.title);
+    setDescription(document.description ?? "");
+    reset();
+    setEditing(true);
+  };
+
+  const cancelEditing = () => {
+    reset();
+    setEditing(false);
+  };
+
+  const save = async (event) => {
+    event.preventDefault();
+
+    try {
+      const updatedDocument = await mutate({
+        id: document.id,
+        title,
+        description,
+      });
+      setDocument(updatedDocument);
+      setEditing(false);
+    } catch {
+      // 오류는 useMutation이 보관하고 RequestErrorAlert가 표시합니다.
+    }
+  };
+
   return (
     <div className="grid w-full max-w-5xl gap-6 lg:grid-cols-3">
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle>{document.title}</CardTitle>
+          <CardTitle>{editing ? "문서 정보 수정" : document.title}</CardTitle>
           <CardDescription>문서 설명</CardDescription>
+          {canEdit && !editing && (
+            <CardAction>
+              <Button type="button" variant="outline" onClick={startEditing}>
+                <PencilIcon />
+                수정
+              </Button>
+            </CardAction>
+          )}
         </CardHeader>
-        <CardContent>
-          <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
-            {document.description || "등록된 설명이 없습니다."}
-          </p>
-        </CardContent>
+        {editing ? (
+          <CardContent>
+            <RequestErrorAlert
+              error={updateError}
+              fallbackTitle="안전문서 수정 실패"
+              fallbackDetail="문서 정보를 수정하지 못했습니다. 입력 내용을 확인해 주세요."
+            />
+            <form className="mt-5 space-y-5" onSubmit={save}>
+              <div className="space-y-2">
+                <Label htmlFor="document-title">제목</Label>
+                <Input
+                  id="document-title"
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  maxLength={200}
+                  disabled={updating}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="document-description">설명</Label>
+                <Textarea
+                  id="document-description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  maxLength={2000}
+                  className="min-h-28 resize-y"
+                  disabled={updating}
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={cancelEditing}
+                  disabled={updating}
+                >
+                  취소
+                </Button>
+                <Button type="submit" disabled={updating}>
+                  {updating ? "저장 중..." : "저장"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        ) : (
+          <CardContent>
+            <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
+              {document.description || "등록된 설명이 없습니다."}
+            </p>
+          </CardContent>
+        )}
       </Card>
 
       <Card>

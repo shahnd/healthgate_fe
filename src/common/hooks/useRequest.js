@@ -45,6 +45,10 @@ export function useRequest(request, params) {
     }
   }, [params, request]);
 
+  const setData = (data) => {
+    setState({ data, error: null, loading: false });
+  };
+
   // 컴포넌트 로드 시 fetch
   useEffect(() => {
     execute();
@@ -52,5 +56,5 @@ export function useRequest(request, params) {
     return () => controllerRef.current?.abort(); // 컴포넌트 unmount 시 요청 중단
   }, [execute]);
 
-  return { ...state, reload: execute };
+  return { ...state, reload: execute, setData };
 }
