@@ -19,6 +19,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useAuthStore } from "@/store/useAuthStore"
+import axios from "axios"
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -26,14 +27,19 @@ export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
-  const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    sessionStorage.setItem("authMessage", "로그아웃되었습니다.");
-    localStorage.removeItem("access_token");
-    logout();
-    navigate("/login", {state: {isLoggingOut : true}});
+  const handleLogout = async () => {
+    try {
+      await axios.post("/healthgate/auth/logout", {}, {withCredentials: true});
+      alert("로그아웃 되었습니다.");
+      navigate("/login", {state: {isLoggingOut : true}});
+
+
+    } catch(error) {
+      console.log("로그아웃 통신 실패");
+    }
+
   };
   return (
     <SidebarMenu>
