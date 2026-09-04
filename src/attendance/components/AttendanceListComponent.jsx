@@ -198,14 +198,13 @@ export default function AttendanceListComponent() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[180px]">사번</TableHead>
-                            <TableHead className="w-[190px]">이름</TableHead>
-                            <TableHead className="w-[200px]">부서</TableHead>
-                            <TableHead className="w-[200px]">직급</TableHead>
-                            <TableHead className="w-[350px]">이메일</TableHead>
-                            <TableHead className="w-[220px]">출근시간</TableHead>
-                            {/* 마지막 항목은 대시보드 너비에 따라 유연하게 늘어나도록 w-auto를 주거나 비워둡니다 */}
-                            <TableHead className="w-auto min-w-[160px]">출근/건강 상태</TableHead>
+                            <TableHead className="w-[10%]">사번</TableHead>
+                            <TableHead className="w-[10%]">이름</TableHead>
+                            <TableHead className="w-[10%]">부서</TableHead>
+                            <TableHead className="w-[10%]">직급</TableHead>
+                            <TableHead className="w-[30%]">이메일</TableHead> 
+                            <TableHead className="w-[15%]">출근시간</TableHead>
+                            <TableHead className="w-[15%]">출근/건강 상태</TableHead>
                         </TableRow>
                     </TableHeader>
 

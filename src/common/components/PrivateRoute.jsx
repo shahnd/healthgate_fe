@@ -10,8 +10,10 @@ const PrivateRoute = ({allowedRoles}) => {
     const isAuthenticated = !!localStorage.getItem("access_token") && !!user;
 
     if (!isAuthenticated) {
-        alert("로그인이 필요한 서비스입니다.");
-        return <Navigate to="login" replace />
+        const message = sessionStorage.getItem("authMessage") ?? "로그인이 필요한 서비스입니다.";
+        sessionStorage.removeItem("authMessage");
+        alert(message);
+        return <Navigate to="/login" replace />;
     }
 
     if (allowedRoles && !allowedRoles.includes(user.role)) {

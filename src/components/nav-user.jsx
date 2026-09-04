@@ -30,9 +30,10 @@ export function NavUser({
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    sessionStorage.setItem("authMessage", "로그아웃되었습니다.");
     localStorage.removeItem("access_token");
     logout();
-    navigate("/login");
+    navigate("/login", {state: {isLoggingOut : true}});
   };
   return (
     <SidebarMenu>
