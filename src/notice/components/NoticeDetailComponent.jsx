@@ -1,8 +1,8 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 
-import { selectNoticeApi, deleteNoticeApi, downloadNoticeFileApi, BASE_URL } from "../api/NoticeApi";
+import { selectNoticeApi, selectNoticeFormApi, deleteNoticeApi, downloadNoticeFileApi, BASE_URL } from "../api/NoticeApi";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ export default function NoticeDetailComponent() {
      // 실행할 구문
     // 해당 글번호부터 뽑아내기
     const noticeId = useParams().noticeId;
+
+    const location = useLocation();
 
     let navigate = useNavigate();
 
@@ -37,10 +39,21 @@ export default function NoticeDetailComponent() {
     useEffect(() => {
 
         const selectNotice = async () => {
-
+        console.log("isFromList 값:", location.state?.isFromList);
             try {
+                
+                const isFromList = location.state?.isFromList;
 
-                const response = await selectNoticeApi(noticeId);
+                let response;
+                // 목록 에서 넘어온 경우 -> 조회수 증가 하는 selectNoticeApi 호출
+                if (isFromList) {
+                  response = await selectNoticeApi(noticeId);
+
+                  window.history.replaceState({}, document.title);
+                } else {
+                     // 수정하기, 상세조회에서 들어온 경우 -> 조회수 증가하는 selectNoticeFormApi 호출
+                  response = await selectNoticeFormApi(noticeId);
+                }
 
                 if(response.data != "") {
                     // > 조회된 내용이 있다면
@@ -63,11 +76,7 @@ export default function NoticeDetailComponent() {
             }
         };
 
-        // 여기에 댓글 목록 조회용 async 함수 정의
-
         selectNotice();
-
-        // 여기서 댓글 목록 조회용 함수 호출
 
     }, []);
 
