@@ -24,15 +24,16 @@ export default function LoginComponent() {
                 }
             );
 
-            if (!response.data.accessToken) {
-                alert("로그인 실패");
+            if (!response.data.employeeNumber) {
+                alert("로그인에 실패하였습니다.");
                 return;
             }
 
-            localStorage.setItem(
-                "access_token",
-                response.data.accessToken
-            );
+            //로컬스토리지 저장 방식 제거. => 쿠키방식으로 변경
+            // localStorage.setItem(
+            //     "access_token",
+            //     response.data.accessToken
+            // );
 
             const userInfo = {
                 id: response.data.id,
