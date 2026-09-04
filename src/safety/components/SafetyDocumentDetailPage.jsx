@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftIcon, FileTextIcon, PencilIcon } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -35,12 +35,16 @@ import {
 } from "@/safety/utils/formatSafetyDocument";
 import { useUserInfo } from "@/store/useAuthStore";
 
+const INDEX_POLL_INTERVAL = 2000;
+const POLLING_INDEX_STATUSES = new Set(["PENDING", "INDEXING"]);
+
 export default function SafetyDocumentDetailPage() {
   const { id } = useParams();
   const {
     data: document,
     error,
     loading,
+    reload,
     setData,
   } = useRequest(getSafetyDocument, { id });
   const {
@@ -48,6 +52,19 @@ export default function SafetyDocumentDetailPage() {
     loading: requestingIndexing,
     mutate: requestIndexing,
   } = useMutation(requestSafetyDocumentIndexing);
+
+  useEffect(() => {
+    if (
+      loading ||
+      error ||
+      !POLLING_INDEX_STATUSES.has(document?.indexStatus)
+    ) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(reload, INDEX_POLL_INTERVAL);
+    return () => window.clearTimeout(timeoutId);
+  }, [document?.indexStatus, error, loading, reload]);
 
   const indexDocument = async () => {
     try {
