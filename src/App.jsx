@@ -44,6 +44,7 @@ import PrivateRoute from "./common/components/PrivateRoute";
 import ChangePasswordComponent from "./login/components/ChangePasswordComponent";
 import SettingsComponent from "./settingsMenu/components/SettingsComponent";
 import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage";
+import SafetyDocumentListPage from "./safety/components/SafetyDocumentListPage";
 
 function App() {
   const location = useLocation();
@@ -79,6 +80,7 @@ function App() {
             <Route path="/attendance" element={<AttendanceListComponent/>}/>
             <Route path="/bioinput" element={<BioInputComponent/>} />
             <Route path="/safety-briefings/today" element={<TodaySafetyBriefingPage />} />
+            <Route path="/safety-documents" element={<SafetyDocumentListPage />} />
 
             {/* 공지사항 */}
             <Route path="/notices/list" element={<NoticeListComponent />} />
