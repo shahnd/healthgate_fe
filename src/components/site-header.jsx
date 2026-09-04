@@ -33,6 +33,7 @@ const breadcrumbMap = {
   "/notices/new": ["공지사항", "공지사항 등록"],
   "/safety-briefings/today": ["오늘의 안전 브리핑"],
   "/safety-documents": ["안전문서"],
+  "/safety-documents/new": ["안전문서", "안전문서 등록"],
 };
 
 export function getBreadcrumbItems(pathname) {

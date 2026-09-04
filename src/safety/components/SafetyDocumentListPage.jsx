@@ -1,5 +1,5 @@
-import { FileTextIcon } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { FilePlus2Icon, FileTextIcon } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
 
 import PageHeader from "@/common/components/PageHeader";
 import Pagination from "@/common/components/Pagination";
@@ -7,10 +7,13 @@ import { RequestErrorAlert } from "@/common/components/RequestErrorAlert";
 import { useRequest } from "@/common/hooks/useRequest";
 import { getSafetyDocuments } from "@/safety/api/safetyDocumentApi";
 import { SafetyDocumentTable } from "@/safety/components/SafetyDocumentTable";
+import { buttonVariants } from "@/components/ui/button";
+import { useUserInfo } from "@/store/useAuthStore";
 
 const PAGE_SIZE = 10;
 
 export default function SafetyDocumentListPage() {
+  const user = useUserInfo();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parsePage(searchParams.get("page"));
   const requestParams = { page, size: PAGE_SIZE };
@@ -30,7 +33,14 @@ export default function SafetyDocumentListPage() {
         title="안전문서"
         description="작업 안전문서와 벡터 인덱싱 상태를 확인합니다."
         icon={FileTextIcon}
-      />
+      >
+        {user?.role === "HEALTH_ADMIN" && (
+          <Link to="/safety-documents/new" className={buttonVariants()}>
+            <FilePlus2Icon />
+            문서 등록
+          </Link>
+        )}
+      </PageHeader>
 
       <RequestErrorAlert
         error={error}
