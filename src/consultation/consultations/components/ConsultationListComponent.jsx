@@ -11,6 +11,7 @@ import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/ListComponent.css";
 
+import { Button } from "@/components/ui/button";
 
 
 export default function ConsultationListComponent() {
@@ -56,7 +57,7 @@ export default function ConsultationListComponent() {
     const [consultationList, setConsultationList] = useState([]);
     // 페이지네이션
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(5);
+    const [size, setSize] = useState(10);
 
     // 차시 -> 시간 매핑
     const turnTimeMap = {
@@ -279,10 +280,14 @@ export default function ConsultationListComponent() {
                             value={ endMonth }
                             min={ startMonth }
                             onChange={ handleEndMonthChange } />
-                        <button type="button"
-                                onClick={ handleThisMonth }>이번달</button>
-                        <button type="submit"
-                                onClick={ searchConsultation }>검색</button>
+                        <Button type="button"
+                                size="lg"
+                                variant="outline"
+                                onClick={ handleThisMonth }>이번달</Button>
+                        <Button type="submit"
+                                size="lg"
+                                variant="outline"
+                                onClick={ searchConsultation }>검색</Button>
                     </div>
                     <div className="flex items-center gap-1">
                         <Input type="text"
