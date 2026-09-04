@@ -14,6 +14,11 @@ export const getSafetyDocument = async ({ id, signal }) => {
   return response.data;
 };
 
+export const getSafetyDocumentFileUrl = (id, { download = false } = {}) => {
+  const query = download ? "?download=true" : "";
+  return `${apiClient.defaults.baseURL}/safety-documents/${id}/file${query}`;
+};
+
 export const createSafetyDocument = async ({ formData, signal }) => {
   const response = await apiClient.post("/safety-documents", formData, { signal });
   return response.data;
