@@ -46,6 +46,7 @@ import SettingsComponent from "./settingsMenu/components/SettingsComponent";
 import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage";
 import SafetyDocumentListPage from "./safety/components/SafetyDocumentListPage";
 import SafetyDocumentCreatePage from "./safety/components/SafetyDocumentCreatePage";
+import SafetyDocumentDetailPage from "./safety/components/SafetyDocumentDetailPage";
 
 function App() {
   const location = useLocation();
@@ -82,6 +83,7 @@ function App() {
             <Route path="/bioinput" element={<BioInputComponent/>} />
             <Route path="/safety-briefings/today" element={<TodaySafetyBriefingPage />} />
             <Route path="/safety-documents" element={<SafetyDocumentListPage />} />
+            <Route path="/safety-documents/:id" element={<SafetyDocumentDetailPage />} />
 
             {/* 공지사항 */}
             <Route path="/notices/list" element={<NoticeListComponent />} />

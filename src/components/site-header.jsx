@@ -44,6 +44,7 @@ export function getBreadcrumbItems(pathname) {
     { match: /^\/hospitals\/\d+$/, items: ["제휴 병원", "병원 상세"] },
     { match: /^\/notices\/[^/]+\/edit$/, items: ["공지사항", "공지사항 수정"] },
     { match: /^\/notices\/\d+$/, items: ["공지사항", "공지사항 상세"] },
+    { match: /^\/safety-documents\/\d+$/, items: ["안전문서", "안전문서 상세"] },
     { match: /^\/consultation\/reservation\/detail\/[^/]+$/, items: ["보건 상담", "예약 상세"] },
     { match: /^\/consultation\/reservation\/[^/]+$/, items: ["보건 상담", "예약 수정"] },
     { match: /^\/consultation\/detail\/[^/]+$/, items: ["보건 상담", "상담 상세"] },
@@ -138,6 +139,10 @@ export function getParentPath(pathname) {
 
   if (pathname.startsWith("/safety-briefings")) {
     return "/dashboard";
+  }
+
+  if (pathname.startsWith("/safety-documents")) {
+    return "/safety-documents";
   }
 
   return "#";

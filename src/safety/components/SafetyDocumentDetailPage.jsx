@@ -1,0 +1,178 @@
+import { ArrowLeftIcon, FileTextIcon } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+
+import PageHeader from "@/common/components/PageHeader";
+import { RequestErrorAlert } from "@/common/components/RequestErrorAlert";
+import { useRequest } from "@/common/hooks/useRequest";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getEmployee } from "@/employee/api/employeeApi";
+import { getSafetyDocument } from "@/safety/api/safetyDocumentApi";
+import {
+  SafetyDocumentStatusBadge,
+  VectorIndexStatusBadge,
+} from "@/safety/components/SafetyDocumentStatusBadge";
+import {
+  formatDateTime,
+  formatFileSize,
+} from "@/safety/utils/formatSafetyDocument";
+
+export default function SafetyDocumentDetailPage() {
+  const { id } = useParams();
+  const {
+    data: document,
+    error,
+    loading,
+  } = useRequest(getSafetyDocument, { id });
+
+  return (
+    <main className="flex w-full flex-col gap-6 px-8 py-6">
+      <PageHeader
+        title="안전문서 상세"
+        description="안전문서의 등록 정보와 현재 상태를 확인합니다."
+        icon={FileTextIcon}
+      >
+        <Link
+          to="/safety-documents"
+          className={buttonVariants({ variant: "outline" })}
+        >
+          <ArrowLeftIcon />
+          목록으로
+        </Link>
+      </PageHeader>
+
+      <RequestErrorAlert
+        error={error}
+        fallbackTitle="안전문서 조회 실패"
+        fallbackDetail="안전문서 정보를 불러오지 못했습니다."
+      />
+
+      {loading && !document ? (
+        <DetailSkeleton />
+      ) : (
+        document && <DocumentDetail document={document} />
+      )}
+    </main>
+  );
+}
+
+function DocumentDetail({ document }) {
+  return (
+    <div className="grid w-full max-w-5xl gap-6 lg:grid-cols-3">
+      <Card className="lg:col-span-2">
+        <CardHeader>
+          <CardTitle>{document.title}</CardTitle>
+          <CardDescription>문서 설명</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">
+            {document.description || "등록된 설명이 없습니다."}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>상태</CardTitle>
+          <CardDescription>문서와 벡터 인덱스 상태입니다.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <DetailItem label="문서 상태">
+            <SafetyDocumentStatusBadge status={document.status} />
+          </DetailItem>
+          <DetailItem label="인덱싱 상태">
+            <VectorIndexStatusBadge status={document.indexStatus} />
+          </DetailItem>
+        </CardContent>
+      </Card>
+
+      <Card className="lg:col-span-3">
+        <CardHeader>
+          <CardTitle>등록 정보</CardTitle>
+          <CardDescription>저장된 파일과 변경 이력 정보입니다.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+            <Metadata label="파일명" value={document.originalFilename} />
+            <Metadata label="파일 형식" value={document.contentType} />
+            <Metadata
+              label="파일 크기"
+              value={formatFileSize(document.fileSize)}
+            />
+            <CreatorMetadata employeeId={document.createdById} />
+            <Metadata
+              label="등록일"
+              value={formatDateTime(document.createdAt)}
+            />
+            <Metadata
+              label="최종 수정일"
+              value={formatDateTime(document.updatedAt)}
+            />
+          </dl>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function CreatorMetadata({ employeeId }) {
+  const {
+    data: employee,
+    error,
+    loading,
+  } = useRequest(getEmployee, {
+    id: employeeId,
+  });
+
+  let value = employee?.name ?? "-";
+  if (loading) {
+    value = "조회 중...";
+  } else if (error) {
+    value = "작성자 조회 실패";
+  }
+
+  return <Metadata label="작성자" value={value} />;
+}
+
+function DetailItem({ label, children }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className="text-sm text-foreground">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function Metadata({ label, value }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
+      <dd
+        className="mt-1 truncate text-sm font-medium"
+        title={String(value ?? "-")}
+      >
+        {value ?? "-"}
+      </dd>
+    </div>
+  );
+}
+
+function DetailSkeleton() {
+  return (
+    <div
+      className="grid w-full max-w-5xl gap-6 lg:grid-cols-3"
+      aria-hidden="true"
+    >
+      <Skeleton className="h-48 lg:col-span-2" />
+      <Skeleton className="h-48" />
+      <Skeleton className="h-52 lg:col-span-3" />
+    </div>
+  );
+}

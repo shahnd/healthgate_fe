@@ -1,4 +1,5 @@
 import { FileTextIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { TableContainer } from "@/common/components/TableContainer";
 import {
@@ -21,6 +22,10 @@ import {
   SafetyDocumentStatusBadge,
   VectorIndexStatusBadge,
 } from "@/safety/components/SafetyDocumentStatusBadge";
+import {
+  formatDateTime,
+  formatFileSize,
+} from "@/safety/utils/formatSafetyDocument";
 
 export function SafetyDocumentTable({ documents, loading, hasError }) {
   return (
@@ -46,7 +51,12 @@ export function SafetyDocumentTable({ documents, loading, hasError }) {
                   className="max-w-0 truncate font-medium"
                   title={document.title}
                 >
-                  {document.title}
+                  <Link
+                    to={`/safety-documents/${document.id}`}
+                    className="hover:text-primary hover:underline"
+                  >
+                    {document.title}
+                  </Link>
                 </TableCell>
                 <TableCell
                   className="max-w-0 truncate"
@@ -99,33 +109,4 @@ function EmptyDocuments() {
       </EmptyHeader>
     </Empty>
   );
-}
-
-function formatFileSize(bytes) {
-  if (!Number.isFinite(bytes) || bytes < 0) {
-    return "-";
-  }
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  }
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  }
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function formatDateTime(value) {
-  if (!value) {
-    return "-";
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
 }
