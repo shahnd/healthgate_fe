@@ -11,7 +11,8 @@ export default function NoticeItemComponent(props) {
     // return 구문
     return (
 
-        <TableRow key={item.noticeId} onClick={() => navigate(`/notices/${ item.noticeId }`)}>
+        <TableRow key={item.noticeId} onClick={() => 
+                navigate(`/notices/${ item.noticeId }`, { state: { isFromList: true } })}>
             <TableCell className="font-medium">{item.noticeId}</TableCell>
             <TableCell>{item.title}</TableCell>
             <TableCell>{item.employee.name}</TableCell>
