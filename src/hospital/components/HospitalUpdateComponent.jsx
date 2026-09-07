@@ -31,11 +31,11 @@ export default function HospitalUpdateComponent() {
                                             phone : "",
                                             url : "",
                                             description : "",
-                                            isGeneralExamAvailable : false,
-                                            isStomachCancerExamAvailable : false,
-                                            isColonCancerExamAvailable : false,
-                                            isLiverCancerExamAvailable : false,
-                                            isLungCancerExamAvailable : false,
+                                            generalExamAvailable : false,
+                                            stomachCancerExamAvailable : false,
+                                            colonCancerExamAvailable : false,
+                                            liverCancerExamAvailable : false,
+                                            lungCancerExamAvailable : false,
                                             createdAt : "",
                                             status : ""})
 

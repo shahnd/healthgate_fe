@@ -26,11 +26,11 @@ export default function HospitalCreateComponent() {
                                         phone : "",
                                         url : "",
                                         description : "",
-                                        isGeneralExamAvailable : false,
-                                        isStomachCancerExamAvailable : false,
-                                        isColonCancerExamAvailable : false,
-                                        isLiverCancerExamAvailable : false,
-                                        isLungCancerExamAvailable : false,
+                                        generalExamAvailable : false,
+                                        stomachCancerExamAvailable : false,
+                                        colonCancerExamAvailable : false,
+                                        liverCancerExamAvailable : false,
+                                        lungCancerExamAvailable : false,
                                         createdAt : "",
                                         status : ""});
  
@@ -72,11 +72,11 @@ export default function HospitalCreateComponent() {
 
             // is가 붙은 키와 안 붙은 키를 둘 다 전송하여 자바빈 매핑 이슈를 완전 회피
             const exams = [
-                { base: "GeneralExamAvailable", key1: "generalExamAvailable", key2: "isGeneralExamAvailable" },
-                { base: "StomachCancerExamAvailable", key1: "stomachCancerExamAvailable", key2: "isStomachCancerExamAvailable" },
-                { base: "ColonCancerExamAvailable", key1: "colonCancerExamAvailable", key2: "isColonCancerExamAvailable" },
-                { base: "LiverCancerExamAvailable", key1: "liverCancerExamAvailable", key2: "isLiverCancerExamAvailable" },
-                { base: "LungCancerExamAvailable", key1: "lungCancerExamAvailable", key2: "isLungCancerExamAvailable" }
+                { base: "generalExamAvailable", key1: "generalExamAvailable", key2: "isGeneralExamAvailable" },
+                { base: "stomachCancerExamAvailable", key1: "stomachCancerExamAvailable", key2: "isStomachCancerExamAvailable" },
+                { base: "colonCancerExamAvailable", key1: "colonCancerExamAvailable", key2: "isColonCancerExamAvailable" },
+                { base: "liverCancerExamAvailable", key1: "liverCancerExamAvailable", key2: "isLiverCancerExamAvailable" },
+                { base: "lungCancerExamAvailable", key1: "lungCancerExamAvailable", key2: "isLungCancerExamAvailable" }
             ];
 
             exams.forEach(item => {
@@ -201,8 +201,8 @@ export default function HospitalCreateComponent() {
                                     <label>
                                         <input
                                             type="checkbox"
-                                            name="isGeneralExamAvailable"
-                                            checked={Boolean(hospital.isGeneralExamAvailable)}
+                                            name="generalExamAvailable"
+                                            checked={Boolean(hospital.generalExamAvailable)}
                                             onChange={handleInputChange}
                                         />
                                         일반검진
@@ -211,8 +211,8 @@ export default function HospitalCreateComponent() {
                                     <label>
                                         <input
                                             type="checkbox"
-                                            name="isStomachCancerExamAvailable"
-                                            checked={Boolean(hospital.isStomachCancerExamAvailable)}
+                                            name="stomachCancerExamAvailable"
+                                            checked={Boolean(hospital.stomachCancerExamAvailable)}
                                             onChange={handleInputChange}
                                         />
                                         위암검진
@@ -221,8 +221,8 @@ export default function HospitalCreateComponent() {
                                     <label>
                                         <input
                                             type="checkbox"
-                                            name="isColonCancerExamAvailable"
-                                            checked={Boolean(hospital.isColonCancerExamAvailable)}
+                                            name="colonCancerExamAvailable"
+                                            checked={Boolean(hospital.colonCancerExamAvailable)}
                                             onChange={handleInputChange}
                                         />
                                         대장암검진
@@ -231,8 +231,8 @@ export default function HospitalCreateComponent() {
                                     <label>
                                         <input
                                             type="checkbox"
-                                            name="isLiverCancerExamAvailable"
-                                            checked={Boolean(hospital.isLiverCancerExamAvailable)}
+                                            name="liverCancerExamAvailable"
+                                            checked={Boolean(hospital.liverCancerExamAvailable)}
                                             onChange={handleInputChange}
                                         />
                                         간암검진
@@ -241,8 +241,8 @@ export default function HospitalCreateComponent() {
                                     <label>
                                         <input
                                             type="checkbox"
-                                            name="isLungCancerExamAvailable"
-                                            checked={Boolean(hospital.isLungCancerExamAvailable)}
+                                            name="lungCancerExamAvailable"
+                                            checked={Boolean(hospital.lungCancerExamAvailable)}
                                             onChange={handleInputChange}
                                         />
                                         폐암검진
@@ -271,11 +271,11 @@ export default function HospitalCreateComponent() {
                                     phone: "",
                                     url: "",
                                     description: "",
-                                    isGeneralExamAvailable: false,
-                                    isStomachCancerExamAvailable: false,
-                                    isColonCancerExamAvailable: false,
-                                    isLiverCancerExamAvailable: false,
-                                    isLungCancerExamAvailable: false
+                                    generalExamAvailable: false,
+                                    stomachCancerExamAvailable: false,
+                                    colonCancerExamAvailable: false,
+                                    liverCancerExamAvailable: false,
+                                    lungCancerExamAvailable: false
                                 });
                             }}
                         >
