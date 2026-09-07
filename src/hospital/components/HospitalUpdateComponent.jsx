@@ -88,8 +88,6 @@ export default function HospitalUpdateComponent() {
     // 수정 버튼 클릭 시 실행할 함수
     const updateHospital = async e => {
         e.preventDefault();
-        // 전송 전 주소 데이터가 있는지 콘솔로 확인
-        console.log("수정 요청 데이터:", hospital);
 
         // address 필드가 누락되지 않도록 확인
         const params = new URLSearchParams();
