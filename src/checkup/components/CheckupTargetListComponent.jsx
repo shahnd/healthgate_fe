@@ -336,23 +336,22 @@ export default function CheckupTargetListComponent() {
 
       // 업로드 결과를 반영하기 위해 목록 재조회
       await loadTargetList();
-      setUploadNotice({
-        message:
-          uploadResult.message ||
-          "건강검진 결과 Excel 업로드가 완료되었습니다.",
+      if ((uploadResult.failureCount ?? 0) === 0) {
+        setUploadNotice({
+          message:
+            uploadResult.message ||
+            "건강검진 결과 Excel 업로드가 완료되었습니다.",
 
-        totalCount:
-          uploadResult.totalCount ?? 0,
+          totalCount:
+            uploadResult.totalCount ?? 0,
 
-        successCount:
-          uploadResult.successCount ?? 0,
+          successCount:
+            uploadResult.successCount ?? 0,
 
-        failureCount:
-          uploadResult.failureCount ?? 0,
-
-        errors:
-          uploadResult.errors ?? [],
-      });
+          failureCount: 0,
+          errors: [],
+        });
+      }
 
       setExcelModalOpen(false);
       setExcelFile(null);
@@ -361,18 +360,6 @@ export default function CheckupTargetListComponent() {
         "건강검진 Excel 업로드 실패:",
         error
       );
-
-      const serverMessage =
-        error.response?.data?.message;
-
-      setExcelUploadError({
-        message:
-          serverMessage ||
-          "Excel 업로드 처리에 실패했습니다.",
-
-        errors:
-          error.response?.data?.errors ?? [],
-      });
     } finally {
       setUploadingExcel(false);
     }
@@ -1145,10 +1132,6 @@ export default function CheckupTargetListComponent() {
                   focus:border-blue-500
                 "
               >
-                <option value="SMS" disabled>
-                  SMS (준비 중)
-                </option>
-
                 <option value="EMAIL">
                   이메일
                 </option>
