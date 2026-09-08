@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -159,6 +160,7 @@ export default function BioInputComponent() {
     const [attendanceStatus, setAttendanceStatus] = useState(null);
 
     const user = useUserInfo();
+    const navigate = useNavigate();
 
     const [inputData, setInputData] = useState({
       systolicBp: "",
@@ -449,6 +451,11 @@ export default function BioInputComponent() {
           <span className="text-sm text-muted-foreground">오늘의 출근 상태</span>
           {ATTENDANCE_MAP[attendanceStatus]}
         </div>
+      )}
+      {attendanceStatus === 'ATTENDANCE' && (
+        <Button type="button" size="lg" className="w-full cursor-pointer" onClick={() => navigate('/safety-briefings/today')}>
+          오늘의 안전수칙
+        </Button>
       )}
     </div>
   );
