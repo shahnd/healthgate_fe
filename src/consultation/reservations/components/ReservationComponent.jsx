@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ReservationCalendar from "./ReservationCalendar";
 import { useNavigate, useParams } from "react-router-dom";
-import { LoginUserApi, saveReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
+import { LoginUserApi, insertReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
 import "../styles/calendar.css";
 import { useAuthStore } from "@/store/useAuthStore";
 import PageHeader from "@/common/components/PageHeader";
@@ -270,7 +270,7 @@ export default function ReservationComponent() {
 
 
     // 상담 신청 버튼 클릭 시 실행할 이벤트
-    const saveReservation = async e => {
+    const insertReservation = async e => {
         e.preventDefault();
 
         // 유효성 검사
@@ -303,7 +303,7 @@ export default function ReservationComponent() {
 
         try {
    
-            const response = await saveReservationApi(reservationData);
+            const response = await insertReservationApi(reservationData);
 
             if(response.data != "") {
                 alert("상담 신청이 예약되었습니다.")
@@ -428,7 +428,7 @@ export default function ReservationComponent() {
                         <Button
                             size="lg" className="cursor-pointer"
                             type="submit"
-                            onClick={saveReservation}
+                            onClick={insertReservation}
                         >
                             {isEditMode ? "수정 완료" : "상담 신청"}
                         </Button>
