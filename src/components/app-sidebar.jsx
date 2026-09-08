@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useUserInfo } from "@/store/useAuthStore"
-import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon, LayoutDashboardIcon, ChartAreaIcon, MessageCircle, Stethoscope, BriefcaseIcon, ShieldAlertIcon } from "lucide-react"
+import { Settings2Icon, CommandIcon, Building2Icon, MegaphoneIcon, UsersIcon, LayoutDashboardIcon, ChartAreaIcon, MessageCircle, Stethoscope, BriefcaseIcon, ShieldAlertIcon, FileTextIcon } from "lucide-react"
 
 
 const data = {
@@ -36,6 +36,13 @@ const data = {
       url: "/safety-briefings/today",
       icon: (
         <ShieldAlertIcon/>
+      )
+    },
+    {
+      title: "안전문서",
+      url: "/safety-documents",
+      icon: (
+        <FileTextIcon/>
       )
     },
     {

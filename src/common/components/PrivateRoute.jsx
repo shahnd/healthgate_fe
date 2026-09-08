@@ -7,11 +7,11 @@ const PrivateRoute = ({allowedRoles}) => {
     const user = useUserInfo();
 
     //로컬 스토리지에 토큰 여부 확인
-    const isAuthenticated = !!localStorage.getItem("access_token") && !!user;
+    const isAuthenticated = !!user;
 
     if (!isAuthenticated) {
         alert("로그인이 필요한 서비스입니다.");
-        return <Navigate to="login" replace />
+        return <Navigate to="/login" replace />;
     }
 
     if (allowedRoles && !allowedRoles.includes(user.role)) {

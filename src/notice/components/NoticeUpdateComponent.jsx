@@ -157,7 +157,7 @@ export default function NoticeUpdateComponent() {
                     alert("공지사항 수정에 성공했습니다.");
 
                     // 공지사항 상세조회 화면으로 이동
-                    navigate(`/notices/${ noticeId }`);
+                    navigate(`/notices/${ noticeId }`,{ state: { isFromList: false }});
   
             } else {
                 // > 공지사항 수정 실패

@@ -21,4 +21,17 @@ describe('breadcrumb mapping', () => {
     expect(getParentPath('/checkup/reminders/history')).toBe('/checkup/targets');
     expect(getParentPath('/notices/new')).toBe('/notices/list');
   });
+
+  it('maps safety document detail flow', () => {
+    // given
+    const pathname = '/safety-documents/10';
+
+    // when
+    const items = getBreadcrumbItems(pathname);
+    const parentPath = getParentPath(pathname);
+
+    // then
+    expect(items).toEqual(['안전문서', '안전문서 상세']);
+    expect(parentPath).toBe('/safety-documents');
+  });
 });
