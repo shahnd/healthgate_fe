@@ -156,17 +156,38 @@ export default function BioInputComponent() {
     ),
     DENY: <Badge variant="destructive">미출근 (근무 불가)</Badge>,
   };
-  const [attendanceStatus, setAttendanceStatus] = useState(null);
+    const [attendanceStatus, setAttendanceStatus] = useState(null);
 
-  const user = useUserInfo();
+    const user = useUserInfo();
 
-  const [inputData, setInputData] = useState({
-    systolicBp: "",
-    diastolicBp: "",
-    heartRate: "",
-    employeeId: "",
-    measuredAt: "",
-  });
+    const [inputData, setInputData] = useState({
+      systolicBp: "",
+      diastolicBp: "",
+      heartRate: "",
+      employeeId: "",
+      measuredAt: "",
+    });
+
+    const getToday = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const fetchTodayAttendanceStatus = async () => {
+    const params = { page: 1, size: 1, employeeNumber: user.number, searchDate: getToday() };
+    console.log("요청 파라미터:", params);
+    try {
+      const res = await axios.get("/healthgate/employees", { params });
+      console.log("응답 결과:", res.data.data.content);
+      const me = res.data.data.content[0];
+      setAttendanceStatus(me?.attendanceStatus ?? null);
+    } catch (error) {
+      console.error("출근 상태 조회 실패:", error.message);
+    }
+  };
 
   const [isMeasuring, setIsMeasuring] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -211,6 +232,12 @@ export default function BioInputComponent() {
       stopCamera();
     };
   }, []);
+  
+  useEffect(() => {
+    if (user?.number) {
+      fetchTodayAttendanceStatus();
+    }
+  }, [user?.number]);
 
   const handleFrame = () => {
     processFrame({
@@ -281,24 +308,26 @@ export default function BioInputComponent() {
   };
 
 
+
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const currentTime = new Date().toISOString();
+    const currentTime = new Date().toISOString();
 
-  const finalData = {
-    ...inputData,
-    employeeId: user.id,
-    measuredAt: currentTime,
+    const finalData = {
+      ...inputData,
+      employeeId: user.id,
+      measuredAt: currentTime,
+    };
+
+    try {
+      await axios.post('/healthgate/biometrics', finalData);
+      await fetchTodayAttendanceStatus();
+    } catch (error) {
+      console.error("데이터 전송 통신 실패:", error.message);
+    }
   };
-
-  try {
-    const res = await axios.post('/healthgate/biometrics', finalData);
-    setAttendanceStatus(res.data.data.attendanceStatus);
-  } catch (error) {
-    console.log("데이터 전송 통신 실패");
-  }
-};
 
   return (
       <div className="mx-auto max-w-xl space-y-6 p-5">
@@ -354,66 +383,67 @@ export default function BioInputComponent() {
 
       <hr className="border-t" />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>측정 결과 입력</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="systolicBp">수축기 혈압 (최고)</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="systolicBp"
-                  type="number"
-                  name="systolicBp"
-                  value={inputData.systolicBp}
-                  onChange={handleInputChange}
-                  placeholder="자동 입력됨"
-                  className="w-[200px]"
-                />
-                <span className="text-sm text-muted-foreground">mmHg</span>
-              </div>
-            </div>
+      {attendanceStatus !== 'ATTENDANCE' &&
+        <Card>
+          <CardHeader>
+            <CardTitle>측정 결과 입력</CardTitle>
+          </CardHeader>
+          <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="systolicBp">수축기 혈압 (최고)</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="systolicBp"
+                      type="number"
+                      name="systolicBp"
+                      value={inputData.systolicBp}
+                      onChange={handleInputChange}
+                      placeholder="자동 입력됨"
+                      className="w-[200px]"
+                    />
+                    <span className="text-sm text-muted-foreground">mmHg</span>
+                  </div>
+                </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="diastolicBp">이완기 혈압 (최저)</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="diastolicBp"
-                  type="number"
-                  name="diastolicBp"
-                  value={inputData.diastolicBp}
-                  onChange={handleInputChange}
-                  placeholder="자동 입력됨"
-                  className="w-[200px]"
-                />
-                <span className="text-sm text-muted-foreground">mmHg</span>
-              </div>
-            </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="diastolicBp">이완기 혈압 (최저)</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="diastolicBp"
+                      type="number"
+                      name="diastolicBp"
+                      value={inputData.diastolicBp}
+                      onChange={handleInputChange}
+                      placeholder="자동 입력됨"
+                      className="w-[200px]"
+                    />
+                    <span className="text-sm text-muted-foreground">mmHg</span>
+                  </div>
+                </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="heartRate">심박수 (Heart Rate)</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="heartRate"
-                  type="number"
-                  name="heartRate"
-                  value={inputData.heartRate}
-                  onChange={handleInputChange}
-                  placeholder="자동 입력됨"
-                  className="w-[200px]"
-                />
-                <span className="text-sm text-muted-foreground">bpm</span>
-              </div>
-            </div>
-
-            <Button type="submit" size="lg" className="w-full cursor-pointer">
-              입력하기
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+                <div className="space-y-1.5">
+                  <Label htmlFor="heartRate">심박수 (Heart Rate)</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="heartRate"
+                      type="number"
+                      name="heartRate"
+                      value={inputData.heartRate}
+                      onChange={handleInputChange}
+                      placeholder="자동 입력됨"
+                      className="w-[200px]"
+                    />
+                    <span className="text-sm text-muted-foreground">bpm</span>
+                  </div>
+                </div>
+                  <Button type="submit" size="lg" className="w-full cursor-pointer">
+                    입력하기
+                  </Button>
+              </form>
+          </CardContent>
+        </Card>
+            }
       {attendanceStatus && (
         <div className="flex items-center justify-center gap-2 rounded-md border p-4">
           <span className="text-sm text-muted-foreground">오늘의 출근 상태</span>
