@@ -19,8 +19,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 const CHECKUP_API_URL =
   "/healthgate/checkups";
 
-const UPLOADED_YEARS_KEY = "healthgate.checkup.uploadedYears";
-
 const EMPTY_STATISTICS = {
   checkupYear: 2026,
   totalCount: 0,
@@ -32,14 +30,18 @@ const EMPTY_STATISTICS = {
 export default function CheckupStatisticsComponent({ dashboard = false }) {
   const currentYear = new Date().getFullYear();
 
-  const [year, setYear] = useState(2026);
+  const [year, setYear] = useState(currentYear);
+  const yearOptions = Array.from(
+    { length: 6 },
+    (_, index) => currentYear + 1 - index
+  );
 
   const [statistics, setStatistics] = useState(EMPTY_STATISTICS);
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
-  const hasUploadedExcel = hasUploadedYear(year);
+  const hasCheckupData = Number(statistics.totalCount ?? 0) > 0;
 
   /**
    * 건강검진 완료율 통계 조회
@@ -75,14 +77,8 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
   }, [year]);
 
   useEffect(() => {
-    if (hasUploadedExcel) {
-      loadStatistics();
-      return;
-    }
-
-    setStatistics({ ...EMPTY_STATISTICS, checkupYear: year });
-    setErrorMessage("");
-  }, [hasUploadedExcel, loadStatistics, year]);
+    loadStatistics();
+  }, [loadStatistics]);
 
   const completionRate = Number(
     statistics.completionRate ?? 0
@@ -108,7 +104,7 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {Array.from({ length: 5 }, (_, index) => currentYear - 2 + index).map((targetYear) => (
+                {yearOptions.map((targetYear) => (
                   <SelectItem key={targetYear} value={String(targetYear)}>
                     {targetYear}년
                   </SelectItem>
@@ -119,30 +115,29 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
         </CardHeader>
 
         <CardContent>
-          {!hasUploadedExcel ? (
+          {!hasCheckupData ? (
             <div className="py-10 text-center text-sm text-muted-foreground">
               검진 대상자 목록에서 {year}년 Excel 파일을 업로드하면 통계가 표시됩니다.
             </div>
           ) : (
             <>
-              <div className="flex flex-col items-center gap-8 py-4 sm:flex-row sm:justify-center">
+              <div className="flex flex-col items-center gap-20 sm:flex-row sm:justify-center">
                 <div
-                  className="grid size-36 shrink-0 place-items-center rounded-full"
+                  className="grid size-24 shrink-0 place-items-center rounded-full"
                   style={{
                     background: `conic-gradient(#2563eb ${safeCompletionRate * 3.6}deg, hsl(var(--muted)) 0deg)`,
                   }}
                 >
-                  <div className="grid size-28 place-items-center rounded-full bg-card">
+                  <div className="grid size-20 place-items-center rounded-full bg-card">
                     <strong className="text-3xl font-bold">{safeCompletionRate}%</strong>
                   </div>
                 </div>
 
                 <div className="w-full max-w-sm">
-                  <strong className="text-3xl font-bold">{safeCompletionRate}%</strong>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {statistics.completedCount ?? 0}명 / {statistics.totalCount ?? 0}명
                   </p>
-                  <div className="mt-4 h-3 overflow-hidden rounded-full bg-muted">
+                  <div className="mt-2 h-3 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full rounded-full bg-blue-600 transition-all duration-500"
                       style={{ width: `${safeCompletionRate}%` }}
@@ -151,7 +146,7 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 divide-x rounded-lg border bg-muted/30 mt-2">
+              <div className="grid grid-cols-3 divide-x rounded-lg border bg-muted/30 ">
                 <DashboardCount label="완료" value={statistics.completedCount} color="text-emerald-600" />
                 <DashboardCount label="미완료" value={statistics.incompleteCount} color="text-red-500" />
                 <DashboardCount label="전체" value={statistics.totalCount} color="text-foreground" />
@@ -166,7 +161,7 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
           )}
         </CardContent>
 
-        {hasUploadedExcel && (
+        {hasCheckupData && (
           <CardFooter className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs text-muted-foreground">마지막 갱신 {formatDashboardDate(lastUpdatedAt)}</p>
             <Button variant="outline" size="sm" render={<Link to="/checkup/targets" />}>
@@ -210,10 +205,7 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-              {Array.from(
-                { length: 5 },
-                (_, index) => currentYear - 2 + index
-              ).map((targetYear) => (
+              {yearOptions.map((targetYear) => (
                 <SelectItem
                   key={targetYear}
                   value={String(targetYear)}
@@ -230,9 +222,9 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
             variant="outline"
             size="sm"
             onClick={() => {
-              if (hasUploadedExcel) loadStatistics();
+              loadStatistics();
             }}
-            disabled={loading || !hasUploadedExcel}
+            disabled={loading}
           >
             {loading ? "조회 중..." : "새로고침"}
           </Button>
@@ -241,7 +233,7 @@ export default function CheckupStatisticsComponent({ dashboard = false }) {
 
       {/* 통계 전체 박스 */}
       <section className="list-table-wrapper">
-        {!hasUploadedExcel ? (
+        {!hasCheckupData ? (
           <div className="px-6 py-6 text-center text-sm text-slate-500">
             검진 대상자 목록에서 {year}년 Excel 파일을 업로드하면 완료율 통계가 표시됩니다.
           </div>
@@ -403,12 +395,4 @@ function StatisticsItem({
       </div>
     </div>
   );
-}
-
-function hasUploadedYear(year) {
-  const uploadedYears = JSON.parse(
-    sessionStorage.getItem(UPLOADED_YEARS_KEY) ?? "[]"
-  );
-
-  return uploadedYears.includes(year);
 }

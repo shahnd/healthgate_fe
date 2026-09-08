@@ -48,11 +48,14 @@ import TodaySafetyBriefingPage from "./safety/components/TodaySafetyBriefingPage
 function App() {
   const location = useLocation();
 
+  const isAutenticated = !!localStorage.getItem("access_token");
+
   //로그인 화면 시 사이드바 + 헤더는 보이지 않음
-  if (location.pathname === "/login") {
+  if (location.pathname === "/login" || (location.pathname === "/" && !isAutenticated)) {
     return (
       <Routes>
         <Route path="/login" element={<LoginComponent />} />
+        <Route path="/" element={<LoginComponent />} />
       </Routes>
     )
   }
@@ -68,6 +71,7 @@ function App() {
 
           {/* 로그인 해야만 들어갈 수 있는 페이지 */}
           <Route element={<PrivateRoute/>}>
+            <Route path="/" element={<Navigate to="/bioinput" replace/>}/>
 
             <Route path="/dashboard" element={<DashboardComponent />} />
             <Route path="/mypage" element={<MyPageComponent/>} />

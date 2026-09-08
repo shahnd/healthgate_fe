@@ -56,7 +56,12 @@ export default function LoginComponent() {
     };
 
     return (
-        <div className="grid min-h-screen w-full place-items-center">
+        <div className="flex flex-col gap-7 justify-center items-center min-h-screen w-full pb-40">
+            <img
+                src="/logo_big.png"
+                alt="logo_big"
+                className="size-50! object-contain"
+            />
             <LoginForm
                 formRef={formRef}
                 onSubmit={handleLogin}

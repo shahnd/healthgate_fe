@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { MessageCircle } from "lucide-react"
 
 const STATUS_MAP = {
   RESERVED: { label: "예정", variant: "secondary" },
@@ -12,7 +13,10 @@ export default function TodayConsultationCard({ consultations = [] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>금일 상담 일정</CardTitle>
+        <div className="flex items-center gap-2">
+          <MessageCircle className="h-4 w-4 text-muted-foreground"/>
+          <CardTitle>금일 상담 일정</CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="space-y-3">
         {consultations.length === 0 && (
