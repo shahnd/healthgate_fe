@@ -22,11 +22,11 @@ function LoginUserApi(id){
     return response;
 }
 // 예약 목록 조회
-function selectAllReservationApi(scheduledDate) {
+function selectAllReservationApi(year, month) {
     const response = axios({
-        url : `${BASE_URL}/list`,
+        url : `${BASE_URL}`,
         method : "get",
-        params : { scheduledDate },
+        params : { year, month },
         ...getAuthConfig()
     });
     return response;
@@ -36,7 +36,7 @@ function selectAllReservationApi(scheduledDate) {
 function selectReservationApi(id) {
 
     const response = axios({
-        url : `${BASE_URL}/details/${id}`,
+        url : `${BASE_URL}/${id}`,
         method : "get",
         ...getAuthConfig()
     });
@@ -46,7 +46,7 @@ function selectReservationApi(id) {
 // 예약 신청 전 조회
 function selectDateApi (scheduledDate) {
     const response = axios({
-        url : `${BASE_URL}/views`,
+        url : `${BASE_URL}`,
         method : "get",
         params : { scheduledDate },
         ...getAuthConfig()
@@ -55,9 +55,9 @@ function selectDateApi (scheduledDate) {
 }
 
 // 예약 신청
-function saveReservationApi (consultation) {
+function insertReservationApi (consultation) {
     const response = axios({
-        url : `${BASE_URL}/save`,
+        url : `${BASE_URL}`,
         method : "post",
         data : consultation,
         ...getAuthConfig()
@@ -67,7 +67,7 @@ function saveReservationApi (consultation) {
 // 예약 수정
 function updateReservationApi (id, consultation) {
     const response = axios({
-        url : `${BASE_URL}/save/${id}`,
+        url : `${BASE_URL}/${id}`,
         method : "put",
         data : consultation,
         ...getAuthConfig()
@@ -85,5 +85,5 @@ function cancelReservationApi (id) {
     return response;
 }
 
-export { selectAllReservationApi, selectReservationApi, selectDateApi, saveReservationApi,
+export { selectAllReservationApi, selectReservationApi, selectDateApi, insertReservationApi,
          updateReservationApi, cancelReservationApi, LoginUserApi };

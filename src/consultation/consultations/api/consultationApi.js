@@ -15,7 +15,7 @@ const getAuthConfig = () => {
 function selectConsultationListApi({ startMonth, endMonth}) {
 
     const response = axios ({
-        url : `${ BASE_URL }/list`,
+        url : `${ BASE_URL }`,
         method : "get",
         params : { startMonth, endMonth},
         ...getAuthConfig()
@@ -28,7 +28,7 @@ function selectConsultationListApi({ startMonth, endMonth}) {
 function selectConsultationApi(id) {
 
     const response = axios({
-        url : `${ BASE_URL }/detail/${ id }`,
+        url : `${ BASE_URL }/${ id }`,
         method : "get",
         ...getAuthConfig()
     });

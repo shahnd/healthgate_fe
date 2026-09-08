@@ -39,13 +39,10 @@ export default function ReservationListComponent() {
 
         // 날짜 객체에서 연월 추출 - 'YYYY-MM-DD' 형식으로
         const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const month = currentDate.getMonth() + 1;
 
-        // 백엔드에 전달할 형식으로 가공
-        const dateStr = `${year}-${month}-01`;
-        
         // 전달
-        const response = await selectAllReservationApi(dateStr);
+        const response = await selectAllReservationApi(year, month);
         let items = response.data;
 
         // 권한 체크
@@ -105,9 +102,9 @@ export default function ReservationListComponent() {
           </div>
         </CardContent>
         <CardFooter className="w-full flex justify-end pr-18">
-            <Button size="lg" className="cursor-pointer"
+            <Button size="lg"
+                    className="cursor-pointer"
                     type="button"
-                    variant="outline"
                     onClick={ () => {navigate("/consultation/reservation")} }>
               예약 하러 가기 ⇒
             </Button>
