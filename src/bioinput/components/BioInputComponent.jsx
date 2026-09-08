@@ -8,6 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+
+
 
 // 렌더 함수 바깥의 순수 로직 — performance.now() 등 impure 호출을 컴포넌트 스코프에서 분리
 function processFrame({
@@ -140,6 +143,21 @@ function processFrame({
 }
 
 export default function BioInputComponent() {
+  const ATTENDANCE_MAP = {
+    ATTENDANCE: (
+      <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-none">
+        출근 (건강 양호)
+      </Badge>
+    ),
+    WARNING: (
+      <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-none">
+        출근 (건강 주의)
+      </Badge>
+    ),
+    DENY: <Badge variant="destructive">미출근 (근무 불가)</Badge>,
+  };
+  const [attendanceStatus, setAttendanceStatus] = useState(null);
+
   const user = useUserInfo();
 
   const [inputData, setInputData] = useState({
@@ -262,26 +280,25 @@ export default function BioInputComponent() {
     setInputData((prev) => ({ ...prev, [name]: value }));
   };
 
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const currentTime = new Date().toISOString();
+  const currentTime = new Date().toISOString();
 
-    const finalData = {
-      ...inputData,
-      employeeId: user.id,
-      measuredAt: currentTime,
-    }
-
-    try {
-      await axios.post('/healthgate/biometrics', finalData);
-    } catch(error) {
-      console.log("데이터 전송 통신 실패");
-    }
-    alert(`전송 데이터:\n심박수: ${inputData.heartRate}\n혈압: ${inputData.systolicBp}/${inputData.diastolicBp}`);
-
-
+  const finalData = {
+    ...inputData,
+    employeeId: user.id,
+    measuredAt: currentTime,
   };
+
+  try {
+    const res = await axios.post('/healthgate/biometrics', finalData);
+    setAttendanceStatus(res.data.data.attendanceStatus);
+  } catch (error) {
+    console.log("데이터 전송 통신 실패");
+  }
+};
 
   return (
       <div className="mx-auto max-w-xl space-y-6 p-5">
@@ -397,6 +414,12 @@ export default function BioInputComponent() {
           </form>
         </CardContent>
       </Card>
+      {attendanceStatus && (
+        <div className="flex items-center justify-center gap-2 rounded-md border p-4">
+          <span className="text-sm text-muted-foreground">오늘의 출근 상태</span>
+          {ATTENDANCE_MAP[attendanceStatus]}
+        </div>
+      )}
     </div>
   );
 }
