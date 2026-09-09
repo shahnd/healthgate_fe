@@ -81,7 +81,7 @@ export default function ConsultationComponent () {
             try {
 
                 const response = await selectConsultationApi(id);
-                console.log(response.data);
+
                 setConsultation(response.data);
                 setIsModified(response.data.content || "");
             } catch (error) {
@@ -113,8 +113,6 @@ export default function ConsultationComponent () {
                 manager : { id : loginUserId },
                 consultatedAt : new Date().toISOString()
             };
-
-            console.log("최종 데이터 : ", saveData);
 
             const response = await saveConsultationApi(id, saveData);
 
