@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ReservationCalendar from "./ReservationCalendar";
 import { useNavigate, useParams } from "react-router-dom";
-import { LoginUserApi, insertReservationApi, selectDateApi, selectReservationApi } from "../api/reservationApi";
+import { LoginUserApi, insertReservationApi, selectDateApi, selectReservationApi, updateReservationApi } from "../api/reservationApi";
 import "../styles/calendar.css";
 import { useAuthStore } from "@/store/useAuthStore";
 import PageHeader from "@/common/components/PageHeader";
@@ -270,7 +270,7 @@ export default function ReservationComponent() {
 
 
     // 상담 신청 버튼 클릭 시 실행할 이벤트
-    const insertReservation = async e => {
+    const submitReservation = async e => {
         e.preventDefault();
 
         // 유효성 검사
@@ -294,7 +294,7 @@ export default function ReservationComponent() {
                                 `- 날짜 : ${reservationData.scheduledDate}\n` +
                                 `- 시간 : ${turnLabel}\n` +
                                 `- 사유 : ${reservationData.reason}\n\n` +
-                                `위 내용으로 상담을 신청하시겠습니까?`;
+                                `위 내용으로 상담을 ${ isEditMode ? "수정" : "신청" }하시겠습니까?`;
 
         // 컨펌창 - 취소 시 함수 종료
         if (!window.confirm(confirmMessage)) {
@@ -302,13 +302,18 @@ export default function ReservationComponent() {
         }
 
         try {
-   
-            const response = await insertReservationApi(reservationData);
+
+            // 신청/수정 모드 판별
+            const response = isEditMode
+                           ? await updateReservationApi(id, reservationData)
+                           : await insertReservationApi(reservationData);
 
             if(response.data != "") {
-                alert("상담 신청이 예약되었습니다.")
+                alert(isEditMode
+                    ? "상담 예약이 수정되었습니다"
+                    : "상담 예약이 신청되었습니다.")
             } else {
-                alert("상담 신청 예약에 실패했습니다. 다시 시도해주세요.");
+                alert("상담 예약에 실패했습니다. 다시 시도해주세요.");
             }
 
             navigate("/consultation/reservation/list");
@@ -428,7 +433,7 @@ export default function ReservationComponent() {
                         <Button
                             size="lg" className="cursor-pointer"
                             type="submit"
-                            onClick={insertReservation}
+                            onClick={submitReservation}
                         >
                             {isEditMode ? "수정 완료" : "상담 신청"}
                         </Button>
