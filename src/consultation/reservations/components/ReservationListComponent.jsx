@@ -27,7 +27,7 @@ export default function ReservationListComponent() {
 
 
   // 공휴일 이벤트
-  const { holidayEvents } = useHolidays();
+  const { holidayStr, holidayEvents } = useHolidays();
 
   // 예약데이터 + 공휴일 이벤트 합치기
   const combinedEvents = [...dataList, ...holidayEvents];
@@ -94,11 +94,27 @@ export default function ReservationListComponent() {
       <PageHeader title="보건 상담 예약 현황" description="보건 상담 예약 현황을 조회합니다." icon={MessageCircle}/>
 
       <Card className="list-table-wrapper w-full max-w-[1100px] mx-auto flex flex-col items-center justify-center">
-        <CardContent className="w-full flex justify-center">
+        <CardContent className="w-full flex flex-col items-center justify-center relative">
+          <div className="absolute top-5 right-8 z-10 flex justify-end items-center gap-4 mb-4 text-sm text-muted-foreground bg-white/80 p-3 rounded-lg">
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#6498E9" }}></span>
+              예약 신청
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#27ae60" }}></span>
+              상담 완료
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: "#e74c3c" }}></span>
+              상담 취소
+            </span>
+          </div>
+
           <div className="w-full max-w-[1000px]">
           <ListCalendar dataList={ combinedEvents }
                         onSelectEvent={ handleSelectEvent }
-                        onNavigate={ handleNavigate } />
+                        onNavigate={ handleNavigate }
+                        holidays={ holidayStr } />
           </div>
         </CardContent>
         <CardFooter className="w-full flex justify-end pr-18">

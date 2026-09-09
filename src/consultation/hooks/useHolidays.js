@@ -17,7 +17,7 @@ export function useHolidays() {
     const rangeEnd = useMemo(() => {
 
         const d = new Date();
-        d.setMonth(d.getMonth() + 5);
+        d.setMonth(d.getMonth() + 4);
 
         return d;
     }, []);
@@ -41,7 +41,13 @@ export function useHolidays() {
         const s = item.locdate;
         const dateObj = new Date(Number(s.substring(0, 4)), Number(s.substring(4, 6)) - 1, Number(s.substring(6, 8)));
 
-        return { title: item.dateName, start: dateObj, end: dateObj, allDay: true, status: "HOLIDAY" };
+        return {
+            title: item.dateName,
+            start: dateObj,
+            end: dateObj,
+            allDay: true,
+            status: "HOLIDAY"
+        };
     }), [data]);
 
     return { holidayStr, holidayEvents, loading, error };

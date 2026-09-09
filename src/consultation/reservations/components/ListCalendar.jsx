@@ -17,7 +17,14 @@ const localizer = dateFnsLocalizer({
 })
 
 
-function ListCalendar({ dataList, onSelectEvent }) {
+function ListCalendar({ dataList, onSelectEvent, holidays = [] }) {
+
+  const toDateStr = date => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`
+  }
 
   return (
     <div className="w-full max-w-[1000px] h-[800px] p-6 text-foreground">
@@ -38,6 +45,14 @@ function ListCalendar({ dataList, onSelectEvent }) {
         components={{ toolbar: CustomToolbar, }}
         onSelectEvent={onSelectEvent}  // prop 된 이벤트 클릭 핸들러
         selectable  // 슬롯 선택 가능하게
+        dayPropGetter={date => {
+          if(holidays.includes(toDateStr(date))) {
+
+            return { className : "day-holiday" };
+          }
+
+          return {};
+        }}
         eventPropGetter={event => {
           let backgroundColor = "cornflowerblue";
           let color = "white";

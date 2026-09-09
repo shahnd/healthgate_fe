@@ -7,39 +7,44 @@
     display: inline-block;
 }
 
-/* 일요일 빨간색*/
+/* 토요일 파란색*/
 .rbc-header:last-child {
     color : cornflowerblue;
-    cursor: pointer;
+    cursor: default;
 }
 .rbc-month-row .rbc-date-cell:last-child .rbc-button-link {
     color : cornflowerblue;
-    cursor: pointer;
+    cursor: default;
 }
 
-/* 토요일 파란색 */
+/* 일요일 빨간색 */
 .rbc-header:first-child {
     color : crimson;
-    cursor: pointer;
+    cursor: default;
 }
 .rbc-month-row .rbc-date-cell:first-child .rbc-button-link {
     color : crimson;
+    cursor: default;
+}
+
+/* 공휴일 빨간색 */
+.day-holiday .rbc-button-link {
+    color : crimson;
+    cursor: default;
+}
+
+.day-available:hover {
     cursor: pointer;
 }
 
-
-.day-availabe:hover {
-    cursor: pointer;
-}
-
-.day-unavailabe:hover {
+.day-unavailable:hover {
     cursor: not-allowed;
 }
 
-.day-availabe .rbc-day-bg:hover {
+.day-available .rbc-day-bg:hover {
     cursor: pointer;
 }
 
-.day-unavailabe .day-availabe.rbc-day-bg:hover {
+.day-unavailable .day-available.rbc-day-bg:hover {
     cursor: not-allowed;
 }
