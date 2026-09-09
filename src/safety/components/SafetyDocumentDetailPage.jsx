@@ -14,7 +14,11 @@ import { SafetyDocumentStatusCard } from "@/safety/components/SafetyDocumentStat
 import { useUserInfo } from "@/store/useAuthStore";
 
 const INDEX_POLL_INTERVAL = 2000;
-const POLLING_INDEX_STATUSES = new Set(["PENDING", "INDEXING"]);
+const POLLING_INDEX_STATUSES = new Set([
+  "PENDING",
+  "INDEXING",
+  "CANCEL_REQUESTED",
+]);
 
 export default function SafetyDocumentDetailPage() {
   const { id } = useParams();

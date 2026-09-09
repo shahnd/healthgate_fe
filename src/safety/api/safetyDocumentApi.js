@@ -42,6 +42,15 @@ export const requestSafetyDocumentIndexing = async ({ id, signal }) => {
   return response.data;
 };
 
+export const cancelSafetyDocumentIndexing = async ({ id, signal }) => {
+  const response = await apiClient.post(
+    `/safety-documents/${id}/index/cancel`,
+    null,
+    { signal },
+  );
+  return response.data;
+};
+
 export const updateSafetyDocumentActivation = async ({ id, active, signal }) => {
   const response = await apiClient.patch(
     `/safety-documents/${id}/activation`,

@@ -21,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  cancelSafetyDocumentIndexing,
   requestSafetyDocumentIndexing,
   updateSafetyDocumentActivation,
 } from "@/safety/api/safetyDocumentApi";
@@ -48,6 +49,11 @@ export function SafetyDocumentStatusCard({ document, canEdit, setDocument }) {
           canEdit={canEdit}
           setDocument={setDocument}
         />
+        <IndexingCancellationAction
+          document={document}
+          canEdit={canEdit}
+          setDocument={setDocument}
+        />
         <ActivationAction
           document={document}
           canEdit={canEdit}
@@ -65,7 +71,8 @@ function IndexingAction({ document, canEdit, setDocument }) {
     mutate: requestIndexing,
   } = useMutation(requestSafetyDocumentIndexing);
   const canRequestIndexing =
-    document.indexStatus == null || document.indexStatus === "FAILED";
+    document.indexStatus == null ||
+    ["FAILED", "CANCELLED"].includes(document.indexStatus);
 
   if (!canEdit || !canRequestIndexing) {
     return null;
@@ -95,6 +102,76 @@ function IndexingAction({ document, canEdit, setDocument }) {
         {getIndexingButtonLabel(document.indexStatus, requestingIndexing)}
       </Button>
     </div>
+  );
+}
+
+function IndexingCancellationAction({ document, canEdit, setDocument }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const {
+    error,
+    loading: cancellingIndexing,
+    mutate: cancelIndexing,
+  } = useMutation(cancelSafetyDocumentIndexing);
+  const canCancel = ["PENDING", "INDEXING"].includes(document.indexStatus);
+
+  if (!canEdit || (!canCancel && document.indexStatus !== "CANCEL_REQUESTED")) {
+    return null;
+  }
+
+  const confirmCancellation = async () => {
+    try {
+      const updatedDocument = await cancelIndexing({ id: document.id });
+      setDocument(updatedDocument);
+      setDialogOpen(false);
+    } catch {
+      // 오류는 useMutation이 보관하고 중단 버튼 가까이에 표시합니다.
+    }
+  };
+
+  return (
+    <>
+      <div className="space-y-3">
+        <RequestErrorMessage
+          error={error}
+          fallbackDetail="안전문서 인덱싱을 중단하지 못했습니다."
+        />
+        <Button
+          type="button"
+          variant="destructive"
+          className="w-full"
+          onClick={() => setDialogOpen(true)}
+          disabled={cancellingIndexing || !canCancel}
+        >
+          {document.indexStatus === "CANCEL_REQUESTED"
+            ? "인덱싱 중단 중..."
+            : "인덱싱 중단"}
+        </Button>
+      </div>
+
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>인덱싱을 중단할까요?</AlertDialogTitle>
+            <AlertDialogDescription>
+              처리 중인 인덱싱은 현재 청크 처리가 끝난 후 중단됩니다. 중단된
+              작업은 다시 요청할 수 있습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={cancellingIndexing}>
+              취소
+            </AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={cancellingIndexing}
+              onClick={confirmCancellation}
+            >
+              {cancellingIndexing ? "중단 요청 중..." : "중단"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
@@ -194,7 +271,9 @@ function getIndexingButtonLabel(indexStatus, requestingIndexing) {
   if (requestingIndexing) {
     return "요청 중...";
   }
-  return indexStatus === "FAILED" ? "인덱싱 재시도" : "인덱싱 요청";
+  return ["FAILED", "CANCELLED"].includes(indexStatus)
+    ? "인덱싱 재시도"
+    : "인덱싱 요청";
 }
 
 function DetailItem({ label, children }) {
