@@ -8,6 +8,8 @@ const DOCUMENT_STATUS = {
 const INDEX_STATUS = {
   PENDING: { label: "대기", variant: "secondary" },
   INDEXING: { label: "처리 중", variant: "outline" },
+  CANCEL_REQUESTED: { label: "중단 중", variant: "outline" },
+  CANCELLED: { label: "중단됨", variant: "secondary" },
   COMPLETED: { label: "완료", variant: "default" },
   FAILED: { label: "실패", variant: "destructive" },
   PURGING: { label: "삭제 중", variant: "outline" },
