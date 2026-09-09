@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { useEffect, useMemo, useState } from "react";
 import { selectConsultationListApi } from "../api/consultationApi";
 import { useAuthStore } from "../../../store/useAuthStore";
@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import PageHeader from "@/common/components/PageHeader";
 import { MessageCircle } from "lucide-react";
 import "@/common/styles/ListComponent.css";
+import { RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -44,20 +45,47 @@ export default function ConsultationListComponent() {
         return result;
     }
 
-    // 기간 필터 객체 초기화 (이번달 ~ 미래 3개월)
-    const [startMonth, setStartMonth] = useState(toMonthStr(addMonths(today, 0)));
-    const [endMonth, setEndMonth] = useState(toMonthStr(addMonths(today, 3)));
+    // 기간 필터 초기화 (이번달 ~ 미래 3개월)
+    const [defaultStartMonth, setDefaultStartMonth] = useState(toMonthStr(addMonths(today, 0)));
+    const [defaultEndMonth, setDefaultEndMonth] = useState(toMonthStr(addMonths(today, 3)));
 
-    // 필터링용 객체 추가
-    const [nameFilter, setNameFilter] = useState("");
-    const [statusFilter, setStatusFilter] = useState("ALL");
-    const [sortOption, setSortOption] = useState("date_desc");
+    // 필터링용
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // 조회에적용된 기간
+    const appliedStartMonth = searchParams.get("startMonth") || defaultStartMonth;
+    const appliedEndMonth = searchParams.get("endMonth") || defaultEndMonth;
+
+    // 이름 상태 정렬
+    const nameFilter = searchParams.get("name") || "";
+    const [keyword, setKeyword] = useState(nameFilter);
+    const statusFilter = searchParams.get("status") || "ALL";
+    const sortOption = searchParams.get("sort") || "date_desc";
+
+
+    // URL 갱신
+        const updateParams = (updates) => {
+        const next = new URLSearchParams(searchParams);
+        Object.entries(updates).forEach(([key, value]) => {
+            if (value === null || value === undefined || value === "") {
+                next.delete(key);
+            } else {
+                next.set(key, String(value));
+            }
+        });
+        setSearchParams(next);
+    };
+
+    // 기간 입력값 - 임시. 검색/이번달 눌러서 URL에 반영
+    const [draftStartMonth, setDraftStartMonth] = useState(appliedStartMonth);
+    const [draftEndMonth, setDraftEndMonth] = useState(appliedEndMonth);
+
 
     // 상담 목록 객체
     const [consultationList, setConsultationList] = useState([]);
     // 페이지네이션
-    const [page, setPage] = useState(1);
-    const [size, setSize] = useState(10);
+    const page = Number(searchParams.get("page") || "1");
+    const size = Number(searchParams.get("size") || "10");
 
     // 차시 -> 시간 매핑
     const turnTimeMap = {
@@ -140,28 +168,28 @@ export default function ConsultationListComponent() {
     // 시작 날짜 핸들러
     const handleStartMonthChange = e => {
         const value = e.target.value;
-        setStartMonth(value);
+        setDraftStartMonth(value);
 
-        if (value > endMonth) {
+        if (value > draftEndMonth) {
             // 시작이 종료보다 늦어지면 종료를 시작에 맞춤
-            setEndMonth(value);
-        } else if (monthDiff(value, endMonth) > MAX_RANGE_MONTHS) {
+            setDraftEndMonth(value);
+        } else if (monthDiff(value, draftEndMonth) > MAX_RANGE_MONTHS) {
             // 검색 최대 기간 초과 시 종료월을 시작+12로 당기기
-            setEndMonth(addMonthsStr(value, MAX_RANGE_MONTHS));
+            setDraftEndMonth(addMonthsStr(value, MAX_RANGE_MONTHS));
         }
     };
 
     // 종료 날짜 핸들러
     const handleEndMonthChange = e => {
         const value = e.target.value;
-        setEndMonth(value);
+        setDraftEndMonth(value);
 
-        if (value < startMonth) {
+        if (value < draftStartMonth) {
             // 종료가 시작보다 앞서면 시작을 종료에 맞춤
-            setStartMonth(value);
-        } else if (monthDiff(startMonth, value) > MAX_RANGE_MONTHS) {
+            setDraftStartMonth(value);
+        } else if (monthDiff(draftStartMonth, value) > MAX_RANGE_MONTHS) {
             // 검색 최대 기간 초과 시 시작월을 종료 -12로 당기기
-            setStartMonth(addMonthsStr(value, -MAX_RANGE_MONTHS));
+            setDraftStartMonth(addMonthsStr(value, - MAX_RANGE_MONTHS));
         }
     };
 
@@ -169,7 +197,7 @@ export default function ConsultationListComponent() {
     const selectConsultationList = async () => {
         try {
 
-            const response = await selectConsultationListApi({ startMonth, endMonth });
+            const response = await selectConsultationListApi({ startMonth : appliedStartMonth, endMonth : appliedEndMonth });
 
             let items = response.data; 
 
@@ -192,21 +220,28 @@ export default function ConsultationListComponent() {
         if (loginUserId !== undefined && loginUserId !== null) {
             selectConsultationList();
         }
-    }, [role, loginUserId, startMonth, endMonth]);
+    }, [role, loginUserId, appliedStartMonth, appliedEndMonth]);
 
     // 검색 버튼 클릭 시 실행
     const searchConsultation = e => {
         e.preventDefault();
-        setPage(1);
-        selectConsultationList();
+        updateParams({
+            startMonth: draftStartMonth,
+            endMonth: draftEndMonth,
+            page: 1
+        });
     }
 
     // 이번달 버튼 클릭 시 실행
     const handleThisMonth = () => {
         const thisMonth = toMonthStr(today);
-        setStartMonth(thisMonth);
-        setEndMonth(thisMonth);
-        setPage(1);
+        setDraftStartMonth(thisMonth);
+        setDraftEndMonth(thisMonth);
+        updateParams({
+            startMonth: thisMonth,
+            endMonth: thisMonth,
+            page: 1
+        });
     }
 
     // 이름, 상태, 정렬 실시간 반영
@@ -259,7 +294,7 @@ export default function ConsultationListComponent() {
 
     useEffect(() => {
         if (page > totalPages) {
-            setPage(1);
+            updateParams({ page: 1 });
         }
     }, [totalPages]);
 
@@ -272,13 +307,13 @@ export default function ConsultationListComponent() {
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="flex items-center gap-1">
                         <Input type="month"
-                            value={ startMonth }
-                            max={ endMonth }
+                            value={ draftStartMonth }
+                            max={ draftEndMonth }
                             onChange={ handleStartMonthChange } />
                         <span>~</span>
                         <Input type="month"
-                            value={ endMonth }
-                            min={ startMonth }
+                            value={ draftEndMonth }
+                            min={ draftStartMonth }
                             onChange={ handleEndMonthChange } />
                         <Button type="button"
                                 size="lg"
@@ -292,12 +327,15 @@ export default function ConsultationListComponent() {
                     <div className="flex items-center gap-1">
                         <Input type="text"
                             placeholder="직원명을 입력하세요."
-                            value={ nameFilter }
-                            onChange={ e => {setNameFilter( e.target.value ); setPage(1); } } />
-
+                            value={ keyword }
+                            onChange={ e => { setKeyword(e.target.value); } }
+                            onKeyDown={ e => {
+                                if(e.key === "Enter") { updateParams({ name : keyword, page : 1 }); }}}
+                            onBlur={ () => { updateParams({ name : keyword, page : 1 }); }}
+                         />
                         <Select name="status"
                                 value={ statusFilter }
-                                onValueChange={ val => { setStatusFilter(val); setPage(1); } }>
+                                onValueChange={ val => { updateParams({ status : val, page : 1 }); } }>
                             <SelectTrigger className="w-[140px]" size="sm">
                                 <SelectValue placeholder="전체 보기">
                                     { statusLabelMap[statusFilter] }
@@ -315,7 +353,7 @@ export default function ConsultationListComponent() {
 
                         <Select name="sort"
                                 value={ sortOption }
-                                onValueChange={ val => { setSortOption(val); setPage(1); } }>
+                                onValueChange={ val => { updateParams({ sort : val, page : 1 }) } }>
                             <SelectTrigger className="w-[140px]">
                                 <SelectValue placeholder="정렬 선택">
                                     { sortLabelMap[sortOption] }
@@ -330,6 +368,16 @@ export default function ConsultationListComponent() {
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        <Button variant="outline" size="icon" onClick={() => {
+                            // 입력값 초기화
+                            setDraftStartMonth(defaultStartMonth);
+                            setDraftEndMonth(defaultEndMonth);
+                            
+                            // URL 파라미터 초기화
+                            setSearchParams({});
+                        }}>
+                            <RotateCcw className="h-2 w-2"/>
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -339,7 +387,6 @@ export default function ConsultationListComponent() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">예약번호</TableHead>
                             <TableHead className="w-[100px]">신청자</TableHead>
                             <TableHead className="w-[100px]">부서명</TableHead>
                             <TableHead className="w-[150px]">상담일</TableHead>
@@ -360,7 +407,6 @@ export default function ConsultationListComponent() {
                                     return(
                                         <TableRow className="cursor-pointer" key={ index }
                                             onClick={() => { navigate(`/consultation/detail/${item.id}`); }}>
-                                            <TableCell>{ item.id }</TableCell>
                                             <TableCell>{ item.employee?.name }</TableCell>
                                             <TableCell>{ item.employee?.departments?.name || "부서미지정" }</TableCell>
                                             <TableCell>{ item.scheduledDate }</TableCell>
@@ -377,7 +423,7 @@ export default function ConsultationListComponent() {
 
             <br /><br />
 
-            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            <Pagination page={page} totalPages={totalPages} onPageChange={ p => { return updateParams({ page : p }) } } />
         </div>
     )
 }

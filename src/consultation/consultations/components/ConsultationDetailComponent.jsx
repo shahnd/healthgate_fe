@@ -207,7 +207,7 @@ export default function ConsultationDetailComponent () {
                         type="button"
                         variant="outline"
                         onClick={() => {
-                            navigate(`/consultation/list`);
+                            navigate(-1);
                         }}
                     >
                         목록으로
