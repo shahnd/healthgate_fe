@@ -176,7 +176,7 @@ export default function ConsultationDetailComponent () {
                             </dd>
                         </div>
 
-                        <div>
+                        <div className="col-span-2">
                             <dt>상담내용</dt>
                             <dd style={{ height : "250px" }}>
                                 {(!consultation.content || consultation.content === "")

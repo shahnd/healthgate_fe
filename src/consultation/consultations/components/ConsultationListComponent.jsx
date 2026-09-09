@@ -292,6 +292,7 @@ export default function ConsultationListComponent() {
         return filteredList.slice(start, start + size);
     }, [filteredList, page, size])
 
+    // 페이지 연동
     useEffect(() => {
         if (page > totalPages) {
             updateParams({ page: 1 });
@@ -398,7 +399,7 @@ export default function ConsultationListComponent() {
                         { 
                             pagedList.length === 0 ? (
                                 <TableRow className="cursor-pointer">
-                                    <TableCell align="center" colSpan={ 6 } style={{ color : "#888888" }}>
+                                    <TableCell align="center" colSpan={ 5 } style={{ color : "#888888" }}>
                                         조회된 내용이 없습니다.
                                     </TableCell>
                                 </TableRow>

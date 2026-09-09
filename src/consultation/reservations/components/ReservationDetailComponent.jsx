@@ -197,7 +197,7 @@ export default function ReservationDetailComponent() {
                             <dd>{formatScheduledTurn(reservation.scheduledTurn)}</dd>
                         </div>
 
-                        <div>
+                        <div className="col-span-2">
                             <dt>신청사유</dt>
                             <dd>{reservation.reason}</dd>
                         </div>
