@@ -26,7 +26,7 @@ export default function EmployeeListComponent() {
 
     const [employees, setEmployees] = useState([]);
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(8);
+    const [size, setSize] = useState(9);
     const [totalPages, setTotalPages] = useState(0);
 
     const [dlist, setDlist] = useState([]);
