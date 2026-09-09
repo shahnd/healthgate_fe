@@ -75,7 +75,35 @@ export default function ReservationComponent() {
     }
 
     // 공휴일
-    const { holidayStr } = useHolidays();
+    const { holidayStr, loading : holidaysLoading } = useHolidays();
+
+    // 예약 가능한 평일 찾기
+    const findNextAvailableDate = holidayStr => {
+
+        const toDateStr = date => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`
+        }
+
+        const candidate = new Date();
+        candidate.setDate(candidate.getDate() + 1); // 내일부터
+
+        while(true) {
+
+            const day = candidate.getDay();
+            const isWeekend = day === 0 || day === 6; // 0 = 일, 6 = 토
+            const isHoliday = holidayStr.includes(toDateStr(candidate));
+
+            if(!isWeekend && !isHoliday) {
+
+                return candidate;
+            }
+
+            candidate.setDate(candidate.getDate() + 1);
+        }
+    }
 
     // 날짜 선택 이벤트 핸들러
     const handleSelectDate = async slotInfo => {
@@ -142,7 +170,7 @@ export default function ReservationComponent() {
                     id : item.id,
                     label : item.label,
                     statusText,
-                    disabled : isReserved && isOriginalTurn, 
+                    disabled : isReserved && !isOriginalTurn, 
                 };
             })
 
@@ -161,8 +189,7 @@ export default function ReservationComponent() {
                 try {
 
                 const response = await LoginUserApi(user.id);
-                console.log(response.data.data)
-                console.log(response.data)
+
                 if(response.data && response.data.data) {
                     const empData = response.data.data;
                     setReservationData(prev => ({
@@ -191,74 +218,79 @@ export default function ReservationComponent() {
 
         const fetchDetailData = async () => {
 
-        if(isEditMode) {
-            try {
-                // 수정모드: 기존 예약 정보 조회
-                const response = await selectReservationApi(id);
+            if(isEditMode) {
 
-                if(response.data) {
-                    const data = response.data;
+                try {
+                    // 수정모드: 기존 예약 정보 조회
+                    const response = await selectReservationApi(id);
 
-                    // 권한 체크
-                    const writerId = data.employee?.id;
-                    if(role !== "HEALTH_ADMIN" && writerId && writerId !== loginUserId){
-                        alert("접근 권한이 없습니다.");
-                        navigate("/consultation/reservation/list", { replace: true });
-                        return;
+                    if(response.data) {
+                        const data = response.data;
+
+                        // 권한 체크
+                        const writerId = data.employee?.id;
+                        if(role !== "HEALTH_ADMIN" && writerId && writerId !== loginUserId){
+
+                            alert("접근 권한이 없습니다.");
+                            navigate("/consultation/reservation/list", { replace: true });
+                            return;
+                        }
+                        
+                        // 1. 전체 예약 데이터
+                        setReservationData(data);
+
+                        // 2. 날짜 객체 생성
+                        const targetDate = new Date(data.scheduledDate);
+                        
+                        // 3. 달력에 선택된 날짜와 현재 월 싱크 맞추기
+                        setSelectedDate(targetDate);
+                        setCurrentDate(targetDate);
+
+                        // 4. 수정모드 - 기존 예약일 저장
+                        setOriginalDate(data.scheduledDate);
+                        setOriginalTurn(data.scheduledTurn);
+
+                        // 5. 해당 날짜 스케줄, 기존 예약 차시 저장
+                        fetchSchedules(targetDate, data.scheduledTurn);
                     }
-                    
-                    // 1. 전체 예약 데이터
-                    setReservationData(data);
+                } catch (error) {
+                    console.log("수정용 데이터 조회 실패" + error);
 
-                    // 2. 날짜 객체 생성
-                    const targetDate = new Date(data.scheduledDate);
-                    
-                    // 3. 달력에 선택된 날짜와 현재 월 싱크 맞추기
-                    setSelectedDate(targetDate);
-                    setCurrentDate(targetDate);
+                    if(error.response && error.response.status === 403) {
 
-                    // 4. 수정모드 - 기존 예약일 저장
-                    setOriginalDate(data.scheduledDate);
-                    setOriginalTurn(data.scheduledTurn);
+                        alert("접근 권한이 없습니다.");
+                        navigate("/consultation/list");
+                    } else if(error.response && error.response.status === 404) {
 
-                    // 5. 해당 날짜 스케줄, 기존 예약 차시 저장
-                    fetchSchedules(targetDate, data.scheduledTurn);
+                        alert("숨겨졌거나 삭제된 데이터 입니다.");
+                        navigate("/consultation/list");
+                    } else {
+
+                        alert("데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.")
+                    }
                 }
-            } catch (error) {
-                console.log("수정용 데이터 조회 실패" + error);
-
-                if(error.response && error.response.status === 403) {
-
-                    alert("접근 권한이 없습니다.");
-                    navigate("/consultation/list");
-                } else if(error.response && error.response.status === 404) {
-
-                    alert("숨겨졌거나 삭제된 데이터 입니다.");
-                    navigate("/consultation/list");
-                } else {
-
-                    alert("데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.")
-                }
-            }
-
             } else {
 
                 // 신청모드
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() +1);
+                if(holidaysLoading) return; // 공휴일 로딩 안 될 시 - 대기
 
-                const formattedToday = formatDate(tomorrow);
+                const defaultDate = findNextAvailableDate(holidayStr);
+                const formattedDate = formatDate(defaultDate);
+
+                setSelectedDate(defaultDate);
+                setCurrentDate(defaultDate);
+
                 setReservationData(prev => ({
                     ...prev,
-                    scheduledDate : formattedToday,
+                    scheduledDate : formattedDate,
                 }));
 
-                fetchSchedules(tomorrow);
+                fetchSchedules(defaultDate);
             }
         }
 
         fetchDetailData();
-    }, [id, loginUserId, role, navigate]);
+    }, [id, loginUserId, role, navigate, holidaysLoading]);
 
     
     // scheduledTurn 이 바뀔 때 갱신
@@ -319,22 +351,22 @@ export default function ReservationComponent() {
             navigate("/consultation/reservation/list");
 
         } catch (error) {
+
+            if(error.response?.status === 409 && error.response?.data === "not_modifiable") {
+
+                alert("이미 예약된 일정입니다. 다른 일정을 선택해주세요");
+            } else {
+
+                alert("예약 신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            }
+
             console.log("상담 신청 통신 실패" + error);
         }
-
     }
 
     // return 구문
     return(
         <div className="detail-page">
-
-            {/* 아래 내용이 공통 헤더에 겹치는 것 같아서 우선 주석처리했습니다. */}
-            {/* <div>
-                <button onClick={() => { navigate("/dashboard") }}>홈</button>&gt; 
-                <button onClick={() => { navigate("/consultation/reservation/list") }}>보건상담</button> &gt; 
-                상담예약
-            </div> */}
-
             <PageHeader title="상담 예약" description="보건 상담을 예약합니다." icon={MessageCircle}/>
             <Card className="detail-info-card">
                 <CardContent>
@@ -382,13 +414,14 @@ export default function ReservationComponent() {
                                     <p className="text-gray-500">예약 가능한 시간을 선택할 수 있습니다.</p>
                                 </div>
 
-                                <ToggleGroup Type="single"
-                                             value={ reservationData.scheduledTurn }
+                                <ToggleGroup value={ reservationData.scheduledTurn }
                                              onValueChange={ value => {
 
-                                                if(!value) return;
+                                                const turnValue = value[0] ?? "";
 
-                                                if(!selectedDate && reservationData.scheduledDate) {
+                                                if(!turnValue) return;
+
+                                                if(!selectedDate && !reservationData.scheduledDate) {
                                                     alert("상담 일자를 선택해주세요.");
                                                     return
                                                 }
@@ -396,7 +429,7 @@ export default function ReservationComponent() {
                                                 setReservationData(prev => {
                                                     return {
                                                         ...prev,
-                                                        scheduledTurn : value
+                                                        scheduledTurn : turnValue
                                                     }
                                                 })
                                              }}

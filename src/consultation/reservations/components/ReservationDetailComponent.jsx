@@ -37,6 +37,21 @@ export default function ReservationDetailComponent() {
         createAt : ""
     });
 
+    // 오늘 날짜
+    const isToday = dateStr => {
+
+        if(!dateStr) return false;
+
+        const today = new Date();
+        const target = new Date(dateStr);
+
+        return today.getFullYear() === target.getFullYear()
+            && today.getMonth() === target.getMonth()
+            && today.getDate() === target.getDate();
+    };
+
+    const canModify = reservation.status === "RESERVED" && !isToday(reservation.scheduledDate);
+
     // 차시 -> 시간 매핑
     const turnTimeMap = {
         "T1": "10:00 ~ 10:50",
@@ -129,6 +144,14 @@ export default function ReservationDetailComponent() {
         }
 
         } catch (error) {
+            if(error.response?.status === 409 && error.response?.data === "not_modifiable") {
+
+                alert("당일 예약이거나 이미 처리된 예약은 취소할 수 없습니다.");
+            } else {
+
+                alert("예약 취소 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            }
+
             console.log("예약 취소 ajax 통신 실패" + error);
         }
     }
@@ -182,24 +205,37 @@ export default function ReservationDetailComponent() {
                 </CardContent>
 
                 <CardFooter>
-                    <Button
-                        size="lg" className="cursor-pointer"
-                        type="button"
-                        onClick={() => {
-                            navigate(`/consultation/reservation/${id}`);
-                        }}
-                    >
-                        예약 수정
-                    </Button>
+                    
+                    { canModify ? (
+                        <>
+                            <Button
+                                size="lg" className="cursor-pointer"
+                                type="button"
+                                onClick={() => {
+                                    navigate(`/consultation/reservation/${id}`);
+                                }}
+                            >
+                                예약 수정
+                            </Button>
 
-                    <Button
-                        size="lg" className="cursor-pointer"
-                        type="button"
-                        variant="outline"
-                        onClick={cancelReservation}
-                    >
-                        예약 취소
-                    </Button>
+                            <Button
+                                size="lg" className="cursor-pointer"
+                                type="button"
+                                variant="outline"
+                                onClick={cancelReservation}
+                            >
+                                예약 취소
+                            </Button>
+                        </>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">
+                            { reservation.status !== "RESERVED"
+                                ? "이미 처리된 예약은 수정/취소 할 수 없습니다."
+                                : "상담 당일에는 수정/취소할 수 없습니다."}
+                        </p>
+                    )}
+                        
+                    
                 </CardFooter>
             </Card>
         </div>
