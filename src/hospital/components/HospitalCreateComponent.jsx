@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
 
+
 import "@/common/styles/FormComponent.css";
 import "@/common/styles/Common.css"
 import PageHeader from "@/common/components/PageHeader";
@@ -168,7 +169,7 @@ export default function HospitalCreateComponent() {
                                 <Label htmlFor="url">병원 홈페이지 URL</Label>
                                 <Input
                                     id="url"
-                                    type="text"
+                                    type="url"
                                     name="url"
                                     value={hospital.url || ""}
                                     onChange={handleInputChange}

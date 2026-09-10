@@ -193,9 +193,21 @@ export default function HospitalDetailComponent() {
                                             {hospital.url || "-"}</a></dd>
                                 </div>
                                 
-                                <div className="full-row">
-                                    <dt>병원 안내</dt>
-                                    <dd>{hospital.description || "-"}</dd>
+                                <div className="full-row" style={{ display: 'flex', alignItems: 'flex-start' }}>
+                                    <dt className="font-bold text-gray-800" style={{ width: '120px', flexShrink: 0 }}>
+                                        병원 안내
+                                    </dt>
+                                    <dd
+                                        style={{
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-all',
+                                        flex: 1,
+                                        minWidth: 0,
+                                        margin: 0
+                                        }}
+                                    >
+                                        {hospital.description || "-"}
+                                    </dd>
                                 </div>
                                 
                                 <div className="full-row">
