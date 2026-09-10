@@ -41,7 +41,7 @@ const deleteHospitalApi = hospitalId => {
 const insertHospitalApi = params => {
     
     const response = axios({
-        url : `${ BASE_URL }/new`,
+        url : `${ BASE_URL }`,
         method : "post",
         data : params
     });

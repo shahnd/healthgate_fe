@@ -39,7 +39,7 @@ const searchNoticeListApi = (cpage, keyword) => {
 const insertNoticeApi = (formData) => {
 
     const response = axios({
-         url :`${ BASE_URL }/new`, 
+         url :`${ BASE_URL }`, 
          method : "post",
          data : formData, 
          headers: {
@@ -91,8 +91,8 @@ const selectNoticeFormApi = noticeId => {
 const updateNoticeApi = (noticeId, formData) => {
 
     const response = axios({
-        url : `${ BASE_URL }/${ noticeId }/edit`,
-        method : "post",
+        url : `${ BASE_URL }/${ noticeId }`,
+        method : "put",
         data: formData,
         headers : {
             'Content-Type': 'multipart/form-data'
