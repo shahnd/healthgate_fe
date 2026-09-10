@@ -207,7 +207,13 @@ export default function ConsultationDetailComponent () {
                         type="button"
                         variant="outline"
                         onClick={() => {
-                            navigate(-1);
+                            if(location.state?.fromListUrl) {
+
+                                navigate(location.state.fromListUrl);
+                            } else {
+
+                                navigate(`/consultation/list`);
+                            }
                         }}
                     >
                         목록으로
