@@ -407,7 +407,9 @@ export default function ConsultationListComponent() {
                                 pagedList.map((item, index) => {
                                     return(
                                         <TableRow className="cursor-pointer" key={ index }
-                                            onClick={() => { navigate(`/consultation/detail/${item.id}`); }}>
+                                            onClick={() => { navigate(`/consultation/detail/${item.id}`), {
+                                                state : { fromListUrl : `${location.pathname}` }
+                                            }; }}>
                                             <TableCell>{ item.employee?.name }</TableCell>
                                             <TableCell>{ item.employee?.departments?.name || "부서미지정" }</TableCell>
                                             <TableCell>{ item.scheduledDate }</TableCell>
