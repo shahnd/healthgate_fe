@@ -199,7 +199,7 @@ export default function HospitalUpdateComponent() {
                                 <Label htmlFor="url">병원 홈페이지</Label>
                                 <Input
                                     id="url"
-                                    type="text"
+                                    type="url"
                                     name="url"
                                     value={hospital.url || ""}
                                     onChange={handleInputChange}
