@@ -51,11 +51,12 @@ const insertNoticeApi = (formData) => {
     return response;
 };
 
-// 공지사항 상세조회
-const selectNoticeApi = noticeId => {
+// 공지사항 상세조회 리스트페이지에서 상세조회 페이지로 넘어올때만 
+// increaseViewCount = true 로넘어와서 조회수증가
+const selectNoticeApi = (noticeId,increaseViewCount = true) => {
    
     const response = axios({
-        url : `${ BASE_URL }/${ noticeId }`,
+        url : `${ BASE_URL }/${ noticeId }?increaseViewCount=${increaseViewCount}`,
         method : "get",
         withCredentials: true
     });
@@ -74,18 +75,6 @@ const deleteNoticeApi = noticeId => {
 
     return response;
 };
-
-// 공지사항 상세조회 - 수정하기 페이지에서 요청(조회수중복증가방지)
-const selectNoticeFormApi = noticeId => {
-
-    const response = axios({
-        url : `${ BASE_URL }/${ noticeId }/form`,
-        method : "get",
-        withCredentials: true
-    });
-
-    return response;
-}
 
 // 공지사항 수정
 const updateNoticeApi = (noticeId, formData) => {
@@ -118,4 +107,4 @@ const downloadNoticeFileApi = (noticeFileId) => {
 
 export { selectNoticeListApi, searchNoticeListApi, insertNoticeApi, 
          selectNoticeApi, deleteNoticeApi, updateNoticeApi, 
-         selectNoticeFormApi, downloadNoticeFileApi, BASE_URL};
+         downloadNoticeFileApi, BASE_URL};
