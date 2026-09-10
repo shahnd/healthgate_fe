@@ -7,7 +7,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 
-export default function CustomPagination({ page, totalPages, onPageChange, pageLimit = 3 }) {
+export default function CustomPagination({ page, totalPages, onPageChange, pageLimit = 10 }) {
   const startPage = Math.floor((page - 1) / pageLimit) * pageLimit + 1;
   const endPage = Math.min(startPage + pageLimit - 1, totalPages);
 
