@@ -17,7 +17,7 @@ const localizer = dateFnsLocalizer({
 })
 
 
-function ListCalendar({ dataList, onSelectEvent, holidays = [] }) {
+function ListCalendar({ dataList, onSelectEvent, onNavigate, holidays = [] }) {
 
   const toDateStr = date => {
     const y = date.getFullYear();
@@ -45,6 +45,7 @@ function ListCalendar({ dataList, onSelectEvent, holidays = [] }) {
         components={{ toolbar: CustomToolbar, }}
         onSelectEvent={onSelectEvent}  // prop 된 이벤트 클릭 핸들러
         selectable  // 슬롯 선택 가능하게
+        onNavigate={onNavigate}
         dayPropGetter={date => {
           if(holidays.includes(toDateStr(date))) {
 
