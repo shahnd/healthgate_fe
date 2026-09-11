@@ -189,15 +189,19 @@ export default function NoticeDetailComponent() {
                                 
                                 <div className="full-row">
                                     <dt>첨부파일</dt>
+                                    
                                     <dd>
                                         {noticeFile && noticeFile.originName ? (
-                                            <span
-                                                onClick={ () => handleDownload(noticeFile.noticeFileId)}
-                                            >  {noticeFile.originName}
-                                            </span>
-                                            ) : (
+                                            <button
+                                            type="button"
+                                            onClick={() => handleDownload(noticeFile.noticeFileId)}
+                                            className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded border border-gray-300 text-sm cursor-pointer inline-flex items-center gap-1.5"
+                                            >
+                                            💾 {noticeFile.originName} <span className="text-green-600 font-semibold">[다운로드]</span>
+                                            </button>
+                                        ) : (
                                             "첨부파일이 없습니다."
-                                            )}
+                                        )}
                                     </dd>
                                 </div>
                             </dl>
