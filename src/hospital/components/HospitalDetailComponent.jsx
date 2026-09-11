@@ -190,7 +190,7 @@ export default function HospitalDetailComponent() {
                                            rel="noopener noreferrer"
                                            className="text-blue-600 hover:underline"
                                             >
-                                            {hospital.url || "-"}</a></dd>
+                                            {hospital.url}</a></dd>
                                 </div>
                                 
                                 <div className="full-row" style={{ display: 'flex', alignItems: 'flex-start' }}>
