@@ -59,37 +59,22 @@ export default function HospitalCreateComponent() {
         e.preventDefault();
         // 기본이벤트 제거
 
-        const params = new URLSearchParams();
-            params.append("name", hospital.name);
-            params.append("address", hospital.address);
-            params.append("phone", hospital.phone);
-            params.append("url", hospital.url);
-            params.append("description", hospital.description);
-            params.append("createdAt",hospital.createdAt);
-            params.append("status",hospital.status);
-
-            // boolean 값을 문자열("true"/"false")로 변환하여 전송
-            const isChecked = (key1, key2) => (hospital[key1] || hospital[key2] ? "true" : "false");
-
-            // is가 붙은 키와 안 붙은 키를 둘 다 전송하여 자바빈 매핑 이슈를 완전 회피
-            const exams = [
-                { base: "generalExamAvailable", key1: "generalExamAvailable", key2: "isGeneralExamAvailable" },
-                { base: "stomachCancerExamAvailable", key1: "stomachCancerExamAvailable", key2: "isStomachCancerExamAvailable" },
-                { base: "colonCancerExamAvailable", key1: "colonCancerExamAvailable", key2: "isColonCancerExamAvailable" },
-                { base: "liverCancerExamAvailable", key1: "liverCancerExamAvailable", key2: "isLiverCancerExamAvailable" },
-                { base: "lungCancerExamAvailable", key1: "lungCancerExamAvailable", key2: "isLungCancerExamAvailable" }
-            ];
-
-            exams.forEach(item => {
-                const val = isChecked(item.key1, item.key2);
-                // is가 안 붙은 형태
-                params.append(item.key1, val);
-                // is가 붙은 형태
-                params.append(item.key2, val);
-            });
+        const formData = new FormData();
+            formData.append("name", hospital.name);
+            formData.append("address", hospital.address);
+            formData.append("phone", hospital.phone);
+            formData.append("url", hospital.url);
+            formData.append("description", hospital.description);
+            formData.append("createdAt",hospital.createdAt);
+            formData.append("status",hospital.status);
+            formData.append("generalExamAvailable",hospital.generalExamAvailable);
+            formData.append("stomachCancerExamAvailable",hospital.stomachCancerExamAvailable);
+            formData.append("colonCancerExamAvailable",hospital.colonCancerExamAvailable);
+            formData.append("liverCancerExamAvailable",hospital.liverCancerExamAvailable);
+            formData.append("lungCancerExamAvailable",hospital.lungCancerExamAvailable);
 
       try {
-            const response = await insertHospitalApi(params);
+            const response = await insertHospitalApi(formData);
 
             if(response.status === 200) {
                 // > 병원 등록 성공일 경우
