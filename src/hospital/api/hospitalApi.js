@@ -38,24 +38,24 @@ const deleteHospitalApi = hospitalId => {
 };
 
 // 검진가능 병원 등록용
-const insertHospitalApi = params => {
+const insertHospitalApi = formData => {
     
     const response = axios({
         url : `${ BASE_URL }`,
         method : "post",
-        data : params
+        data : formData
     });
 
      return response
 };
 
 // 검진가능 병원 수정용 
-const updateHospitalApi = (hospitalId, params) => {
+const updateHospitalApi = (hospitalId, formData) => {
 
     const response = axios({
         url : `${ BASE_URL }/${ hospitalId }`, 
         method : "put",
-        data : params
+        data : formData
     });
 
     return response;

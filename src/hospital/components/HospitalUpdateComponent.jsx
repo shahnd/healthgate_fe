@@ -89,38 +89,23 @@ export default function HospitalUpdateComponent() {
     const updateHospital = async e => {
         e.preventDefault();
 
-        // address 필드가 누락되지 않도록 확인
-        const params = new URLSearchParams();
-            params.append("name", hospital.name);
-            params.append("address", hospital.address);
-            params.append("phone", hospital.phone);
-            params.append("url", hospital.url);
-            params.append("description", hospital.description);
-            params.append("createdAt",hospital.createdAt);
-            params.append("status",hospital.status);
-
-            // boolean 값을 문자열("true"/"false")로 변환하여 전송
-            const isChecked = (key1, key2) => (hospital[key1] || hospital[key2] ? "true" : "false");
-
-            // is가 붙은 키와 안 붙은 키를 둘 다 전송하여 자바빈 매핑 이슈를 완전 회피
-            const exams = [
-                { base: "GeneralExamAvailable", key1: "generalExamAvailable", key2: "isGeneralExamAvailable" },
-                { base: "StomachCancerExamAvailable", key1: "stomachCancerExamAvailable", key2: "isStomachCancerExamAvailable" },
-                { base: "ColonCancerExamAvailable", key1: "colonCancerExamAvailable", key2: "isColonCancerExamAvailable" },
-                { base: "LiverCancerExamAvailable", key1: "liverCancerExamAvailable", key2: "isLiverCancerExamAvailable" },
-                { base: "LungCancerExamAvailable", key1: "lungCancerExamAvailable", key2: "isLungCancerExamAvailable" }
-            ];
-
-            exams.forEach(item => {
-            const val = isChecked(item.key1, item.key2);
-            // is가 안 붙은 형태
-            params.append(item.key1, val);
-            // is가 붙은 형태
-            params.append(item.key2, val);
-            });
+        
+        const formData = new FormData();
+            formData.append("name", hospital.name);
+            formData.append("address", hospital.address);
+            formData.append("phone", hospital.phone);
+            formData.append("url", hospital.url);
+            formData.append("description", hospital.description);
+            formData.append("createdAt",hospital.createdAt);
+            formData.append("status",hospital.status);
+            formData.append("generalExamAvailable",hospital.generalExamAvailable);
+            formData.append("stomachCancerExamAvailable",hospital.stomachCancerExamAvailable);
+            formData.append("colonCancerExamAvailable",hospital.colonCancerExamAvailable);
+            formData.append("liverCancerExamAvailable",hospital.liverCancerExamAvailable);
+            formData.append("lungCancerExamAvailable",hospital.lungCancerExamAvailable);
 
         try {
-            const response = await updateHospitalApi(hospitalId, params);
+            const response = await updateHospitalApi(hospitalId, formData);
 
              if(response.data == "success") {
                 // 수정 성공
@@ -228,53 +213,58 @@ export default function HospitalUpdateComponent() {
                             <div className="full-row">
                                 <Label>검진가능 항목</Label>
 
-                                <div>
-                                    <label>
+                                <div className="flex items-center justify-start gap-1 !w-auto ">
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="generalExamAvailable"
                                             checked={Boolean(hospital.generalExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         일반검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="stomachCancerExamAvailable"
                                             checked={Boolean(hospital.stomachCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         위암검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_6.5rem]">
                                         <input
                                             type="checkbox"
                                             name="colonCancerExamAvailable"
                                             checked={Boolean(hospital.colonCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         대장암검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="liverCancerExamAvailable"
                                             checked={Boolean(hospital.liverCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         간암검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="lungCancerExamAvailable"
                                             checked={Boolean(hospital.lungCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         폐암검진
                                     </label>

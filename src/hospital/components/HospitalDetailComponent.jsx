@@ -135,50 +135,55 @@ export default function HospitalDetailComponent() {
 
                                 <div className="full-row">
                                     <dt>검진가능 항목</dt>
-                                    <dd>
-                                        <label>
+                                    <dd className="flex items-center justify-start gap-1 !w-auto ">
+                                        <label className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(hospital.generalExamAvailable)}
                                                 readOnly
+                                                className="!grow-[0.3] !flex-none"
                                             />
-                                            일반검진
+                                            <span>일반검진</span>
                                         </label>
-
-                                        <label>
+                                    
+                                        <label className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(hospital.stomachCancerExamAvailable)}
                                                 readOnly
+                                                className="!grow-[0.3] !flex-none"
                                             />
-                                            위암검진
+                                            <span>위암검진</span>
                                         </label>
-
-                                        <label>
+                
+                                        <label className="flex items-center gap-0.5 !flex-[0_0_6.5rem]">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(hospital.colonCancerExamAvailable)}
                                                 readOnly
+                                                className="!grow-[0.3] !flex-none"
                                             />
-                                            대장암검진
+                                            <span>대장암검진</span>
                                         </label>
 
-                                        <label>
+                                        <label className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(hospital.liverCancerExamAvailable)}
                                                 readOnly
+                                                className="!grow-[0.3] !flex-none"
                                             />
-                                            간암검진
+                                            <span>간암검진</span>
                                         </label>
 
-                                        <label>
+                                        <label className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(hospital.lungCancerExamAvailable)}
                                                 readOnly
+                                                className="!grow-[0.3] !flex-none"
                                             />
-                                            폐암검진
+                                            <span>폐암검진</span>
                                         </label>
                                     </dd>
                                 </div>
@@ -190,7 +195,7 @@ export default function HospitalDetailComponent() {
                                            rel="noopener noreferrer"
                                            className="text-blue-600 hover:underline"
                                             >
-                                            {hospital.url || "-"}</a></dd>
+                                            {hospital.url}</a></dd>
                                 </div>
                                 
                                 <div className="full-row" style={{ display: 'flex', alignItems: 'flex-start' }}>

@@ -97,6 +97,13 @@ export default function NoticeListComponent() {
         
     };
 
+    const handleReset = () => {
+        setKeyword("");
+
+        // 초기화 후 바로 전체 목록을 다시 조회
+        navigate('/notices/list');
+    }
+
     // 검색 요청용 함수
     const searchNoticeList = async () => {
 
@@ -216,8 +223,12 @@ export default function NoticeListComponent() {
                         value={ keyword } 
                         onChange={ handleChange }
                         style={{ flex: "0 0 350px", width: "350px" }} />
+                    <Button type="button" variant="outline" size="icon" onClick={handleReset}>
+                        <RotateCcw className="h-4 w-4" />
+                    </Button>
                     <Button type="submit" size="sm"
                             onClick={ handleClick }>검색</Button>
+                    
                 </div>
                 {canCreateNotice && (
                     <Button size="lg" className="cursor-pointer" type="button" onClick={ () => navigate("/notices/new")}>
