@@ -213,53 +213,58 @@ export default function HospitalUpdateComponent() {
                             <div className="full-row">
                                 <Label>검진가능 항목</Label>
 
-                                <div>
-                                    <label>
+                                <div className="flex items-center justify-start gap-1 !w-auto ">
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="generalExamAvailable"
                                             checked={Boolean(hospital.generalExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         일반검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="stomachCancerExamAvailable"
                                             checked={Boolean(hospital.stomachCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         위암검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_6.5rem]">
                                         <input
                                             type="checkbox"
                                             name="colonCancerExamAvailable"
                                             checked={Boolean(hospital.colonCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         대장암검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="liverCancerExamAvailable"
                                             checked={Boolean(hospital.liverCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         간암검진
                                     </label>
 
-                                    <label>
+                                    <label  className="flex items-center gap-0.5 !flex-[0_0_5.5rem]">
                                         <input
                                             type="checkbox"
                                             name="lungCancerExamAvailable"
                                             checked={Boolean(hospital.lungCancerExamAvailable)}
                                             onChange={handleInputChange}
+                                            className="!grow-[0.3] !flex-none"
                                         />
                                         폐암검진
                                     </label>
