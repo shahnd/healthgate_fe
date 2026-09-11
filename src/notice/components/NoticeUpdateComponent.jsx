@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { useState, useEffect, useRef } from "react";
 
-import { selectNoticeFormApi, updateNoticeApi, BASE_URL } from "../api/NoticeApi";
+import { selectNoticeApi, updateNoticeApi, BASE_URL } from "../api/NoticeApi";
 
 import { useUserInfo } from "../../store/useAuthStore";
 
@@ -56,7 +56,7 @@ export default function NoticeUpdateComponent() {
 
             try {
 
-                const response = await selectNoticeFormApi(noticeId);
+                const response = await selectNoticeApi(noticeId,false);
 
                 setNotice(response.data.notice);
                 setInitialNotice(response.data.notice); // 원본 백업

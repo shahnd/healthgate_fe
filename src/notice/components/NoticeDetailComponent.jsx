@@ -2,7 +2,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 
-import { selectNoticeApi, selectNoticeFormApi, deleteNoticeApi, downloadNoticeFileApi, BASE_URL } from "../api/NoticeApi";
+import { selectNoticeApi, deleteNoticeApi, downloadNoticeFileApi, BASE_URL } from "../api/NoticeApi";
 
 import { useUserInfo } from "../../store/useAuthStore";
 
@@ -57,14 +57,14 @@ export default function NoticeDetailComponent() {
                 const isFromList = location.state?.isFromList;
 
                 let response;
-                // 목록 에서 넘어온 경우 -> 조회수 증가 하는 selectNoticeApi 호출
+                // 목록 에서 넘어온 경우 -> 조회수 증가O true
                 if (isFromList) {
-                  response = await selectNoticeApi(noticeId);
+                  response = await selectNoticeApi(noticeId, true);
 
                   window.history.replaceState({}, document.title);
                 } else {
-                     // 수정하기, 상세조회에서 들어온 경우 -> 조회수 증가하는 selectNoticeFormApi 호출
-                  response = await selectNoticeFormApi(noticeId);
+                     // 수정하기, 상세조회에서 들어온 경우 -> 조회수 증가X false
+                  response = await selectNoticeApi(noticeId, false);
                 }
 
                 if(response.data != "") {
