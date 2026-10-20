@@ -1,18 +1,31 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 프론트엔드 README
 
-Currently, two official plugins are available:
+```markdown
+# HealthGate Frontend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+직원 건강관리 시스템 HealthGate의 프론트엔드입니다. React와 Vite를 사용하며, 백엔드 REST API와 연동합니다.
 
-## React Compiler
+## 기술 스택
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- React
+- JavaScript
+- Vite
+- React Router
+- Axios
+- Tailwind CSS
+- Vitest
+- ESLint
 
-Note: This will impact Vite dev & build performances.
+## 사전 준비
 
-## Expanding the ESLint configuration
+- Node.js
+- npm
+- 실행 중인 HealthGate 백엔드
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 설치
+
+프로젝트 루트(`healthgate_fe`)에서 실행합니다.
+
+```bash
+npm install
